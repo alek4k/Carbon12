@@ -1,6 +1,8 @@
 var http = require('http');
 var fs = require('fs');
 var formidable = require('formidable');
+var path = require('path');
+var mime = require('mime');
 
 // html file containing upload form
 var upload_html = fs.readFileSync("addestramento.html");
@@ -8,6 +10,7 @@ var download_html = fs.readFileSync("downloadPredittore.html");
 
 // replace this with the location to save uploaded files
 var upload_path = __dirname + '/';
+
 
 http.createServer(function (req, res) {
   if (req.url == '/fileupload') {
@@ -25,10 +28,27 @@ http.createServer(function (req, res) {
                 //quando il file è pronto deve tornare alla pagina per il download
 
                 // you may respond with another html page
-                res.write(download_html);
-                res.end();
+                res.writeHead(301,{'Location' : 'downloadPredittore'});
+                return res.end();
             });
         });
+    }
+    else if(req.url == '/downloadPredittore'){
+      res.write(download_html);
+      return res.end();
+    }
+    else if(req.url == '/downloadFile'){
+      var file = __dirname + '/predittore.json';
+
+      var filename = path.basename(file);
+      var mimetype = mime.lookup(file);
+
+      res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+      res.setHeader('Content-type', mimetype);
+
+      var filestream = fs.createReadStream(file);
+      filestream.pipe(res);
+      //return res.end();
     }
     else{
       res.writeHead(200);

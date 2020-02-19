@@ -18,7 +18,11 @@
         text-align: center;
       }
 
-      button {
+      fieldset {
+        border: none;
+      }
+
+      #download {
         padding: 1%;
         background-color: #1675AA;
         margin: 0 45%;
@@ -32,7 +36,11 @@
     <h2>Pagina di addestramento</h2>
     <p>Il file con il predittore addestrato è pronto. Procedere con il download</p>
     <div>
-      <button id="download">Download</button>
+      <form action="downloadFile" method="post">
+        <fieldset>
+          <input type="submit" id="download" value="DOWNLOAD PREDITTORE">
+        </fieldset>
+      </form>
     </div>
   </body>
 </html>

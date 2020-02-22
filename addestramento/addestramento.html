@@ -53,9 +53,9 @@
         <label>Seleziona il file coi dati di addestramento (formato JSON):</label>
         <input type="file" id="upload" value="upload file" accept=".json" name="filetoupload">
         <label>Seleziona il modello da addestrare:</label>
-        <select>
-          <option>SVM</option>
-          <option>RL</option>
+        <select name="modello">
+          <option value="SVM">SVM</option>
+          <option value="RL">RL</option>
         </select>
         <input type="submit" id="submit" value="AVVIO ADDESTRAMENTO">
       </fieldset>

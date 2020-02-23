@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta author="Carbon12">
+    <title>Pagina di addestramento</title>
+    <style>
+      h1, h2, h3 {
+        text-align: center;
+        font-weight: bold;
+      }
+
+      h1 {
+        color: #1675AA;
+      }
+
+      p {
+        text-align: center;
+      }
+
+      fieldset {
+        border: none;
+      }
+
+      #download {
+        padding: 1%;
+        background-color: #1675AA;
+        margin: 0 45%;
+        font-size: 1em;
+        color: #FFFFFF;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Predire in Grafana</h1>
+    <h2>Pagina di addestramento</h2>
+    <h3>Modello utilizzato: <%= model %></h3>
+    <p>Il file con il predittore addestrato è pronto. Procedere con il download</p>
+    <div>
+      <form action="downloadFile" method="post">
+        <fieldset>
+          <input type="submit" id="download" value="DOWNLOAD PREDITTORE">
+        </fieldset>
+      </form>
+    </div>
+  </body>
+</html>

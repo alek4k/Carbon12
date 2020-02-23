@@ -4,12 +4,42 @@ var formidable = require('formidable');
 var path = require('path');
 var mime = require('mime');
 const modules = require("ml-modules");
-const SVM = modules.SVM;
+var express = require('express');
 
-// file html con la form per upload dati e selezione modello
-var upload_html = fs.readFileSync("addestramento.html");
-// file html per il download del predittore
-var download_html = fs.readFileSync("downloadPredittore.html");
+var app = express();
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+const PORT = 8080;
+
+var router = express.Router();
+
+let model;
+
+router.get('/', function (request, response) {
+  response.render('addestramento');
+});
+
+router.post('/fileupload', function (request, response) {
+  var form = new formidable.IncomingForm();
+  uploadForm(request, response, form);
+});
+
+router.get('/downloadPredittore', function (request, response) {
+  response.render('downloadPredittore', { model });
+});
+
+router.post('/downloadFile', function (request, response) {
+  downloadPredittore(request, response);
+});
+
+app.use('/', router);
+
+app.listen(PORT, function () {
+  console.log('Listening on port ' + PORT);
+});
+
+const SVM = modules.SVM;
 
 // path directory dove salvare il file
 var upload_path = __dirname + '/';
@@ -49,13 +79,14 @@ function addestramento(){
 //funzione per gestire dati in input nella form
 function uploadForm(req, res, form){
   form.parse(req, function (err, fields, files) {
+      model = fields.modello;
       // oldpath : dir temporanea dove è salvato il file
       var oldpath = files.filetoupload.path;
       // newpath : nuova dir dove è salvato il file
       var newpath = upload_path + files.filetoupload.name;
       // copia del file nella nuova posizione
       fs.rename(oldpath, newpath, function (err) {
-          if (err) throw err; //deve lanciare errore se controllo file non va a buon fine: ALERT Popup?
+          //if (err) throw err; //deve lanciare errore se controllo file non va a buon fine: ALERT Popup?
           //analizzare select SVM o RL
           addestramento();
           //redirect alla pagina di download
@@ -79,25 +110,3 @@ function downloadPredittore(req, res){
   filestream.pipe(res);
   //aggiungere conferma download e redirect a upload
 }
-
-http.createServer(function (req, res) {
-    if (req.url == '/fileupload') {
-      var form = new formidable.IncomingForm();
-      uploadForm(req, res, form);
-    }
-    else if(req.url == '/downloadPredittore'){
-      //restituisce pagina download
-      res.writeHead(200);
-      res.write(download_html);
-      return res.end();
-    }
-    else if(req.url == '/downloadFile'){
-      downloadPredittore(req, res);
-    }
-    else{
-      //restituisce pagina upload
-      res.writeHead(200);
-      res.write(upload_html);
-      return res.end();
-    }
-}).listen(8080);

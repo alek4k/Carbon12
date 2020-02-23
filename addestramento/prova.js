@@ -44,22 +44,34 @@ const SVM = modules.SVM;
 // path directory dove salvare il file
 var upload_path = __dirname + '/';
 
-//funzione di addestramento della SVM
-function addestramento(){
-  let data = [
-    [1, 0],
-    [2, 3],
-    [5, 4],
-    [2, 7],
-    [0, 3],
-    [-1, 0],
-    [-3, -4],
-    [-2, -2],
-    [-1, -1],
-    [-5, -2]
-  ];
+//lettura dati per data
+function readNumero(data,x){
+  var n;
+  var nstring="";
+  if(x==0){
+    for(let i=0; i<data.length && data[i]!=","; i++){
+      if(data[i]!=','){
+        nstring=nstring+data[i];
+      }
+    }
+    n=parseInt(nstring);
+  }
+  else{
+    var salto=0;
+    for(let i=0; i<data.length && data[i]!=","; i++){
+      if(data[i]!=','){salto++;}
+      else{salto++;}
+    }
+    for(let i=salto+1; i<data.length; i++){
+      nstring=nstring+data[i];
+    }
+    n=parseInt(nstring);
+  }
+  return n;
+};
 
-  let labels = [1, 1, 1, 1, 1, -1, -1, -1, -1, -1];
+//funzione di addestramento della SVM
+function addestramento(data, labels){
 
   let options = {
     kernel: "linear",
@@ -67,13 +79,14 @@ function addestramento(){
   };
 
   let svm = new SVM();
-  console.log("svm creta");
+  console.log("svm creata");
 
   svm.train(data, labels, options);
   console.log("svm train");
   let json = svm.toJSON();
   console.log("predittore creato");
   console.log(json);
+  return json;
 }
 
 //funzione per gestire dati in input nella form
@@ -87,10 +100,30 @@ function uploadForm(req, res, form){
       // copia del file nella nuova posizione
       fs.rename(oldpath, newpath, function (err) {
           //if (err) throw err; //deve lanciare errore se controllo file non va a buon fine: ALERT Popup?
+         //lettura dati per addestramento: data e labels
+          var datainput=fs.readFileSync(newpath, 'utf8');
+          var obj= JSON.parse(datainput);
+          var datagraf=[];
+          var labels=[];
+          var i=0;
+          for(var key in obj){
+            datagraf[i]=key;
+            labels[i]=obj[key];
+            i=i+1;
+          }
+          var data=[];
+          for(let a=0; a<datagraf.length; a++){
+            data[a] = [];
+            for(var b=0; b<2; b++) {
+              data[a][b] = readNumero(datagraf[a],b);
+            }
+          }
+
           //analizzare select SVM o RL
-          addestramento();
+          var risultato= addestramento(data,labels);
           //redirect alla pagina di download
           console.log("addestramento terminato");
+          fs.writeFileSync('predittore.json',JSON.stringify(risultato));
           res.writeHead(301,{'Location' : 'downloadPredittore'});
           return res.end();
       });

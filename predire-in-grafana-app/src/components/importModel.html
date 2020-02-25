@@ -1,0 +1,81 @@
+<div>
+  <div class="page-header">
+    <h1>Predire in Grafana</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-md-10">
+      <p>Through this page it is possible to import a model.</p>
+    </div>
+  </div>
+
+  <div class="gf-form-group">
+    <div ng-if="!ctrl.jsonImported" class="gf-form-group">
+      <form class="page-action-bar">
+        <dash-upload on-upload="ctrl.uploadFile(json)"></dash-upload>
+      </form>
+
+      <p>Or paste the JSON content here and
+        <button type="button" class="btn btn-secondary"
+          ng-click="ctrl.loadText()">Load</button>
+      </p>
+      <div class="gf-form">
+        <textarea class="gf-form-input width-30" rows="10"
+          ng-model="ctrl.jsonText"></textarea>
+      </div>
+      <div ng-if="ctrl.jsonError" class="text-error p-l-1">
+        <i class="fa fa-warning"></i>
+        {{ctrl.jsonError}}
+      </div>
+    </div>
+    <div ng-if="ctrl.jsonImported" class="text-success p-l-1">
+      <i class="fa fa-check"></i>
+      {{'JSON imported'}}
+    </div>
+  </div>
+
+  <div class="gf-form-inline">
+    <label class="gf-form-label">Sources:</label>
+    <div class="gf-form-group">
+      <div class="gf-form-inline">
+        <label class="gf-form-label width-5">CPU</label>
+        <div class="gf-form-inline">
+          <gf-form-switch checked="ctrl.cpu"></gf-form-switch>
+        </div>
+      </div>
+      <div class="gf-form-inline">
+        <label class="gf-form-label width-5">RAM</label>
+        <div class="gf-form-inline">
+          <gf-form-switch checked="ctrl.ram"></gf-form-switch>
+        </div>
+      </div>
+      <div class="gf-form-inline">
+        <label class="gf-form-label width-5">Disk I/O</label>
+        <div class="gf-form-inline">
+          <gf-form-switch checked="ctrl.diskio"></gf-form-switch>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gf-form-group">
+    <div class="gf-form">
+      <label class="gf-form-label">Model:</label>
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input"
+          ng-model="ctrl.model"
+          ng-options="x for x in ['Support Vector Machine', 'Linear Regression']">
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="gf-form-inline">
+    <button class="btn btn-success"
+      ng-click="ctrl.createPanel()">Create Panel</button>
+    <span ng-if="ctrl.notSelectedError" class="text-error p-l-1">
+      <i class="fa fa-warning"></i>
+      {{ctrl.notSelectedError}}
+    </span>
+  </div>
+</div>

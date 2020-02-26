@@ -2,7 +2,7 @@ import {GraphCtrl} from "../graph/module";
 
 class GraphPredictionCtrl extends GraphCtrl{
     /** @ngInject*/
-    constructor($scope, $injector, annotationsSrv, backendSrv) {
+    constructor($scope, $injector, annotationsSrv) {
         super($scope, $injector, annotationsSrv);
         $scope.ctrl.panel.title = "Carbon12 Graph Prediction";
     }
@@ -12,4 +12,3 @@ GraphPredictionCtrl.templateUrl = 'public/plugins/predire-in-grafana/panels/grap
 export {
     GraphPredictionCtrl as PanelCtrl
 };
-

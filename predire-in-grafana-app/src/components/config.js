@@ -6,8 +6,7 @@ export class PredireInGrafanaAppConfigCtrl {
   }
 
   redirect(){
-    console.info("redirect to importNet");
-    this.$location.url('plugins/predire-in-grafana-app/page/import-model');
+    this.$location.url('plugins/predire-in-grafana-app/page/import');
   }
 }
 

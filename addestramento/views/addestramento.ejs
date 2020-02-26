@@ -4,44 +4,7 @@
     <meta charset="utf-8">
     <meta author="Carbon12">
     <title>Pagina di addestramento</title>
-    <style>
-      h1, h2 {
-        text-align: center;
-        font-weight: bold;
-      }
-
-      h1 {
-        color: #1675AA;
-      }
-
-      p {
-        margin-left: 25%;
-      }
-
-      form{
-        margin: 0 25%;
-      }
-
-      label  {
-        display: block;
-        font-size: 1.2em;
-        margin-top: 1%;
-      }
-
-      input[type=file], select  {
-        display: block;
-        font-size: 1em;
-      }
-
-      input[type=submit] {
-        display: block;
-        padding: 2%;
-        background-color: #1675AA;
-        margin: 2% auto;
-        font-size: 1em;
-        color: #FFFFFF;
-      }
-    </style>
+    <link href="/css/style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
     <h1>Predire in Grafana</h1>
@@ -50,8 +13,10 @@
       e scaricare il predittore da inserire nel plug-in</p>
     <form action="fileupload" method="post" enctype="multipart/form-data">
       <fieldset>
-        <label>Seleziona il file coi dati di addestramento (formato JSON):</label>
-        <input type="file" id="upload" value="upload file" accept=".json" name="filetoupload">
+        <label>Seleziona il file coi dati di addestramento (formato CSV):</label>
+        <input type="file" id="upload" value="upload file" accept=".csv" name="trainFile">
+        <label>Seleziona il file con la configurazione del modello (formato JSON):</label>
+        <input type="file" id="upload" value="upload file" accept=".json" name="configFile">
         <label>Seleziona il modello da addestrare:</label>
         <select name="modello">
           <option selected value="SVM">SVM</option>

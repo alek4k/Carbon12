@@ -9,6 +9,7 @@ var express = require('express');
 var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
 
 const PORT = 8080;
 
@@ -93,15 +94,32 @@ function addestramento(data, labels){
 function uploadForm(req, res, form){
   form.parse(req, function (err, fields, files) {
       model = fields.modello;
+
+      //file csv addestramento
       // oldpath : dir temporanea dove è salvato il file
-      var oldpath = files.filetoupload.path;
+      var oldpathTrainFile = files.trainFile.path;
       // newpath : nuova dir dove è salvato il file
-      var newpath = upload_path + files.filetoupload.name;
+      var newpathTrainFile = upload_path + files.trainFile.name;
       // copia del file nella nuova posizione
-      fs.rename(oldpath, newpath, function (err) {
+      fs.rename(oldpathTrainFile, newpathTrainFile, (err) => {
+        if (err) throw err;
+        console.log('Rename complete!');
+      });
+
+      //file json config
+      // oldpath : dir temporanea dove è salvato il file
+      var oldpathConfigFile = files.configFile.path;
+      // newpath : nuova dir dove è salvato il file
+      var newpathConfigFile = upload_path + files.configFile.name;
+      // copia del file nella nuova posizione
+      fs.rename(oldpathConfigFile, newpathConfigFile, (err) => {
+        if (err) throw err;
+        console.log('Rename complete!');
+      });
+
           //if (err) throw err; //deve lanciare errore se controllo file non va a buon fine: ALERT Popup?
          //lettura dati per addestramento: data e labels
-          var datainput=fs.readFileSync(newpath, 'utf8');
+          var datainput=fs.readFileSync(newpathConfigFile, 'utf8');
           var obj= JSON.parse(datainput);
           var datagraf=[];
           var labels=[];
@@ -126,7 +144,6 @@ function uploadForm(req, res, form){
           fs.writeFileSync('predittore.json',JSON.stringify(risultato));
           res.writeHead(301,{'Location' : 'downloadPredittore'});
           return res.end();
-      });
   });
 }
 

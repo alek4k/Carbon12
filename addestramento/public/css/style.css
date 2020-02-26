@@ -1,4 +1,4 @@
-h1, h2 {
+h1, h2, h3 {
   text-align: center;
   font-weight: bold;
 }
@@ -8,7 +8,7 @@ h1 {
 }
 
 p {
-  margin-left: 25%;
+  text-align: center;
 }
 
 form{
@@ -35,12 +35,6 @@ input[type=submit] {
   color: #FFFFFF;
 }
 
-#download {
-  padding: 1%;
-  background-color: #1675AA;
-  display: none;
-  margin: 2% auto;
-  font-size: 1em;
-  color: #FFFFFF;
-
+fieldset {
+  border: none;
 }

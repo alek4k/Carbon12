@@ -26,15 +26,11 @@ input[type=file], select  {
   font-size: 1em;
 }
 
-input[type=submit] {
+input[type=submit], #home {
   display: block;
   padding: 2%;
   background-color: #1675AA;
   margin: 2% auto;
   font-size: 1em;
   color: #FFFFFF;
-}
-
-fieldset {
-  border: none;
 }

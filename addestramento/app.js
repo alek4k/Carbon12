@@ -5,6 +5,7 @@ var path = require('path');
 var mime = require('mime');
 const modules = require("ml-modules");
 var express = require('express');
+const rwpredittore = require('./r_w_predittore')
 
 var app = express();
 app.set('views', path.join(__dirname, 'views'));
@@ -82,16 +83,31 @@ function uploadForm(req, res, form){
     });
 
     //file json config
+    var configPresence = false;
     // oldpath : dir temporanea dove è salvato il file
     var oldpathConfigFile = files.configFile.path;
     // newpath : nuova dir dove è salvato il file
     var newpathConfigFile = upload_path + files.configFile.name;
     // copia del file nella nuova posizione
     fs.rename(oldpathConfigFile, newpathConfigFile, (err) => {
-      //if (!newpathConfigFile){alert( "Manca file JSON" );}
+      if (!newpathConfigFile){
+        configPresence = false;
+      }
+      else {
+        configPresence = true;
+      }
       //controllo validità file --> popup errore
       console.log('Rename complete!');
     });
+    //se è stato caricato il predittore già allenato
+    if(configPresence){
+      var manage_predittore = new rwpredittore(pathPredittore);
+      var title = manage_predittore.getTitle();
+      //aggiungere controllo titolo, versione, data entry
+      var config = manage_predittore.getConfiguration();
+      //config va passata alla creazione della SVM
+      //cambia la function addestramento
+    }
 
     //lettura dati per addestramento: data e labels
     var datainput=fs.readFileSync(newpathTrainFile, 'utf8');

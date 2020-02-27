@@ -45,32 +45,6 @@ const SVM = modules.SVM;
 // path directory dove salvare il file
 var upload_path = __dirname + '/';
 
-//lettura dati per data
-function readNumero(data,x){
-  var n;
-  var nstring="";
-  if(x==0){
-    for(let i=0; i<data.length && data[i]!=","; i++){
-      if(data[i]!=','){
-        nstring=nstring+data[i];
-      }
-    }
-    n=parseInt(nstring);
-  }
-  else{
-    var salto=0;
-    for(let i=0; i<data.length && data[i]!=","; i++){
-      if(data[i]!=','){salto++;}
-      else{salto++;}
-    }
-    for(let i=salto+1; i<data.length; i++){
-      nstring=nstring+data[i];
-    }
-    n=parseInt(nstring);
-  }
-  return n;
-};
-
 //funzione di addestramento della SVM
 function addestramento(data, labels){
 
@@ -94,7 +68,7 @@ function addestramento(data, labels){
 function uploadForm(req, res, form){
   form.parse(req, function (err, fields, files) {
     model = fields.modello;
-    
+
     //file csv addestramento
     // oldpath : dir temporanea dove è salvato il file
     var oldpathTrainFile = files.trainFile.path;
@@ -102,7 +76,7 @@ function uploadForm(req, res, form){
     var newpathTrainFile = upload_path + files.trainFile.name;
     // copia del file nella nuova posizione
     fs.rename(oldpathTrainFile, newpathTrainFile, (err) => {
-      //if (err) throw err;
+      if (!newpathTrainFile.length){alert( "Seleziona un file CSV" ); return;}
       //controllo validità file --> popup errore
       console.log('Rename complete!');
     });
@@ -114,29 +88,22 @@ function uploadForm(req, res, form){
     var newpathConfigFile = upload_path + files.configFile.name;
     // copia del file nella nuova posizione
     fs.rename(oldpathConfigFile, newpathConfigFile, (err) => {
-      //if (err) throw err;
+      //if (!newpathConfigFile){alert( "Manca file JSON" );}
       //controllo validità file --> popup errore
       console.log('Rename complete!');
     });
 
     //lettura dati per addestramento: data e labels
-    var datainput=fs.readFileSync(newpathConfigFile, 'utf8');
-    var obj= JSON.parse(datainput);
-    var datagraf=[];
-    var labels=[];
-    var i=0;
-    for(var key in obj){
-      datagraf[i]=key;
-      labels[i]=obj[key];
-      i=i+1;
-    }
-    var data=[];
-    for(let a=0; a<datagraf.length; a++){
-      data[a] = [];
-      for(var b=0; b<2; b++) {
-        data[a][b] = readNumero(datagraf[a],b);
-      }
-    }
+    var datainput=fs.readFileSync(newpathTrainFile, 'utf8');
+
+    //trasformazione SVM in array
+    var datatable=csv2array(datainput,';');//chiamata csv-array
+
+    //array indice dataEntry e dataExit
+    var dataEntry=[];                     //chiamata csv-array
+    var dataExit=[];
+    dataEntry=indiciDataEntry(datatable);
+    dataExit=indiciDataExit(datatable);
 
     if(model == 'SVM'){
       //chiamata function addestramento SVM
@@ -147,10 +114,36 @@ function uploadForm(req, res, form){
       console.log("regression");
     }
     //analizzare select SVM o RL
-    var risultato= addestramento(data,labels);
+    var strPredittore;
+
+    //addestramento SVM
+    /*if(dataEntry.length==1){*/
+      var lungh= datatable.length-1;
+      data=letturaData(datatable,1,lungh);
+      labels=letturaLabels(datatable,1,lungh);
+
+      //analizzare select SVM o RL
+      var risultato= addestramento(data,labels);
+      console.log("addestramento terminato");
+      strPredittore=strPredittore+risultato;
+    /*}else{
+      for(let i=0; i<dataEntry.length; i++){
+        console.log("inizio: "+dataEntry[i]);
+        console.log("fine: "+dataExit[i]);
+        data=letturaData(datatable,dataEntry[i],dataExit[i]);
+        labels=letturaLabels(datatable,dataEntry[i],dataExit[i]);
+        console.log("lunghezza: "+data.length);
+
+        //analizzare select SVM o RL
+        var risultato= addestramento(data,labels);
+        console.log("addestramento " +i+ " terminato");
+        strPredittore=strPredittore+risultato;
+      }*/
+    }
+
     //redirect alla pagina di download
-    console.log("addestramento terminato");
-    fs.writeFileSync('predittore.json',JSON.stringify(risultato));
+    console.log("addestramento totale terminato");
+    fs.writeFileSync('predittore.json',JSON.stringify(strPredittore));
     res.writeHead(301,{'Location' : 'downloadPredittore'});
     return res.end();
   });

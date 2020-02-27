@@ -43,9 +43,6 @@ app.listen(PORT, function () {
 
 const SVM = modules.SVM;
 
-// path directory dove sallete il file
-let upload_path = __dirname + '/';
-
 //funzione di addestramento della SVM
 function addestramento(data, labels) {
 

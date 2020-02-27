@@ -46,6 +46,10 @@ const SVM = modules.SVM;
 // path directory dove salvare il file
 var upload_path = __dirname + '/';
 
+
+/* @todo
+* aggiungere la creazione della svm a partire da una configurazione data usando fromJSON
+*/
 //funzione di addestramento della SVM
 function addestramento(data, labels){
 
@@ -99,6 +103,12 @@ function uploadForm(req, res, form){
       //controllo validità file --> popup errore
       console.log('Rename complete!');
     });
+
+    /* @todo
+    * aggiungere la lettura dei parametri del predittore caricato per verificare la validità
+    * controllare che le data entry coincidano con quelle nel csv e
+    * controllare che il modello coincida con quello scelto
+    */
     //se è stato caricato il predittore già allenato
     if(configPresence){
       var manage_predittore = new rwpredittore(pathPredittore);
@@ -106,7 +116,6 @@ function uploadForm(req, res, form){
       //aggiungere controllo titolo, versione, data entry
       var config = manage_predittore.getConfiguration();
       //config va passata alla creazione della SVM
-      //cambia la function addestramento
     }
 
     //lettura dati per addestramento: data e labels
@@ -121,6 +130,9 @@ function uploadForm(req, res, form){
     dataEntry=indiciDataEntry(datatable);
     dataExit=indiciDataExit(datatable);
 
+    /* @todo
+    * aggiungere chiamata alla function addestramento giusta
+    */
     if(model == 'SVM'){
       //chiamata function addestramento SVM
       console.log("support");

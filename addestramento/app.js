@@ -155,7 +155,6 @@ function uploadForm(req, res, form){
         console.log("addestramento " +i+ " terminato");
         strPredittore=strPredittore+risultato;
       }*/
-    }
 
     //redirect alla pagina di download
     console.log("addestramento totale terminato");

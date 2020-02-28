@@ -119,6 +119,13 @@ module.exports = class csv_reader {
   }
 
   /**
+   * @returns {int} Ritorna il numero di sorgenti.
+   */
+  countSource(){
+    return this.getDataSource().length;
+  }
+
+  /**
    * @returns Ritorna un vettore contenente i nomi delle data entry.
    */
   getDataEntry() {

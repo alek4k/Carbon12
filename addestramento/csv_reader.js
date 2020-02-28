@@ -29,14 +29,14 @@ module.exports = class csv_reader {
       this.columns=Object.keys(this.records[0]);
     }
   }
-
+  
   getData(columns){
     if(columns==null){
       return null;
     }
     let res=Array();
     this.records.array.forEach(row => {
-      row.array.forEach(element, key => {
+      row.forEach(element, key => {
         if(columns.includes(key))
           res[key]=element;
       });

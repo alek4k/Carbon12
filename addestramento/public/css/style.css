@@ -1,14 +1,22 @@
 h1, h2, h3 {
-  text-align: center;
   font-weight: bold;
 }
 
 h1 {
   color: #1675AA;
+  display: inline-block;
+  margin-left: 5%;
+}
+
+h2 {
+  margin-left: 40%;
 }
 
 p {
+  padding-top: 3%;
   text-align: center;
+  font-size: 1.1em;
+  clear: left;
 }
 
 form{
@@ -17,8 +25,8 @@ form{
 
 label  {
   display: block;
-  font-size: 1.2em;
-  margin-top: 1%;
+  font-size: 1.1em;
+  margin-top: 2%;
 }
 
 input[type=file], select  {
@@ -26,11 +34,65 @@ input[type=file], select  {
   font-size: 1em;
 }
 
-input[type=submit], #home {
+input[type=submit] {
   display: block;
   padding: 2%;
   background-color: #1675AA;
+  border: 3px solid #FFFFFF;
+  border-radius: 4px;
   margin: 2% auto;
   font-size: 1em;
   color: #FFFFFF;
+  transition-duration: 0.7s;
+}
+
+input[type=submit]:hover {
+  color: #1675AA;
+  border-color: #1675AA;
+  background-color: #FFFFFF;
+  font-size: 1em;
+}
+
+fieldset {
+  background-color: #BFE9FF;
+}
+
+img {
+  width: 10%;
+  margin: 1% 25%;
+  margin-right: 0;
+  float: left;
+}
+
+#home {
+  padding: 1%;
+  border: 3px solid #1675AA;
+  background-color: #FFFFFF;
+  color: #1675AA;
+  border-radius: 2px;
+  font-size: 1em;
+  font-weight: bold;
+  margin: 5% 45%;
+}
+
+#home:hover {
+  color: #FFFFFF;
+  border-color: #1675AA;
+  background-color: #1675AA;
+  font-size: 1em;
+}
+
+#downloadPredittore {
+  background-color: #BFE9FF;
+  width: 50%;
+  margin: auto;
+  border: 1px solid;
+}
+
+#formDownload fieldset {
+  border: none;
+}
+
+ul {
+  font-size: 1.1em;
 }

@@ -7,17 +7,21 @@
     <link href="/css/style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
+    <img src="/images/C.png" alt=""/>
     <h1>Predire in Grafana</h1>
-    <h2>Pagina di addestramento</h2>
-    <h3>Modello utilizzato: <%= model %></h3>
-    <p>Il file con il predittore addestrato è pronto. Procedere con il download</p>
-    <div>
-      <form action="downloadFile" method="post">
+    <h2>Pagina di download</h2>
+    <p>Il file con il predittore addestrato è pronto. Procedere con il download.</p>
+    <div id="downloadPredittore">
+      <ul><strong>Parametri di allenamento:</strong>
+        <li>Modello utilizzato: <%= model %></li>
+        <li>Sorgenti analizzate: </li>
+      </ul>
+      <form action="downloadFile" method="post" id="formDownload">
         <fieldset>
           <input type="submit" id="download" value="DOWNLOAD PREDITTORE">
         </fieldset>
       </form>
-      <button type="button" onclick="window.location.href='/'" id="home">Torna all'homepage</button>
     </div>
+    <button type="button" onclick="window.location.href='/'" id="home">Torna all'homepage</button>
   </body>
 </html>

@@ -148,8 +148,8 @@ function uploadForm(req, res, form){
       //analizzare select SVM o RL
       var risultato= addestramento(data,labels);
       console.log("addestramento terminato");
-      strPredittore=strPredittore+risultato;
-  /*  }else{
+      strPredittore=strPredittore+risultato
+    }/*else{
       for(let i=0; i<dataEntry.length; i++){
         console.log("inizio: "+dataEntry[i]);
         console.log("fine: "+dataExit[i]);

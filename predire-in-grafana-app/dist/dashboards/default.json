@@ -65,7 +65,48 @@
             "value_type": "cumulative",
             "query_as_alias": true
           },
-          "targets": [],
+          "targets": [{
+      "refId": "A",
+      "policy": "default",
+      "resultFormat": "time_series",
+      "orderByTime": "ASC",
+      "tags": [
+        {
+          "key": "instance",
+          "operator": "=",
+          "value": "0"
+        }
+      ],
+      "groupBy": [
+        {
+          "type": "time",
+          "params": [
+            "$__interval"
+          ]
+        },
+        {
+          "type": "fill",
+          "params": [
+            "null"
+          ]
+        }
+      ],
+      "select": [
+        [
+          {
+            "type": "field",
+            "params": [
+              "Percent_DPC_Time"
+            ]
+          },
+          {
+            "type": "mean",
+            "params": []
+          }
+        ]
+      ],
+      "measurement": "win_cpu"
+    }],
           "aliasColors": {},
           "aliasYAxis": {},
           "renderer": "flot",

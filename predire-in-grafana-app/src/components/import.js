@@ -10,6 +10,40 @@ export class importCtrl{
     this.jsonImported = false;
     this.jsonError = '';
     this.notSelectedError = '';
+
+    // creo la connessione con il database
+    
+    const Influx = require('../utils/connection.js');
+    let influx = new Influx();
+    
+
+    // prelevo le risorse monitorate da influx
+    
+    influx.getSources().then(function(result) {
+
+      // result è un oggetto che contiene le sorgenti e altre informazioni utili. 
+      // Con l'istruzione: 
+      //    result.results[0].series
+      // ottieni un array di oggetti che rappresentano le sorgenti e i dettagli.
+      //
+      // ad esempio con l'istruzione:
+      //    result.results[0].series[0].name
+      // ottieni il nome della prima sorgente monitorata
+      // se ad esempio vuoi ottenere il numero di CPU puoi usare
+      //    result.results[0].series[0].values.length - 1
+      //
+      // gli stessi campi sono disponibili per tutte le risorse, ti basta variare l'indice dell'array series 
+      // per accedere alle altre sorgenti
+      // !! Non variare mai l'indice di results, esiste solo l'indice 0.
+      // 
+      // per la lista delle sorgenti ti conviene fare
+      //    console.log(result.results[0].series);
+      // cosi dalla console puoi vederti la lista delle varie sorgenti ed altre cagate
+      
+      console.log(result.results[0].series);
+    });
+  
+
   }
 
   uploadFile(json){

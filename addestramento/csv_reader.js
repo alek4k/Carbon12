@@ -12,12 +12,11 @@ module.exports = class csv_reader {
     let input;
     input = fs.readFileSync(path, 'utf8');
 
-    console.log(input);
-
     if(options== null)
     {
       options={
       delimiter: ';',
+      bom: true,
       columns: true,
       skip_empty_lines: true
       }
@@ -35,24 +34,53 @@ module.exports = class csv_reader {
       return null;
     }
     let res=Array();
-    this.records.array.forEach(row => {
-      row.forEach(element, key => {
+    let i=0;
+    this.records.forEach(row => {
+      let validCol=Array();
+      let c=0;
+      for(let key in row)
+      {
         if(columns.includes(key))
-          res[key]=element;
-      });
+          validCol[c++]=row[key];
+      }
+      res[i++]=validCol;
     });
     return res;
   }
 
   autoGetData()
   {
-    let validColumns=Array();
-    for(let i=1;i<this.columns.length-1;i++)
-      validColumns[i-1]=this.columns[i];
-    return this.getData(validColumns);
+    let dataColumns=Array();
+    this.columns.forEach(element => {
+      console.log(element);
+      if(!(element ==="" || element==="Labels" || element==="Series"))
+      {
+        dataColumns.push(element);
+      }
+    });
+    let res=this.getData(dataColumns);
+    for(let i=0;i<res.length;i++)
+    {
+      res[i][0]=Date.parse(res[i][0]);
+      for(let j=1;j<res[i].length;j++)
+      {
+        if(res[i][j]==="null")
+          res[i][j]=0;
+        else
+          res[i][j]=parseFloat(res[i][j]);
+      }
+    }
+    return res;
   }
 
   autoGetLabel(){
-    return this.getData({0:"Labels"});
+    let labCol=Array();
+    labCol[0]="Labels";
+    let res = this.getData(labCol);
+    for(let i=0;i<res.length;i++)
+    {
+      res[i]=parseInt(res[i]);
+    }
+    return res;
   }
 };

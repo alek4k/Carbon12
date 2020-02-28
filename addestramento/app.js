@@ -90,20 +90,13 @@ function uploadForm(req, res, form){
     var configPresence = false;
     // oldpath : dir temporanea dove è salvato il file
     var oldpathConfigFile = files.configFile.path;
-    // newpath : nuova dir dove è salvato il file
-    var newpathConfigFile = upload_path + files.configFile.name;
-    // copia del file nella nuova posizione
-    fs.rename(oldpathConfigFile, newpathConfigFile, (err) => {
-      if (!newpathConfigFile){
-        configPresence = false;
-      }
-      else {
-        configPresence = true;
-      }
-      //controllo validità file --> popup errore
-      console.log('Rename complete!');
-    });
 
+    if (oldpathConfigFile){
+      configPresence = true;
+    }
+    else {
+      configPresence = false;
+    }
     /* @todo
     * aggiungere la lettura dei parametri del predittore caricato per verificare la validità
     * controllare che le data entry coincidano con quelle nel csv e
@@ -111,12 +104,13 @@ function uploadForm(req, res, form){
     */
     //se è stato caricato il predittore già allenato
     if(configPresence){
-      var manage_predittore = new rwpredittore(pathPredittore);
+      var manage_predittore = new rwpredittore(oldpathConfigFile);
       var title = manage_predittore.getTitle();
       //aggiungere controllo titolo, versione, data entry
       var config = manage_predittore.getConfiguration();
       //config va passata alla creazione della SVM
     }
+
 
     //lettura dati per addestramento: data e labels
     var datainput=fs.readFileSync(newpathTrainFile, 'utf8');
@@ -141,11 +135,12 @@ function uploadForm(req, res, form){
       //chiamata function addestramento RL
       console.log("regression");
     }
+
     //analizzare select SVM o RL
     var strPredittore;
 
     //addestramento SVM
-    /*if(dataEntry.length==1){*/
+    if(dataEntry.length==1){
       var lungh= datatable.length-1;
       data=letturaData(datatable,1,lungh);
       labels=letturaLabels(datatable,1,lungh);
@@ -154,7 +149,7 @@ function uploadForm(req, res, form){
       var risultato= addestramento(data,labels);
       console.log("addestramento terminato");
       strPredittore=strPredittore+risultato;
-    /*}else{
+  /*  }else{
       for(let i=0; i<dataEntry.length; i++){
         console.log("inizio: "+dataEntry[i]);
         console.log("fine: "+dataExit[i]);
@@ -167,7 +162,7 @@ function uploadForm(req, res, form){
         console.log("addestramento " +i+ " terminato");
         strPredittore=strPredittore+risultato;
       }*/
-    }
+
 
     //redirect alla pagina di download
     console.log("addestramento totale terminato");

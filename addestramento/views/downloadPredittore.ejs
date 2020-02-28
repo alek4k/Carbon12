@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta author="Carbon12">
     <title>Pagina di addestramento</title>
     <link href="/css/style.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
-    <img src="/images/C.png" alt=""/>
-    <h1>Predire in Grafana</h1>
-    <h2>Pagina di download</h2>
-    <p>Il file con il predittore addestrato è pronto. Procedere con il download.</p>
-    <div id="downloadPredittore">
-      <ul><strong>Parametri di allenamento:</strong>
+</head>
+<body>
+<img src="/images/C.png" alt=""/>
+<h1>Predire in Grafana</h1>
+<h2>Pagina di download</h2>
+<p>Il file con il predittore addestrato è pronto. Procedere con il download.</p>
+<div id="downloadPredittore">
+    <ul><strong>Parametri di allenamento:</strong>
         <li>Modello utilizzato: <%= model %></li>
-        <li>Sorgenti analizzate: </li>
-      </ul>
-      <form action="downloadFile" method="post" id="formDownload">
+        <li>Sorgenti analizzate:</li>
+    </ul>
+    <form action="downloadFile" method="post" id="formDownload">
         <fieldset>
-          <input type="submit" id="download" value="DOWNLOAD PREDITTORE">
+            <input type="submit" id="download" value="DOWNLOAD PREDITTORE">
         </fieldset>
-      </form>
-    </div>
-    <button type="button" onclick="window.location.href='/'" id="home">Torna all'homepage</button>
-  </body>
+    </form>
+</div>
+<button type="button" onclick="window.location.href='/'" id="home">Torna all'homepage</button>
+</body>
 </html>

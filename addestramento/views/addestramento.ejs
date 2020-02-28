@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta author="Carbon12">
     <title>Pagina di addestramento</title>
     <link href="/css/style.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
-    <img src="/images/C.png" alt=""/>
-    <h1>Predire in Grafana</h1>
-    <h2>Pagina di addestramento</h2>
-    <p>In questa pagina è possibile addestrare il modello di predizione
-      per ottenere il predittore da inserire nel plug-in</p>
-    <form action="fileupload" method="post" enctype="multipart/form-data">
-      <fieldset>
+</head>
+<body>
+<img src="/images/C.png" alt=""/>
+<h1>Predire in Grafana</h1>
+<h2>Pagina di addestramento</h2>
+<p>In questa pagina è possibile addestrare il modello di predizione
+    per ottenere il predittore da inserire nel plug-in</p>
+<form action="fileupload" method="post" enctype="multipart/form-data">
+    <fieldset>
         <label>Seleziona il file coi dati di addestramento (formato CSV):</label>
         <input type="file" id="upload" value="upload file" accept=".csv" name="trainFile">
         <label>Seleziona il file con la configurazione del modello (formato JSON):</label>
         <input type="file" id="upload" value="upload file" accept=".json" name="configFile">
         <label>Seleziona il modello da addestrare:</label>
         <select name="modello">
-          <option selected value="SVM">SVM</option>
-          <option value="RL">RL</option>
+            <option selected value="SVM">SVM</option>
+            <option value="RL">RL</option>
         </select>
         <input type="submit" id="submit" value="AVVIO ADDESTRAMENTO">
-      </fieldset>
-    </form>
-  </body>
+    </fieldset>
+</form>
+</body>
 </html>

@@ -1,1 +1,19 @@
-{"N":98,"D":2,"b":-6329561486721024,"kernelType":"linear","w":[11000,2967.9199999999983]}
+{
+    "header": {
+        "title": "Carbon12 Predire in Grafana",
+        "plugin_version": "0.0.0",
+        "train_version": "0.0.0"
+    },
+    "model": "SVM",
+    "file_version": "0",
+    "configuration": {
+        "N": 591,
+        "D": 2,
+        "b": 0,
+        "kernelType": "linear",
+        "w": [
+            null,
+            null
+        ]
+    }
+}

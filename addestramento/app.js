@@ -13,32 +13,35 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
 const PORT = 8080;
+const FILE_VERSION = "0";
+const TRAIN_VERSION = "0.0.0";
+const PLUGIN_VERSION = "0.0.0";
 
 let router = express.Router();
 
 let model;
 
 router.get('/', function (request, response) {
-  response.render('addestramento');
+    response.render('addestramento');
 });
 
 router.post('/fileupload', function (request, response) {
-  let form = new formidable.IncomingForm();
-  uploadForm(request, response, form);
+    let form = new formidable.IncomingForm();
+    uploadForm(request, response, form);
 });
 
 router.get('/downloadPredittore', function (request, response) {
-  response.render('downloadPredittore', { model });
+    response.render('downloadPredittore', {model});
 });
 
 router.post('/downloadFile', function (request, response) {
-  downloadPredittore(request, response);
+    downloadPredittore(request, response);
 });
 
 app.use('/', router);
 
 app.listen(PORT, function () {
-  console.log('Listening on port ' + PORT);
+    console.log('Listening on port ' + PORT);
 });
 
 const SVM = modules.SVM;
@@ -47,86 +50,94 @@ const SVM = modules.SVM;
 //funzione di addestramento della SVM
 function addestramento(data, labels) {
 
-  let options = {
-    kernel: "linear",
-    karpathy: true,
-  };
+    let options = {
+        kernel: "linear",
+        karpathy: true,
+    };
 
-  let svm = new SVM();
-  console.log("svm creata");
+    let svm = new SVM();
+    console.log("svm creata");
 
-  svm.train(data, labels, options);
-  console.log("svm train");
-  let json = svm.toJSON();
-  console.log("predittore creato");
-  console.log(json);
-  return json;
+    svm.train(data, labels, options);
+    console.log("svm train");
+    let json = svm.toJSON();
+    console.log("predittore creato");
+    console.log(json);
+    return json;
 }
 
 //funzione per gestire dati in input nella form
 function uploadForm(req, res, form) {
-  form.parse(req, function (err, fields, files) {
-    model = fields.modello;
-    //dir temporanea dove è salvato il file csv addestramento
-    let pathTrainFile = files.trainFile.path;
-    //dir temporanea dove è salvato il file json config
-    let pathConfigFile = files.configFile.path;
-    
-    /* @todo
-    * aggiungere la lettura dei parametri del predittore caricato per verificare la validità
-    * controllare che le data entry coincidano con quelle nel csv e
-    * controllare che il modello coincida con quello scelto
-    */
-    //se è stato caricato il predittore già allenato
-    //TODO:implementare una funzione che controlla se effettivamente è stato caricato o no un predittore(controllando se il file in pathConfigFile è vuoto?)
-    let configPresence = false;
-    if (configPresence) {
-      let manage_predittore = new rwpredittore(pathPredittore);
-      let title = manage_predittore.getTitle();
-      //aggiungere controllo titolo, versione, data entry
-      let config = manage_predittore.getConfiguration();
-      //config va passata alla creazione della SVM
-    }
+    form.parse(req, function (err, fields, files) {
+        model = fields.modello;
+        //dir temporanea dove è salvato il file csv addestramento
+        let pathTrainFile = files.trainFile.path;
+        //dir temporanea dove è salvato il file json config
+        let pathConfigFile = files.configFile.path;
 
-    if (model === 'SVM') {
-      //chiamata function addestramento SVM
-      console.log("support");
-    }
-    else {
-      //chiamata function addestramento RL
-      console.log("regression");
-    }
+        /* @todo
+        * aggiungere la lettura dei parametri del predittore caricato per verificare la validità
+        * controllare che le data entry coincidano con quelle nel csv e
+        * controllare che il modello coincida con quello scelto
+        */
+        //se è stato caricato il predittore già allenato
+        //TODO:implementare una funzione che controlla se effettivamente è stato caricato o no un predittore(controllando se il file in pathConfigFile è vuoto?)
+        let configPresence = false;
+        if (configPresence) {
+            let manage_predittore = new rwpredittore(pathPredittore);
+            let title = manage_predittore.getTitle();
+            //aggiungere controllo titolo, versione, data entry
+            let config = manage_predittore.getConfiguration();
+            //config va passata alla creazione della SVM
+        }
 
-    const csvr = require('./csv_reader.js');
-    let csvreader=new csvr(pathTrainFile);
+        if (model === 'SVM') {
+            //chiamata function addestramento SVM
+            console.log("support");
+        } else {
+            //chiamata function addestramento RL
+            console.log("regression");
+        }
 
-    //dati addestramento SVM
-    data = csvreader.autoGetData();
-    labels = csvreader.autoGetLabel();
+        const csvr = require('./csv_reader.js');
+        let csvreader = new csvr(pathTrainFile);
 
-    //analizzare select SVM o RL
-    let strPredittore = addestramento(data, labels);
-    console.log("addestramento terminato");
+        //dati addestramento SVM
+        data = csvreader.autoGetData();
+        labels = csvreader.autoGetLabel();
 
-    //redirect alla pagina di download
-    console.log("addestramento totale terminato");
-    fs.writeFileSync('predittore.json', JSON.stringify(strPredittore));
-    res.writeHead(301, { 'Location': 'downloadPredittore' });
-    return res.end();
-  });
+        //analizzare select SVM o RL
+        let strPredittore = addestramento(data, labels);
+        console.log("addestramento terminato");
+
+        //redirect alla pagina di download
+        console.log("addestramento totale terminato");
+
+        //salvataggio predittore
+        //TODO: aggiungere data-entry
+        let manage_predittore = new rwpredittore();
+        manage_predittore.setHeader(PLUGIN_VERSION, TRAIN_VERSION);
+        manage_predittore.setModel(model);
+        manage_predittore.setFileVersion(FILE_VERSION);
+        manage_predittore.setConfiguration(strPredittore);
+        fs.writeFileSync('predittore.json', manage_predittore.save());
+        //fs.writeFileSync('predittore.json', JSON.stringify(strPredittore));
+        res.writeHead(301, {'Location': 'downloadPredittore'});
+        return res.end();
+    });
 }
 
 function downloadPredittore(req, res) {
-  let file = __dirname + '/predittore.json';
+    let file = __dirname + '/predittore.json';
 
-  let filename = path.basename(file);
-  let mimetype = mime.lookup(file);
+    let filename = path.basename(file);
+    let mimetype = mime.getType(file);
 
-  res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-  res.setHeader('Content-type', mimetype);
+    res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+    res.setHeader('Content-type', mimetype);
 
-  let filestream = fs.createReadStream(file);
-  filestream.pipe(res);
-  //aggiungere conferma download e redirect a upload
+    let filestream = fs.createReadStream(file);
+    filestream.pipe(res);
+    //aggiungere conferma download e redirect a upload
 
 }

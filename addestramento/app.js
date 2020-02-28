@@ -1,10 +1,10 @@
-let http = require('http');
-let fs = require('fs');
-let formidable = require('formidable');
-let path = require('path');
-let mime = require('mime');
+const http = require('http');
+const fs = require('fs');
+const formidable = require('formidable');
+const path = require('path');
+const mime = require('mime');
 const modules = require("ml-modules");
-let express = require('express');
+const express = require('express');
 const rwpredittore = require('./r_w_predittore')
 
 let app = express();
@@ -48,7 +48,7 @@ function addestramento(data, labels) {
 
   let options = {
     kernel: "linear",
-    karpathy: true
+    karpathy: true,
   };
 
   let svm = new SVM();
@@ -83,19 +83,7 @@ function uploadForm(req, res, form) {
       //cambia la function addestramento
     }
 
-    //lettura dati per addestramento: data e labels
-    let datainput = fs.readFileSync(pathTrainFile, 'utf8');
-
-    //trasformazione SVM in array
-    let datatable = csv2array(datainput, ';');//chiamata csv-array
-
-    //array indice dataEntry e dataExit
-    let dataEntry = [];                     //chiamata csv-array
-    let dataExit = [];
-    dataEntry = indiciDataEntry(datatable);
-    dataExit = indiciDataExit(datatable);
-
-    if (model == 'SVM') {
+    if (model === 'SVM') {
       //chiamata function addestramento SVM
       console.log("support");
     }
@@ -103,19 +91,17 @@ function uploadForm(req, res, form) {
       //chiamata function addestramento RL
       console.log("regression");
     }
-    //analizzare select SVM o RL
-    let strPredittore;
 
-    //addestramento SVM
-    /*if(dataEntry.length==1){*/
-    let length = datatable.length - 1;
-    data = letturaData(datatable, 1, length);
-    labels = letturaLabels(datatable, 1, length);
+    const csvr = require('./csv_reader.js');
+    let csvreader=new csvr(pathTrainFile);
+
+    //dati addestramento SVM
+    data = csvreader.autoGetData();
+    labels = csvreader.autoGetLabel();
 
     //analizzare select SVM o RL
-    let risultato = addestramento(data, labels);
+    let strPredittore = addestramento(data, labels);
     console.log("addestramento terminato");
-    strPredittore = strPredittore + risultato;
 
     //redirect alla pagina di download
     console.log("addestramento totale terminato");

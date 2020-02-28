@@ -3693,11 +3693,6 @@ js-yaml@~3.4.0:
     esprima "^2.6.0"
     inherit "^2.2.2"
 
-jsbayes@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/jsbayes/-/jsbayes-0.1.0.tgz#c05cd8c7eb8d46bc7d5dbea97737c3e599bb5dfb"
-  integrity sha512-V7BdZbj/3hpotdLk7ZQvRQ9/w2flAkffNKfOxR4vj6vjNoGPmrHrKOWPKQ6qsDttmMo+//2+hcWYY1MLEWt+ng==
-
 jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"

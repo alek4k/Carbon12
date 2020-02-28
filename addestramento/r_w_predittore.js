@@ -11,6 +11,8 @@
 * var campo = manage_predittore.getCampo();
 */
 const fs = require("fs");
+//const {string} property stringa per verifica validità predittore
+const property = "Carbon12 Predire in Grafana";
 class R_W_Predittore{
   constructor(path){
     this.path = path;
@@ -20,24 +22,43 @@ class R_W_Predittore{
   }
 
   /**
+  * @return {bool} verifica validità predittore in ingresso
+  */
+  validity(){
+    if(this.jsonContent.header.title == property)
+      return true;
+    else
+      return false;
+  }
+
+  /**
   * @return {string} title nell'header del predittore
   */
   getTitle(){
-    return this.jsonContent.header.title;
+    if(this.jsonContent.header.title)
+      return this.jsonContent.header.title;
+    else
+      return '';
   }
 
   /**
   * @return {string} plug-in version nell'header del predittore
   */
   getPluginVersion(){
-    return this.jsonContent.header.plugin_version;
+    if(this.jsonContent.header.plugin_version)
+      return this.jsonContent.header.plugin_version;
+    else
+      return '';
   }
 
   /**
   * @return {string} train version nell'header del predittore
   */
   getTrainVersion(){
-    return this.jsonContent.header.train_version;
+    if(this.jsonContent.header.train_version)
+      return this.jsonContent.header.train_version;
+    else
+      return '';
   }
 
   /**
@@ -60,14 +81,20 @@ class R_W_Predittore{
   * @return {string} modello utilizzato per l'allenamento
   */
   getModel(){
-    return this.jsonContent.model;
+    if(this.jsonContent.model)
+      return this.jsonContent.model;
+    else
+      return '';
   }
 
   /**
   * @return {string} versione file allenamento
   */
   getFileVersion(){
-    return this.jsonContent.file_version;
+    if(this.jsonContent.file_version)
+      return this.jsonContent.file_version;
+    else
+      return '';
   }
 
   /**
@@ -75,9 +102,11 @@ class R_W_Predittore{
   * stringa JSON con la configurazione salvata per la creazione del modello
   */
   getConfiguration(){
-    return JSON.stringify(this.jsonContent.configuration);
+    if(this.jsonContent.configuration)
+      return JSON.stringify(this.jsonContent.configuration);
+    else
+      return '';
   }
-
 }
 
 module.exports = R_W_Predittore;

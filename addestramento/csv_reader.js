@@ -137,10 +137,11 @@ module.exports = class csv_reader {
 
         //seleziona ogni data entry una sola volta
         series.forEach(element => {
-            if (!res.includes(element)) {
-                res.push(element);
+            if (!res.includes(element[0])) {
+                res.push(element[0]);
             }
         });
+
         return res;
     }
 };

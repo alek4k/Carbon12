@@ -4,16 +4,20 @@
         "plugin_version": "0.0.0",
         "train_version": "0.0.0"
     },
+    "data_entry": {
+        "sources": "[\"Time\",\"A\",\"B\"]"
+    },
     "model": "SVM",
     "file_version": "0",
     "configuration": {
-        "N": 591,
-        "D": 2,
-        "b": 0,
+        "N": 60,
+        "D": 3,
+        "b": -1612241174528,
         "kernelType": "linear",
         "w": [
-            null,
-            null
+            -524.1893310546875,
+            1069.9205241243599,
+            314.97005787636095
         ]
     }
 }

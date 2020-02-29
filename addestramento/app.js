@@ -20,6 +20,7 @@ const PLUGIN_VERSION = "0.0.0";
 let router = express.Router();
 
 let model;
+let sources;
 
 router.get('/', function (request, response) {
     response.render('addestramento');
@@ -31,7 +32,7 @@ router.post('/fileupload', function (request, response) {
 });
 
 router.get('/downloadPredittore', function (request, response) {
-    response.render('downloadPredittore', {model});
+    response.render('downloadPredittore', {model, sources});
 });
 
 router.post('/downloadFile', function (request, response) {
@@ -46,7 +47,9 @@ app.listen(PORT, function () {
 
 const SVM = modules.SVM;
 
-
+/* @todo
+* aggiungere la creazione della svm a partire da una configurazione data usando fromJSON
+*/
 //funzione di addestramento della SVM
 function addestramento(data, labels) {
 
@@ -80,8 +83,6 @@ function uploadForm(req, res, form) {
         * controllare che le data entry coincidano con quelle nel csv e
         * controllare che il modello coincida con quello scelto
         */
-        //se è stato caricato il predittore già allenato
-        //TODO:implementare una funzione che controlla se effettivamente è stato caricato o no un predittore(controllando se il file in pathConfigFile è vuoto?)
         let configPresence = false;
         if (configPresence) {
             let manage_predittore = new rwpredittore(pathPredittore);
@@ -91,6 +92,9 @@ function uploadForm(req, res, form) {
             //config va passata alla creazione della SVM
         }
 
+        /* @todo
+        * chiamata a trainSVM o trainRL
+        */
         if (model === 'SVM') {
             //chiamata function addestramento SVM
             console.log("support");
@@ -106,22 +110,25 @@ function uploadForm(req, res, form) {
         data = csvreader.autoGetData();
         labels = csvreader.autoGetLabel();
 
-        //analizzare select SVM o RL
+        //elenco sorgenti
+        sources = csvreader.getDataSource().toString();
+        console.log(sources);
+        console.log(csvreader.countSource());
+
         let strPredittore = addestramento(data, labels);
         console.log("addestramento terminato");
-
-        //redirect alla pagina di download
-        console.log("addestramento totale terminato");
 
         //salvataggio predittore
         //TODO: aggiungere data-entry
         let manage_predittore = new rwpredittore();
         manage_predittore.setHeader(PLUGIN_VERSION, TRAIN_VERSION);
+        manage_predittore.setDataEntry(csvreader.getDataSource(), csvreader.countSource());
         manage_predittore.setModel(model);
         manage_predittore.setFileVersion(FILE_VERSION);
         manage_predittore.setConfiguration(strPredittore);
         fs.writeFileSync('predittore.json', manage_predittore.save());
-        //fs.writeFileSync('predittore.json', JSON.stringify(strPredittore));
+
+        //redirect alla pagina di download
         res.writeHead(301, {'Location': 'downloadPredittore'});
         return res.end();
     });
@@ -138,6 +145,4 @@ function downloadPredittore(req, res) {
 
     let filestream = fs.createReadStream(file);
     filestream.pipe(res);
-    //aggiungere conferma download e redirect a upload
-
 }

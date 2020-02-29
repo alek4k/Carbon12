@@ -90,11 +90,22 @@ class R_W_Predittore {
      *   });
      */
     getDataEntry() {
+      if(this.jsonContent.data_entry){
         var dataEntry = this.jsonContent.data_entry;
         for (var source in dataEntry) {
             this.sources.push(dataEntry[source]);
         }
-        return this.sources;
+      }
+      return this.sources;
+    }
+
+    /**
+     * @param {array} sources array con l'elenco delle sorgenti
+     * @param {int} n numero sorgenti
+     */
+    setDataEntry(array, n) {
+      this.jsonContent.data_entry = {};
+      this.jsonContent.data_entry.sources = JSON.stringify(array);
     }
 
     /**

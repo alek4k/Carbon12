@@ -73,10 +73,12 @@ module.exports = class csv_reader {
             }
         });
         let res = this.getData(dataColumns);
-
+        
+        //tempo di inizio dei dati
+        let timeIn = Date.parse(res[0][0]);
         for (let i = 0; i < res.length; i++) {
             //converte le date(dando per scontato che siano nella prima colonna dati) in secondi
-            res[i][0] = Date.parse(res[i][0]);
+            res[i][0] = Date.parse(res[i][0])-timeIn;
             //converte i valori in float
             for (let j = 1; j < res[i].length; j++) {
                 if (res[i][j] === "null")

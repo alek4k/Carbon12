@@ -110,16 +110,10 @@ function uploadForm(req, res, form) {
         data = csvreader.autoGetData();
         labels = csvreader.autoGetLabel();
 
-        //elenco sorgenti
-        sources = csvreader.getDataSource().toString();
-        console.log(sources);
-        console.log(csvreader.countSource());
-
         let strPredittore = addestramento(data, labels);
         console.log("addestramento terminato");
 
         //salvataggio predittore
-        //TODO: aggiungere data-entry
         let manage_predittore = new rwpredittore();
         manage_predittore.setHeader(PLUGIN_VERSION, TRAIN_VERSION);
         manage_predittore.setDataEntry(csvreader.getDataSource(), csvreader.countSource());

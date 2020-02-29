@@ -105,7 +105,11 @@ class R_W_Predittore {
      */
     setDataEntry(array, n) {
       this.jsonContent.data_entry = {};
-      this.jsonContent.data_entry.sources = JSON.stringify(array);
+      let index = 0;
+      for(index = 0; index < n; index++){
+        let source = "source"+index;
+        this.jsonContent.data_entry[source] = array[index]; 
+      }
     }
 
     /**

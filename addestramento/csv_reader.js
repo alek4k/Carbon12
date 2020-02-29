@@ -106,12 +106,12 @@ module.exports = class csv_reader {
     }
 
     /**
-     * @returns Ritorna un vettore contenente i nomi delle sorgenti di dati.
+     * @returns {Array} Ritorna un vettore contenente i nomi delle sorgenti di dati.
      */
     getDataSource() {
         let res = Array();
         this.columns.forEach(element => {
-            if (!(element === "Labels" || element === "Series")) {
+            if (!(element === "Labels")) {
                 res.push(element);
             }
         });
@@ -122,26 +122,6 @@ module.exports = class csv_reader {
      * @returns {int} Ritorna il numero di sorgenti.
      */
     countSource() {
-        return this.getDataSource().length;
-    }
-
-    /**
-     * @returns Ritorna un vettore contenente i nomi delle data entry.
-     */
-    getDataEntry() {
-        //usa getData per ottenere la colonna delle Series
-        let entCol = Array();
-        entCol[0] = "Series";
-        let series = this.getData(entCol);
-        let res = Array();
-
-        //seleziona ogni data entry una sola volta
-        series.forEach(element => {
-            if (!res.includes(element[0])) {
-                res.push(element[0]);
-            }
-        });
-
-        return res;
+      return this.getDataSource().length;
     }
 };

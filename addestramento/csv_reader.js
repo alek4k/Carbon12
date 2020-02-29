@@ -68,12 +68,13 @@ module.exports = class csv_reader {
         //seleziona tutte le colonne, eccetto quella delle data entry(Series), delle Labels e quella vuota che mette grafana
         let dataColumns = Array();
         this.columns.forEach(element => {
-            if (!(element === "" || element === "Labels" || element === "Series")) {
+            if (element !== "Labels") {
                 dataColumns.push(element);
             }
         });
         let res = this.getData(dataColumns);
         
+        //converte i valori ottenuti nel giusto formato
         //tempo di inizio dei dati
         let timeIn = Date.parse(res[0][0]);
         for (let i = 0; i < res.length; i++) {

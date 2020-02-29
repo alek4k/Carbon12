@@ -113,6 +113,9 @@ function uploadForm(req, res, form) {
         let strPredittore = addestramento(data, labels);
         console.log("addestramento terminato");
 
+        //elenco sorgenti
+        sources = csvreader.getDataSource().toString();
+
         //salvataggio predittore
         let manage_predittore = new rwpredittore();
         manage_predittore.setHeader(PLUGIN_VERSION, TRAIN_VERSION);

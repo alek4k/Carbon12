@@ -10,10 +10,12 @@
   </div>
 
   <div ng-if="!ctrl.jsonImported" class="gf-form-group">
-    <form class="page-action-bar">
+    <form class="gf-form">
       <label class="btn btn-primary" for="dashupload">Carica file JSON</label>
-      <dash-upload class="hide" on-upload="ctrl.uploadFile(json)"/>
+      <dash-upload class="hide" on-upload="ctrl.onUpload(dash)"/>
     </form>
+
+    <br/>
 
     <p>O incolla qui il contenuto del file JSON e
       <button type="button" class="btn btn-secondary"
@@ -29,55 +31,65 @@
     </div>
   </div>
 
-  <div ng-if="ctrl.jsonImported" class="page-action-bar text-success p-l-1">
-    <i class="fa fa-check"></i>
-    {{'file JSON importato'}}
-  </div>
+  <div ng-if="ctrl.jsonImported" class="gf-form-group">
+    <div ng-if="ctrl.jsonImported" class="page-action-bar text-success p-l-1">
+      <i class="fa fa-check"></i>
+      {{'JSON importato'}}
+    </div>
 
-  <div class="gf-form-inline">
-    <label class="gf-form-label">Sorgenti:</label>
     <div class="gf-form-group">
-      <div class="gf-form-inline">
-        <label class="gf-form-label width-5">CPU</label>
-        <div class="gf-form-inline">
-          <gf-form-switch checked="ctrl.cpu"></gf-form-switch>
-        </div>
+      <div class="gf-form">
+        <label class="gf-form-label width-8">Modello:</label>
+        <input type="text" class="gf-form-input width-4" ng-model="ctrl.model" readonly/>
       </div>
-      <div class="gf-form-inline">
-        <label class="gf-form-label width-5">RAM</label>
-        <div class="gf-form-inline">
-          <gf-form-switch checked="ctrl.ram"></gf-form-switch>
-        </div>
-      </div>
-      <div class="gf-form-inline">
-        <label class="gf-form-label width-5">Disk I/O</label>
-        <div class="gf-form-inline">
-          <gf-form-switch checked="ctrl.diskio"></gf-form-switch>
+    </div>
+    
+    <div class="gf-form-group">
+      <div class="gf-form">
+        <label class="gf-form-label width-8">Predittore:</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input" ng-model="ctrl.predictor" ng-options="p for p in ctrl.availablePredictors"/>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="gf-form-group">
+    <div class="gf-form-group">
+      <div class="gf-form">
+        <label class="gf-form-label width-8">Sorgente:</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input" ng-model="ctrl.source" ng-options="s for s in ctrl.availableSources"
+            ng-change="ctrl.buildParams()"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="gf-form-group">
+      <div class="gf-form">
+        <label class="gf-form-label width-8">Parametro:</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input" ng-model="ctrl.param" ng-options="p for p in ctrl.selectedSourceParams"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="gf-form-group">
+      <div class="gf-form">
+        <label class="gf-form-label width-8">Visualizzazione:</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input" ng-model="ctrl.view" ng-options="v for v in ['Grafico']"/>
+        </div>
+      </div>
+    </div>
+  
+    <br/>
+
     <div class="gf-form">
-      <label class="gf-form-label">Modello:</label>
-      <div class="gf-form-select-wrapper">
-        <select class="gf-form-input"
-          ng-model="ctrl.model"
-          ng-options="x for x in ['Support Vector Machine', 'Linear Regression']">
-        </select>
-      </div>
+      <button class="btn btn-success"
+        ng-click="ctrl.createPanel()">Crea Pannello</button>
+      <span ng-if="ctrl.notSelectedError" class="text-error p-l-1">
+        <i class="fa fa-warning"></i>
+        {{ctrl.notSelectedError}}
+      </span>
     </div>
-  </div>
-
-  <br/>
-
-  <div class="gf-form">
-    <button class="btn btn-success"
-      ng-click="ctrl.createPanel()">Crea Pannello</button>
-    <span ng-if="ctrl.notSelectedError" class="text-error p-l-1">
-      <i class="fa fa-warning"></i>
-      {{ctrl.notSelectedError}}
-    </span>
   </div>
 </div>

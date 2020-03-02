@@ -14,6 +14,7 @@
         {
           "span": 12,
           "type": "graph-prediction",
+          "datasource": "InfluxDB",
           "x-axis": true,
           "y-axis": true,
           "scale": 1,
@@ -93,16 +94,6 @@
             ],
             "select": [
               [
-                {
-                  "type": "field",
-                  "params": [
-                    "Percent_DPC_Time"
-                  ]
-                },
-                {
-                  "type": "mean",
-                  "params": []
-                }
               ]
             ],
             "measurement": "win_cpu"
@@ -150,7 +141,7 @@
     }
   ],
   "time": {
-    "from": "now-6h",
+    "from": "now-15m",
     "to": "now"
   },
   "templating": {

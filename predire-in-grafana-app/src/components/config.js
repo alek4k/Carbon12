@@ -1,4 +1,4 @@
-export class PredireInGrafanaAppConfigCtrl {
+export class PredireInGrafanaAppConfigCtrl{
 
   /** @ngInject */
   constructor($location){

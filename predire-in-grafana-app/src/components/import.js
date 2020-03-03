@@ -59,7 +59,7 @@ export class importCtrl{
       this.jsonImported = true;
       this.jsonError = '';
       this.model = json.model;
-      Object.keys(json.data_entry).slice(1).every(key => this.availablePredictors.push(json.data_entry[key]));
+      this.availablePredictors = (Object.values(json.data_entry).slice(1));
     }
     else{
       this.jsonError = 'Il JSON inserito non è un predittore';

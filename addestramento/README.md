@@ -13,7 +13,7 @@ Per il corretto funzionamento del programma di addestramento il file dovrà:
 1. essere un file con estensione `.csv`
 2. presentare la struttura seguente: 
 | Time | Source_1 | Source_2  | ... | Labels |
-| :--- | :------- | :-------- | :---| :------| 
+| :--- | :------- | :-------- | :---| :-----:| 
   dove 
   * *Time* è il timestamp di riferimento
     * l'intestazione della colonna **deve** essere rispettata 

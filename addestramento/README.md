@@ -13,7 +13,7 @@ Per il corretto funzionamento del programma di addestramento il file dovrà:
 1. essere un file con estensione `.csv`
 2. presentare la struttura seguente: 
 | Time | Source_1 | Source_2  | ... | Labels |
-| ---- | -------  | --------- | ----| -------| 
+| :--- | :------- | :-------- | :---| :------| 
   dove 
   * *Time* è il timestamp di riferimento
     * l'intestazione della colonna **deve** essere rispettata 
@@ -25,7 +25,7 @@ Per il corretto funzionamento del programma di addestramento il file dovrà:
 
 In figura viene presentato un esempio del file di addestramento.
 
-![file_csv](https://github.com/alek4k/Carbon12/tree/addestramento/addestramento/img_README/formatoFileCSV)
+![file_csv](https://github.com/alek4k/Carbon12/blob/addestramento/addestramento/img_README/formatoFileCSV.png)
 
 ### Struttura del predittore.json
 Il file predittore.json avrà una struttura predefinita, tramite la quale sarà possibile la lettura dei risultati nel plug-in di Grafana e il corretto funzionamento delle funzioni di predizione.
@@ -40,7 +40,7 @@ La sua struttura è la seguente:
 
 In figura viene presentato un esempio del file di addestramento.
 
-![file_json](https://github.com/alek4k/Carbon12/tree/addestramento/addestramento/img_README/formatoFileJSON)
+![file_json](https://github.com/alek4k/Carbon12/blob/addestramento/addestramento/img_README/formatoFileJSON.png)
 
 
 ### Avvio del programma

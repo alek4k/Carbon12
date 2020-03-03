@@ -13,8 +13,8 @@ export class importCtrl{
     this.jsonImported = false;
     this.jsonError = '';
     this.model = '';
-    this.measurement = [];
-    this.params = [];
+    this.availableMeasurement = [];
+    this.availableParams = [];
     this.param = '';
     this.selectedSourceParams = [];
     this.availablePredictors = [];
@@ -27,12 +27,16 @@ export class importCtrl{
     // creo la connessione con il database
     const Influx = require('../utils/connection.js');
     let influx = new Influx();
+
+    // prelevo le sorgenti disponibili
     influx.getSources()
       .then(result => {
+        // itero sulle sorgenti disponibili
         for(let i = 0; result.results[0].series[i].name; ++i){
+          // itero sulle istanze della sorgente i
           for(let j = 0; j < result.results[0].series[i].values.length; ++j){
-            this.measurement.push({
-              "measurement": result.results[0].series[i].name,
+            this.availableMeasurement.push({
+              "name": result.results[0].series[i].name,
               "instance": result.results[0].series[i].values[j][1]
             });
             this.availableSources.push(result.results[0].series[i].name + '\n' + result.results[0].series[i].values[j][1]);
@@ -40,12 +44,15 @@ export class importCtrl{
         }
       });
       
+      // prelevo i parametri disponibili
       influx.getParams()
       .then(result => {
+        // itero sulle sorgenti disponibili
         for (let i = 0; result.results[0].series[i].name; ++i){
+          // itero sui parametri della sorgente i
           for (let j = 0; j < result.results[0].series[i].values.length; ++j){
-            this.params.push({
-              "measurement": result.results[0].series[i].name,
+            this.availableParams.push({
+              "name": result.results[0].series[i].name,
               "params": result.results[0].series[i].values[j][0]
             });
           }
@@ -53,19 +60,21 @@ export class importCtrl{
       });
   }
 
+  // carico il file del predittore
   onUpload(json){
     // controllo che il JSON inserito abbia la struttura desiderata
     if(arrayOfKeys.every(key => json.hasOwnProperty(key))){
-      this.jsonImported = true;
+      this.jsonImported = true; 
       this.jsonError = '';
       this.model = json.model;
-      this.availablePredictors = (Object.values(json.data_entry).slice(1));
+      this.availablePredictors = Object.values(json.data_entry).slice(1); // creo l'array con i predittori
     }
     else{
       this.jsonError = 'Il JSON inserito non è un predittore';
     }
   }
 
+  // carico testo del predittore
   loadText(){
     try{
       // controllo prima con parse() se il JSON è valido, poi chiamo il metodo onUpload()
@@ -76,41 +85,53 @@ export class importCtrl{
     }
   }
 
-  buildParams(){
-    this.selectedSourceParams = [];
-    let sourceName = this.source.substring(0, this.source.indexOf('\n')), i = 0;
-    for(; this.params[i].measurement != sourceName; ++i);
-    for(; this.params[i].measurement == sourceName; ++i){
-      this.selectedSourceParams.push(this.params[i].params);
-    }
-    this.param = this.selectedSourceParams[0];
-  }
-
+  // imposto sorgete selezionata dall'utente
   setMeasurement(index){
-    defaultDashboard.rows[0].panels[0].targets[0].measurement = this.measurement[index].measurement;
+    defaultDashboard.rows[0].panels[0].targets[0].measurement = this.availableMeasurement[index].name;
   }
 
+  // imposto istanza selezionata dall'utente
   setInstance(index){
-    defaultDashboard.rows[0].panels[0].targets[0].tags[0].value = this.measurement[index].instance;
+    defaultDashboard.rows[0].panels[0].targets[0].tags[0].value = this.availableMeasurement[index].instance;
   }
 
+  // imposto il predittore selezionato dall'utente
   setPredictor(index){
     defaultDashboard.rows[0].panels[0].targets[0].refId = this.predictor;
   }
 
+  // imposto il parametro selezionato dall'utente
   setParams(index){
+    defaultDashboard.rows[0].panels[0].targets[0].select[0].pop();
+    defaultDashboard.rows[0].panels[0].targets[0].select[0].pop();
     defaultDashboard.rows[0].panels[0].targets[0].select[0].push({
       "type": "field",
       "params": [
         this.param
-      ]
-    },
-    {
-      "type": "mean",
-      "params": []
-    });
+      ]},
+      {
+        "type": "mean",
+        "params": []
+      });
+
+      console.log(defaultDashboard.rows[0].panels[0].targets[0].select[0]);
   }
 
+  // costruisco l'array dei parametri relativo alla sorgente selezionta
+  buildParams() {
+    this.selectedSourceParams = [];
+    let sourceName = this.source.substring(0, this.source.indexOf('\n')),
+      i = 0;
+    // trovo l'indice del prima sorgente accettabile
+    for (; this.availableParams[i].name != sourceName; ++i);
+    // seleziono i parametri relativi alla sorgente
+    for (; this.availableParams[i].name == sourceName; ++i) {
+      this.selectedSourceParams.push(this.availableParams[i].params);
+    }
+    this.param = this.selectedSourceParams[0];
+  }
+
+  // creo il pannello
   createPanel(){
     if(!this.predictor || !this.source){
       this.notSelectedError = 'È necessario selezionare ';
@@ -141,7 +162,6 @@ export class importCtrl{
         })
     }
   }
-
 }
 
 importCtrl.templateUrl = 'components/import.html';

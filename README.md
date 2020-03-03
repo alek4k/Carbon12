@@ -1,6 +1,6 @@
-# Predire in Grafana - Monitoraggio predittivo per DevOps
+# Carbon12
 
-Predire in Grafana è un plug-in realizzato dal gruppo Carbon12 per l'insegnamento di Ingegneria del Software a.a.2019/2020. 
+Repository del plug-in `predire-in-grafana-app` incluso nel Proof of Concept realizzato per il progetto **Predire in Grafana - Monitoraggio predittivo per DevOps -** dell'insegnamento Ingegneria del Software dell'Università degli studi di Padova A.A. 2019/2020.
 
 ## Scopo
 Predire in Grafana è un plug-in sviluppato per Grafana v6.5.x, la cui utilità è quella di fornire all'utente un servizio di previsione dei valori di determinati nodi monitorati dal sistema.  
@@ -8,6 +8,8 @@ Lo scopo del plug-in è quello di analizzare il flusso di dati proveniente da Gr
 L’analisi dei dati e le previsioni saranno effettuate utilizzando modelli di machine learning quali Support Vector Machine e Regressione Lineare.  
 I risultati delle previsioni verranno poi forniti in forma grafica agli utenti che monitorano il sistema.  
 Per il corretto utilizzo del plug-in è necessario essere in possesso del programma di addestramento, il quale una volta forniti dei dati di monitoraggio validi sarà in grado di addestrare il modello desiderato e produrre un file contenente tutte le informazioni utili alla configurazione del plug-in.
+
+---
 
 ## Utilizzo
 
@@ -38,13 +40,25 @@ Dopo aver avviato Grafana, è sufficiente accedere alla scheda dedicata ai plug-
 
 Accedendo alla pagina di configurazione del plug-in verrà richiesto di inserire il file JSON contenente il modello addestrato, e successivamente sarà possibile selezionare le sorgenti desiderate tra quelle disponibili.
 
-## Componenti
-I componenti del gruppo Carbon12:
+![Import panel](/img_README/import.png)
 
-- Giacomo Callegari 1122658
-- Manuel De Franceschi 1162299
-- Nicolò Fassina 1166190
-- Francesco Gobbo 1120713
-- Andrea Longo 1174957
-- Alessandro Lovo 1142682
-- Veronica Pederiva 1161493
+Una volta cliccato su `Crea pannello` verrà generata automaticamente una dashboard contenente il pannello configurato.
+
+![Graph](/img_README/graph.png)
+
+---
+
+## Componenti
+| Nome                 | Matricola |
+| :--------------------|:---------:| 
+| Giacomo Callegari    | 1122658   | 
+| Manuel De Franceschi | 1162299   |
+| Nicolò Fassina       | 1166190   |
+| Francesco Gobbo      | 1120713   | 
+| Andrea Longo         | 1174957   |
+| Alessandro Lovo      | 1142682   |
+| Veronica Pederiva    | 1161493   |
+
+
+
+

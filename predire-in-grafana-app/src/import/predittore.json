@@ -1,0 +1,25 @@
+{
+    "header": {
+        "title": "Carbon12 Predire in Grafana",
+        "plugin_version": "0.0.0",
+        "train_version": "0.0.0"
+    },
+    "data_entry": {
+        "source0": "Time",
+        "source1": "A",
+        "source2": "B"
+    },
+    "model": "SVM",
+    "file_version": "0",
+    "configuration": {
+        "N": 60,
+        "D": 3,
+        "b": -23741043761479680,
+        "kernelType": "linear",
+        "w": [
+            -0.000244140625,
+            573.0467777777778,
+            42.693999999999996
+        ]
+    }
+}

@@ -3,7 +3,6 @@ const fs = require('fs');
 const formidable = require('formidable');
 const path = require('path');
 const mime = require('mime');
-const modules = require("ml-modules");
 const express = require('express');
 const rwpredittore = require('./r_w_predittore')
 
@@ -45,7 +44,8 @@ app.listen(PORT, function () {
     console.log('Listening on port ' + PORT);
 });
 
-const SVM = modules.SVM;
+const SVM = require("./models/svm/svm.js");
+const RL = require("./models/rl/regression.js");
 
 /* @todo
 * aggiungere la creazione della svm a partire da una configurazione data usando fromJSON
@@ -115,15 +115,22 @@ function uploadForm(req, res, form) {
 
         //elenco sorgenti
         sources = csvreader.getDataSource().toString();
+        /*
+        * @todo aggiungere lettura note
+        */
+        let note = "";
 
         //salvataggio predittore
         let manage_predittore = new rwpredittore();
         manage_predittore.setHeader(PLUGIN_VERSION, TRAIN_VERSION);
+        manage_predittore.setNotes(note);
         manage_predittore.setDataEntry(csvreader.getDataSource(), csvreader.countSource());
         manage_predittore.setModel(model);
         manage_predittore.setFileVersion(FILE_VERSION);
         manage_predittore.setConfiguration(strPredittore);
         fs.writeFileSync('predittore.json', manage_predittore.save());
+
+
 
         //redirect alla pagina di download
         res.writeHead(301, {'Location': 'downloadPredittore'});

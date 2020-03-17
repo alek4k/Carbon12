@@ -65,7 +65,8 @@ module.exports = class csv_reader {
      * Converte i numeri in float, i null in 0 e le date in secondi.
      */
     autoGetData() {
-        //seleziona tutte le colonne, eccetto quella delle data entry(Series), delle Labels e quella vuota che mette grafana
+        /*seleziona tutte le colonne, eccetto quella delle data entry(Series),
+        delle Labels e quella vuota che mette grafana*/
         let dataColumns = Array();
         this.columns.forEach(element => {
             if (!(element === "Labels")) {

@@ -13,6 +13,7 @@
 const fs = require("fs");
 //const {string} property stringa per verifica validità predittore
 const property = "Carbon12 Predire in Grafana";
+let arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', 'configuration'];
 
 class R_W_Predittore {
     constructor(path) {
@@ -27,14 +28,22 @@ class R_W_Predittore {
             this.jsonContent = {};
     }
 
+    /* @todo
+    * gestione versione plugin, train, file
+    */
+
     /**
      * @return {bool} verifica validità predittore in ingresso
+     * struttura e proprietà
      */
     validity() {
-        if (this.jsonContent.header.title == property)
-            return true;
-        else
-            return false;
+      // controllo che il JSON inserito abbia la struttura desiderata
+      if((arrayOfKeys.every(key => json.hasOwnProperty(key)))&&(this.jsonContent.header.title == property)){
+        return true;
+      }
+      else{
+        return false;
+      }
     }
 
     /**
@@ -108,7 +117,7 @@ class R_W_Predittore {
       let index = 0;
       for(index = 0; index < n; index++){
         let source = "source"+index;
-        this.jsonContent.data_entry[source] = array[index]; 
+        this.jsonContent.data_entry[source] = array[index];
       }
     }
 
@@ -146,6 +155,25 @@ class R_W_Predittore {
      */
     setFileVersion(version) {
         this.jsonContent.file_version = version;
+    }
+
+    /**
+     * @return {string} notes
+     * stringa contenente node sull'allenamento
+     */
+    getNotes() {
+        if (this.jsonContent.notes)
+            return this.jsonContent.notes;
+        else
+            return '';
+    }
+
+    /**
+     *
+     * @param notes
+     */
+    setNotes(notes) {
+        this.jsonContent.notes = notes;
     }
 
     /**

@@ -48,10 +48,10 @@ const SVM = require("./models/svm/svm.js");
 const RL = require("./models/rl/regression.js");
 
 /* @todo
-* aggiungere la creazione della svm a partire da una configurazione data usando fromJSON
+* aggiungere la creazione della svm e rl a partire da una configurazione data usando fromJSON
 */
 //funzione di addestramento della SVM
-function addestramento(data, labels) {
+function trainSVM(data, labels) {
 
     let options = {
         kernel: "linear",
@@ -68,6 +68,19 @@ function addestramento(data, labels) {
     console.log(json);
     return json;
 }
+
+//funzione di addestramento della RL
+// x numero data entry
+function trainRL(data,labels,x){
+  console.log('x'+x);
+  let reg = new RL({ numX: x, numY: 1 });
+  reg.train(data,labels);
+  console.log(reg.calculate())
+  let json = reg.toJSON();
+  console.log(json);
+  return json;
+}
+
 
 //funzione per gestire dati in input nella form
 function uploadForm(req, res, form) {

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/alek4k/Carbon12.svg?token=aGyxqazAisPLCopSpzkZ&branch=master)](https://travis-ci.com/alek4k/Carbon12)
+
 # Carbon 12
 Repository del Proof of Concept realizzato per il progetto **Predire in Grafana - Monitoraggio predittivo per DevOps -** dell'insegnamento Ingegneria del Software dell'Università degli studi di Padova A.A. 2019/2020.
 

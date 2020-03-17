@@ -1,3 +1,17 @@
+/**
+ * File name: app.js
+ * Date: 2020-03-18
+ *
+ * @file Script principale del programma di addestramento
+ * Authors:
+ *     @author Nome Cognome <carbon.dodici@gmail.com>
+ * @version X.Y.Z
+ *
+ * Changelog: modifiche effettuate
+ */
+
+// TODO: non si può validare l'header con eslint essendo gli @author variabili! lasciamo stare?
+
 const fs = require('fs');
 const formidable = require('formidable');
 const path = require('path');

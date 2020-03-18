@@ -1,5 +1,20 @@
 /**
- * classe per la lettura e scrittura del JSON con il predittore
+ * File name: r_w_predittore.js
+ * Date: 2020-03-18
+ *
+ * @file classe per la lettura e scrittura del JSON con il predittore
+ * @author Carbon12 <carbon.dodici@gmail.com>
+ * @version X.Y.Z
+ *
+ * Changelog: modifiche effettuate
+ */
+
+const fs = require('fs');
+// const {string} property stringa per verifica validità predittore
+const property = 'Carbon12 Predire in Grafana';
+const arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', 'configuration'];
+
+/**
  * @param {string} path percorso dove viene salvato il file
  *
  * uso:
@@ -10,11 +25,6 @@
  * getter
  * var campo = manage_predittore.getCampo();
  */
-const fs = require('fs');
-// const {string} property stringa per verifica validità predittore
-const property = 'Carbon12 Predire in Grafana';
-const arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', 'configuration'];
-
 class RWPredittore {
     constructor(path) {
         this.path = path;

@@ -3,7 +3,7 @@
  * Date: 2020-03-18
  *
  * @file Script principale del programma di addestramento
- * @author Nome Cognome <carbon.dodici@gmail.com>
+ * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
  * Changelog: modifiche effettuate

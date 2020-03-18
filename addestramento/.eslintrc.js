@@ -16,5 +16,7 @@ module.exports = {
         "max-len": ["warn", 80, {"comments": 150}],
         //spazi per indentazione
         indent: ["error", 4],
+        //permesso di utilizzare operatore ++ e --
+        "no-plusplus": "off"
     }
 };

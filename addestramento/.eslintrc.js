@@ -7,7 +7,7 @@ module.exports = {
         //header da utilizzare in tutti gli script
         "header/header": [2, "block", [
             "*", {"pattern": " * File name: [a-z | A-Z]"}, {"pattern": " * Date: \\d{4}-\\d{2}-\\d{2}$"}, " *",
-            {"pattern": " * @file [a-z | A-Z]"}, " * Authors:", {"pattern": " *     @author [a-z | A-Z]"},
+            {"pattern": " * @file [a-z | A-Z]"}, {"pattern": " * @author [a-z | A-Z]"},
             {"pattern": " * @version [a-z | A-Z | 0-9]"}, " *", {"pattern": " * Changelog: [a-z | A-Z]"}, " "
         ]],
         //numero massimo di parametri delle funzioni

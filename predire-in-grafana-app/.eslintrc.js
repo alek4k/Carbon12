@@ -19,6 +19,13 @@ module.exports = {
         //permesso di utilizzare operatore ++ e --
         "no-plusplus": "off",
         //permesso di utilizzare la stampa su console
-        "no-console": "off"
+        "no-console": "off",
+        //permesso di concatenare stringhe
+        "prefer-template": "off",
+        "prefer-destructuring": "off",
+        //permesso di utilizzare determinate sintassi di JavaScript
+        "no-restricted-syntax": "off",
+        //permesso di utilizzare parseInt senza il secondo argomento
+        radix: "off"
     }
 };

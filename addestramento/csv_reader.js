@@ -11,7 +11,6 @@
 
 const fs = require('fs');
 const parse = require('csv-parse/lib/sync');
-const assert = require('assert');
 
 module.exports = class csvReader {
     /**
@@ -21,10 +20,10 @@ module.exports = class csvReader {
 
     constructor(path, options) {
         const input = fs.readFileSync(path, 'utf8');
-
+        let readOptions = options;
         // opzioni di default per csv
         if (options == null) {
-            options = {
+            readOptions = {
                 delimiter: ';',
                 bom: true,
                 columns: true,
@@ -33,7 +32,7 @@ module.exports = class csvReader {
         }
 
         // converte il csv in una matrice: records[i]=riga i, records[i][nomeColonna]=valore nella cella in riga i e colonna nomeColonna
-        this.records = parse(input, options);
+        this.records = parse(input, readOptions);
 
         // controllo da fare nel caso il csv sia vuoto
         if (this.records.length > 0) {

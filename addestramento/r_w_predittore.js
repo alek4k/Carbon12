@@ -72,9 +72,9 @@ class RWPredittore {
      * @param title Titolo da inserire nell'header [opzionale]
      */
     setHeader(pluginVersion, trainVersion, title) {
-        if (title == null) title = property;
+        const jsonTitle = title == null ? property : title;
         this.jsonContent.header = {};
-        this.jsonContent.header.title = title;
+        this.jsonContent.header.title = jsonTitle;
         this.jsonContent.header.plugin_version = pluginVersion;
         this.jsonContent.header.train_version = trainVersion;
     }
@@ -111,7 +111,9 @@ class RWPredittore {
         if (this.jsonContent.data_entry) {
             const dataEntry = this.jsonContent.data_entry;
             for (const source in dataEntry) {
-                this.sources.push(dataEntry[source]);
+                if ({}.hasOwnProperty.call(dataEntry, source)) {
+                    this.sources.push(dataEntry[source]);
+                }
             }
         }
         return this.sources;

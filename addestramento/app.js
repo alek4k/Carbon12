@@ -118,7 +118,7 @@ function uploadForm(req, res, form) {
 }
 
 function downloadPredittore(req, res) {
-    const file = __dirname + '/predittore.json';
+    const file = path.join(__dirname, '/predittore.json');
 
     const filename = path.basename(file);
     const mimetype = mime.getType(file);
@@ -140,7 +140,7 @@ router.post('/fileupload', (request, response) => {
 });
 
 router.get('/downloadPredittore', (request, response) => {
-    response.render('downloadPredittore', {model, sources});
+    response.render('downloadPredittore', { model, sources });
 });
 
 router.post('/downloadFile', (request, response) => {

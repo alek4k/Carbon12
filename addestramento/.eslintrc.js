@@ -17,6 +17,8 @@ module.exports = {
         //spazi per indentazione
         indent: ["error", 4],
         //permesso di utilizzare operatore ++ e --
-        "no-plusplus": "off"
+        "no-plusplus": "off",
+        //permesso di utilizzare la stampa su console
+        "no-console": "off"
     }
 };

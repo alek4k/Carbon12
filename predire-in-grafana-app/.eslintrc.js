@@ -7,15 +7,6 @@ module.exports = {
         "browser": true,
         "es6": true
     },
-    "extends": "eslint:recommended",
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
-    "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
     "rules": {
         //header da utilizzare in tutti gli script
         "header/header": [2, "block", [

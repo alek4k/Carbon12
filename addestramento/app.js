@@ -1,12 +1,12 @@
 /**
  * File name: app.js
- * Date: 2020-03-18
+ * Date: 2020-03-19
  *
  * @file Script principale del programma di addestramento
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
- * Changelog: modifiche effettuate
+ * Changelog: nuovi file rw
  */
 
 const fs = require('fs');
@@ -15,8 +15,9 @@ const path = require('path');
 const mime = require('mime');
 const modules = require('ml-modules');
 const express = require('express');
-const RWPredittore = require('./r_w_predittore')
-const CSVr = require('./csv_reader.js');
+const RPredittore = require('./fileManager/r_predittore')
+const WPredittore = require('./fileManager/w_predittore')
+const CSVr = require('./fileManager/csv_reader.js');
 
 const app = express();
 app.set('views', path.join(__dirname, 'views'));
@@ -103,7 +104,7 @@ function uploadForm(req, res, form) {
         sources = csvreader.getDataSource().toString();
 
         // salvataggio predittore
-        const managePredittore = new RWPredittore();
+        const managePredittore = new WPredittore();
         managePredittore.setHeader(PLUGIN_VERSION, TRAIN_VERSION);
         managePredittore.setDataEntry(csvreader.getDataSource(), csvreader.countSource());
         managePredittore.setModel(model);

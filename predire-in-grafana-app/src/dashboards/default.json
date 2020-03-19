@@ -13,8 +13,9 @@
       "panels": [
         {
           "span": 12,
+          "colorBackground": false,
           "type": "graph-prediction",
-          "datasource": "InfluxDB",
+          "datasource": "InfluxDB-Prova",
           "x-axis": true,
           "y-axis": true,
           "scale": 1,
@@ -103,7 +104,8 @@
           "renderer": "flot",
           "annotate": {
             "enable": false
-          }
+          },
+          "title": "Grafico di Predizione"
         }
       ]
     }

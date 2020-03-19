@@ -1,5 +1,20 @@
 /**
- * classe per la lettura e scrittura del JSON con il predittore
+ * File name: r_w_predittore.js
+ * Date: 2020-03-18
+ *
+ * @file classe per la lettura e scrittura del JSON con il predittore
+ * @author Carbon12 <carbon.dodici@gmail.com>
+ * @version X.Y.Z
+ *
+ * Changelog: modifiche effettuate
+ */
+
+const fs = require('fs');
+// const {string} property stringa per verifica validità predittore
+const property = 'Carbon12 Predire in Grafana';
+const arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', 'configuration'];
+
+/**
  * @param {string} path percorso dove viene salvato il file
  *
  * uso:
@@ -10,84 +25,78 @@
  * getter
  * var campo = manage_predittore.getCampo();
  */
-const fs = require("fs");
-//const {string} property stringa per verifica validità predittore
-const property = "Carbon12 Predire in Grafana";
-let arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', 'configuration'];
-
-class R_W_Predittore {
+class RWPredittore {
     constructor(path) {
         this.path = path;
         this.sources = [];
         this.contents = null;
         if (path != null) this.contents = fs.readFileSync(this.path);
         this.jsonContent = null;
-        if (this.contents != null)
+        if (this.contents != null) {
             this.jsonContent = JSON.parse(this.contents);
-        else
+        } else {
             this.jsonContent = {};
+        }
     }
 
     /* @todo
-    * gestione versione plugin, train, file
-    */
+     * gestione versione plugin, train, file
+     */
 
     /**
      * @return {bool} verifica validità predittore in ingresso
      * struttura e proprietà
      */
     validity() {
-      // controllo che il JSON inserito abbia la struttura desiderata
-      if((arrayOfKeys.every(key => json.hasOwnProperty(key)))&&(this.jsonContent.header.title == property)){
-        return true;
-      }
-      else{
+        // controllo che il JSON inserito abbia la struttura desiderata
+        if ((arrayOfKeys.every((key) => json.hasOwnProperty(key))) && (this.jsonContent.header.title === property)) {
+            return true;
+        }
         return false;
-      }
     }
 
     /**
      * @return {string} title nell'header del predittore
      */
     getTitle() {
-        if (this.jsonContent.header.title)
+        if (this.jsonContent.header.title) {
             return this.jsonContent.header.title;
-        else
-            return '';
+        }
+        return '';
     }
 
     /**
      * Impostazione header predittore
-     * @param plugin_version
-     * @param train_version
+     * @param pluginVersion
+     * @param trainVersion
      * @param title Titolo da inserire nell'header [opzionale]
      */
-    setHeader(plugin_version, train_version, title) {
-        if (title == null) title = property;
+    setHeader(pluginVersion, trainVersion, title) {
+        const jsonTitle = title == null ? property : title;
         this.jsonContent.header = {};
-        this.jsonContent.header.title = title;
-        this.jsonContent.header.plugin_version = plugin_version;
-        this.jsonContent.header.train_version = train_version;
+        this.jsonContent.header.title = jsonTitle;
+        this.jsonContent.header.plugin_version = pluginVersion;
+        this.jsonContent.header.train_version = trainVersion;
     }
 
     /**
      * @return {string} plug-in version nell'header del predittore
      */
     getPluginVersion() {
-        if (this.jsonContent.header.plugin_version)
+        if (this.jsonContent.header.plugin_version) {
             return this.jsonContent.header.plugin_version;
-        else
-            return '';
+        }
+        return '';
     }
 
     /**
      * @return {string} train version nell'header del predittore
      */
     getTrainVersion() {
-        if (this.jsonContent.header.train_version)
+        if (this.jsonContent.header.train_version) {
             return this.jsonContent.header.train_version;
-        else
-            return '';
+        }
+        return '';
     }
 
     /**
@@ -99,13 +108,15 @@ class R_W_Predittore {
      *   });
      */
     getDataEntry() {
-      if(this.jsonContent.data_entry){
-        var dataEntry = this.jsonContent.data_entry;
-        for (var source in dataEntry) {
-            this.sources.push(dataEntry[source]);
+        if (this.jsonContent.data_entry) {
+            const dataEntry = this.jsonContent.data_entry;
+            for (const source in dataEntry) {
+                if ({}.hasOwnProperty.call(dataEntry, source)) {
+                    this.sources.push(dataEntry[source]);
+                }
+            }
         }
-      }
-      return this.sources;
+        return this.sources;
     }
 
     /**
@@ -113,22 +124,22 @@ class R_W_Predittore {
      * @param {int} n numero sorgenti
      */
     setDataEntry(array, n) {
-      this.jsonContent.data_entry = {};
-      let index = 0;
-      for(index = 0; index < n; index++){
-        let source = "source"+index;
-        this.jsonContent.data_entry[source] = array[index];
-      }
+        this.jsonContent.data_entry = {};
+        let index = 0;
+        for (index = 0; index < n; index++) {
+            const source = 'source' + index;
+            this.jsonContent.data_entry[source] = array[index];
+        }
     }
 
     /**
      * @return {string} modello utilizzato per l'allenamento
      */
     getModel() {
-        if (this.jsonContent.model)
+        if (this.jsonContent.model) {
             return this.jsonContent.model;
-        else
-            return '';
+        }
+        return '';
     }
 
     /**
@@ -143,10 +154,10 @@ class R_W_Predittore {
      * @return {string} versione file allenamento
      */
     getFileVersion() {
-        if (this.jsonContent.file_version)
+        if (this.jsonContent.file_version) {
             return this.jsonContent.file_version;
-        else
-            return '';
+        }
+        return '';
     }
 
     /**
@@ -162,10 +173,10 @@ class R_W_Predittore {
      * stringa contenente node sull'allenamento
      */
     getNotes() {
-        if (this.jsonContent.notes)
+        if (this.jsonContent.notes) {
             return this.jsonContent.notes;
-        else
-            return '';
+        }
+        return '';
     }
 
     /**
@@ -181,10 +192,10 @@ class R_W_Predittore {
      * stringa JSON con la configurazione salvata per la creazione del modello
      */
     getConfiguration() {
-        if (this.jsonContent.configuration)
+        if (this.jsonContent.configuration) {
             return JSON.stringify(this.jsonContent.configuration);
-        else
-            return '';
+        }
+        return '';
     }
 
     /**
@@ -204,4 +215,4 @@ class R_W_Predittore {
     }
 }
 
-module.exports = R_W_Predittore;
+module.exports = RWPredittore;

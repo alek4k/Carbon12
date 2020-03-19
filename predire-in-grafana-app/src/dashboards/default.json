@@ -15,7 +15,7 @@
           "span": 12,
           "colorBackground": false,
           "type": "graph-prediction",
-          "datasource": "InfluxDB-Prova",
+          "datasource": "",
           "x-axis": true,
           "y-axis": true,
           "scale": 1,

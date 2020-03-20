@@ -51,7 +51,6 @@ module.exports = class Regression {
       this.N = json.N
       this.D = json.D
       this.coefficients = json.alpha
-      return json
   }
 
   constructor(options){

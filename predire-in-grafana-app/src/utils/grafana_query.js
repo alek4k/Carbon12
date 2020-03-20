@@ -7,7 +7,7 @@ class GrafanaApiQuery{
   async getDataSources(){
     return this.backendSrv.get('/api/datasources');
   }
-
+  
 }
 
 module.exports = GrafanaApiQuery;

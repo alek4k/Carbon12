@@ -41,8 +41,8 @@ export class importCtrl{
       });
 
     // creo la connessione con il database
-    const Influx = require('../utils/connection.js');
-    let influx = new Influx();
+    const ServerProxy = require('../utils/server_proxy.js');
+    let influx = new ServerProxy('http://localhost', 8086, 'telegraf');
 
     // prelevo le sorgenti disponibili
     influx.getSources()

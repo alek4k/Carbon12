@@ -49,7 +49,7 @@ class RPredittore {
      */
     validity() {
         // controllo che il JSON inserito abbia la struttura desiderata
-        if ((arrayOfKeys.every((key) => json.hasOwnProperty(key))) && (this.jsonContent.header.title === property)) {
+        if ((arrayOfKeys.every((key) => this.jsonContent.hasOwnProperty(key))) && (this.jsonContent.header.title === property)) {
             return true;
         }
         return false;

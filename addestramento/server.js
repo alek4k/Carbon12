@@ -13,11 +13,11 @@ const fs = require('fs');
 const formidable = require('formidable');
 const path = require('path');
 const mime = require('mime');
-const modules = require('ml-modules');
 const express = require('express');
 const RPredittore = require('./fileManager/r_predittore')
 const WPredittore = require('./fileManager/w_predittore')
 const CSVr = require('./fileManager/csv_reader.js');
+const PORT = 8080;
 let model 
 let sources 
 
@@ -34,7 +34,7 @@ module.exports = class Server {
     * aggiungere la creazione della svm e rl a partire da una configurazione data usando fromJSON
     */
     // funzione di addestramento della SVM
-    trainSVM(data, labels) 
+    /*trainSVM(data, labels) 
         const options = {
             kernel: 'linear',
             karpathy: true,
@@ -49,7 +49,7 @@ module.exports = class Server {
         console.log('predittore creato') 
         console.log(json) 
         return json 
-    }
+    }*/
 
     //funzione di addestramento della RL
     // x numero data entry

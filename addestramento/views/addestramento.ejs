@@ -14,15 +14,19 @@
     per ottenere il predittore da inserire nel plug-in</p>
 <form action="fileupload" method="post" enctype="multipart/form-data">
     <fieldset>
-        <label>Seleziona il file coi dati di addestramento (formato CSV):</label>
-        <input type="file" id="upload" value="upload file" accept=".csv" name="trainFile">
-        <label>Seleziona il file con la configurazione del modello (formato JSON):</label>
-        <input type="file" id="upload" value="upload file" accept=".json" name="configFile">
-        <label>Seleziona il modello da addestrare:</label>
-        <select name="modello">
+        <label for="trainFile">Seleziona il file coi dati di addestramento (formato CSV):</label>
+        <input type="file"  id="trainFile" value="upload file" accept=".csv" name="trainFile">
+        <label for="configFile">Seleziona il file con la configurazione del modello (formato JSON):</label>
+        <input type="file" id="configFile" value="upload file" accept=".json" name="configFile">
+        <label for="modelType">Seleziona il modello da addestrare:</label>
+        <select name="modello" id="modelType">
             <option selected value="SVM">SVM</option>
             <option value="RL">RL</option>
         </select>
+        <label for="note">Inserisci delle note per il predittore</label>
+        <textarea id="note" rows="4" cols="50" placeholder="le tue note..." name="note"></textarea>
+        <label for="nameFile">Inserisci il nome del file Predittore</label>
+        <input type="text" id="nameFile" name="nomeFile" placeholder="predittore">
         <input type="submit" id="submit" value="AVVIO ADDESTRAMENTO">
     </fieldset>
 </form>

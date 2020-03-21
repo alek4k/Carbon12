@@ -78,7 +78,7 @@ class WPredittore {
     setNotes(notes) {
         this.jsonContent.notes = notes;
     }
-    
+
     /**
      *
      * @param config

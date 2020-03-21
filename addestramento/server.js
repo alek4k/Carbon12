@@ -14,17 +14,10 @@ const formidable = require('formidable');
 const path = require('path');
 const mime = require('mime');
 const express = require('express');
+const nconf = require('nconf');
 const RPredittore = require('./fileManager/r_predittore');
 const WPredittore = require('./fileManager/w_predittore');
 const CSVr = require('./fileManager/csv_reader.js');
-
-/* @todo
-    * aggiungere config file
-    */
-const PORT = 8080;
-const PLUGIN_VERSION = '0.0.0';
-const TRAIN_VERSION = '0.0.0';
-const FILE_VERSION = 0;
 
 const SVM = require('./models/svm/svm');
 const RL = require('./models/rl/regression');
@@ -33,6 +26,7 @@ let model;
 let sources;
 let notes;
 let nomePredittore;
+let FILE_VERSION = 0;
 
 module.exports = class Server {
     constructor() {
@@ -41,13 +35,21 @@ module.exports = class Server {
         this.app.set('views', path.join(__dirname, 'views'));
         this.app.set('view engine', 'ejs');
         this.app.use(express.static(path.join(__dirname, 'public')));
+        try {
+            nconf.argv().env().file('config.json');
+        } catch (e) {
+            console.log('Error parsing your configuration file.');
+            return process.exit();
+        }
+        // parametri di default da utilizzare se il file di configurazione o alcune key non sono presenti
+        nconf.defaults({ PORT: 8080, TRAIN_VERSION: '0.0.0', PLUGIN_VERSION: '0.0.0' });
     }
 
     /* @todo
         * aggiungere gestione addestramento
         */
     train(data, expected) {
-        //train
+        // train
         this.data = data;
         this.expected = expected;
     }
@@ -91,7 +93,7 @@ module.exports = class Server {
 
             const csvReader = new CSVr(pathTrainFile, null);
 
-            // dati addestramento 
+            // dati addestramento
             const data = csvReader.autoGetData();
             console.log('data' + data);
             const labels = csvReader.autoGetLabel();
@@ -104,7 +106,7 @@ module.exports = class Server {
 
             // salvataggio predittore
             const managePredittore = new WPredittore();
-            managePredittore.setHeader(PLUGIN_VERSION, TRAIN_VERSION);
+            managePredittore.setHeader(nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'));
             managePredittore.setDataEntry(csvReader.getDataSource(), csvReader.countSource());
             managePredittore.setModel(model);
             managePredittore.setFileVersion(FILE_VERSION);
@@ -149,8 +151,8 @@ module.exports = class Server {
 
     startServer() {
         this.config();
-        this.app.listen(PORT, () => {
-            console.log('Listening on port ' + PORT);
+        this.app.listen(nconf.get('PORT'), () => {
+            console.log('Listening on port ' + nconf.get('PORT'));
         });
     }
 };

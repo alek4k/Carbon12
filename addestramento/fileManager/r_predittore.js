@@ -55,12 +55,12 @@ class RPredittore {
     }
 
     /**
-     * @return {bool} verifica validità predittore in ingresso
+     * @return {boolean} verifica validità predittore in ingresso
      * struttura e proprietà
      */
     validity() {
         // controllo che il JSON inserito abbia la struttura desiderata
-        if ((arrayOfKeys.every((key) => this.jsonContent.hasOwnProperty(key))) && (this.jsonContent.header.title === property)) {
+        if ((arrayOfKeys.every((key) => Object.prototype.hasOwnProperty.call(this.jsonContent, key))) && (this.jsonContent.header.title === property)) {
             return true;
         }
         return false;

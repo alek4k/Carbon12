@@ -43,7 +43,7 @@ class WPredittore {
     }
 
     /**
-     * @param {array} sources array con l'elenco delle sorgenti
+     * @param {array} array sources array con l'elenco delle sorgenti
      * @param {int} n numero sorgenti
      */
     setDataEntry(array, n) {

@@ -54,7 +54,6 @@ module.exports = class Server {
         this.expected = expected;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     uploadForm(req, res) {
         const form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
@@ -120,7 +119,6 @@ module.exports = class Server {
         return res.end();
     }
 
-    // eslint-disable-next-line class-methods-use-this
     downloadPredittore(req, res) {
         const file = path.join(__dirname, '/predittore.json');
         const filename = path.basename(file);

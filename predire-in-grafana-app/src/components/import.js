@@ -13,10 +13,11 @@ export class importCtrl{
     this.step = 1;
     this.error = '';
     this.availableDataSources = [];
-    this.dataSources = '';
+    this.dataSource = '';
     this.name = '';
     this.database = '';
-    this.url = 'http://localhost:8086';
+    this.host = 'http://localhost';
+    this.port = '8086';
     this.model = '';
     this.availableMeasurement = [];
     this.availableParams = [];
@@ -26,54 +27,19 @@ export class importCtrl{
     this.predictor = '';
     this.availableSources = [];
     this.source = '';
-    this.view = 'Grafico';
+    this.view = '';
 
     const GrafanaApiQuery = require('../utils/grafana_query.js');
-    let grafana = new GrafanaApiQuery(this.backendSrv);
+    this.grafana = new GrafanaApiQuery(this.backendSrv);
   
     // prelevo le data sources disponibili
-    grafana.getDataSources()
+    this.grafana.getDataSources()
       .then(dataSources => {
         // dataSoources ha la struttura di un json
         for(const ds in dataSources){
           this.availableDataSources.push(dataSources[ds].name);
         }
       });
-
-    // creo la connessione con il database
-    const ServerProxy = require('../utils/server_proxy.js');
-    let influx = new ServerProxy('http://localhost', 8086, 'telegraf');
-
-    // prelevo le sorgenti disponibili
-    influx.getSources()
-      .then(result => {
-        // itero sulle sorgenti disponibili
-        for(let i = 0; result.results[0].series[i].name; ++i){
-          // itero sulle istanze della sorgente i
-          for(let j = 0; j < result.results[0].series[i].values.length; ++j){
-            this.availableMeasurement.push({
-              "name": result.results[0].series[i].name,
-              "instance": result.results[0].series[i].values[j][1]
-            });
-            this.availableSources.push(result.results[0].series[i].name + '\n' + result.results[0].series[i].values[j][1]);
-          }
-        }
-      });
-      
-    // prelevo i parametri disponibili
-    influx.getParams()
-    .then(result => {
-      // itero sulle sorgenti disponibili
-      for (let i = 0; result.results[0].series[i].name; ++i){
-        // itero sui parametri della sorgente i
-        for (let j = 0; j < result.results[0].series[i].values.length; ++j){
-          this.availableParams.push({
-            "name": result.results[0].series[i].name,
-            "params": result.results[0].series[i].values[j][0]
-          });
-        }
-      }
-    });
   }
 
   // carico il file del predittore
@@ -82,6 +48,7 @@ export class importCtrl{
     if(arrayOfKeys.every(key => json.hasOwnProperty(key))){
       this.error = '';
       this.model = json.model;
+      this.view = (json.model == 'SVM') ? 'Indicatore' : 'Grafico';
       this.availablePredictors = Object.values(json.data_entry); // creo l'array con i predittori
       this.step = 2; 
     }
@@ -102,10 +69,32 @@ export class importCtrl{
   }
 
   // imposto la data source selezionata dall'utente
-  setDataSource(dataSource){
-    if(dataSource){
+  setDataSource(ds){
+    if(ds){
       this.error = '';
-      defaultDashboard.rows[0].panels[0].datasource = dataSource;
+      defaultDashboard.rows[0].panels[0].datasource = ds;
+      if(this.dataSource){ 
+        // ho selezionato una data source
+        let dataSources = this.grafana.getDataSources();
+        dataSources.then((dataSource) => {
+          let found = false;
+          // dataSources ha la struttura di un json
+          for (let i = 0; dataSource[i] != undefined && !found; ++i) {
+            if (dataSource[i].name == this.dataSource) {
+              found = true;
+              // vado ad estrarre le informazioni della data source selezionata
+              this.database = dataSource[i].database;
+              this.host = dataSource[i].url.substring(0, dataSource[i].url.lastIndexOf(':'));
+              this.port = dataSource[i].url.substring(dataSource[i].url.lastIndexOf(':') + 1);
+              this.connections(); 
+            }
+          }
+        });  
+      }
+      else{
+        // ho configurato una nuova datasource
+        this.connections();
+      }
       this.step = 3;
     }
     else{
@@ -115,14 +104,14 @@ export class importCtrl{
 
   // aggiungo la configurazione della data source alla lista delle data sources
   addDataSource(){
-    const configComplete = this.name && this.database && this.url;
+    const configComplete = this.name && this.database && this.host && this.port;
     if(configComplete){
       this.backendSrv.post('api/datasources', {
         name: this.name,
-        type:"influxdb",
+        type: "influxdb",
         access: "proxy",
         database: this.database,
-        url: this.url,
+        url: this.host + ':' + this.port,
         readOnly: false,
         editable: true
       }).then(() => {
@@ -132,6 +121,51 @@ export class importCtrl{
     else{
       this.error = 'La configurazione non è completa';
     }
+  }
+
+  connections(){
+    // creo la connessione con il database
+    const Influx = require('../utils/influx.js');
+    let influx = new Influx(this.host, parseInt(this.port, 10), this.database);
+    // prelevo le sorgenti disponibili
+    let sources = influx.getSources().results[0].series;
+    sources.forEach((s) => {
+      for (let j = 0; j < s.values.length; ++j) {
+        this.availableMeasurement.push({
+          "name": s.name,
+          "instance": s.values[j][1]
+        });
+        this.availableSources.push(s.name + '\n' + s.values[j][1]);
+      }
+    });
+  
+    // prelevo i parametri disponibili
+    let params = influx.getParams().results[0].series;
+    params.forEach((p) => {
+        // itero sui parametri della sorgente i
+        for (let j = 0; j < p.values.length; ++j) {
+          this.availableParams.push({
+            "name": p.name,
+            "params": p.values[j][0]
+          });
+        }
+    });
+
+    /*
+    influx.getParams()
+      .then(result => {
+        // itero sulle sorgenti disponibili
+        for (let i = 0; result.results[0].series[i].name; ++i){
+          // itero sui parametri della sorgente i
+          for (let j = 0; j < result.results[0].series[i].values.length; ++j){
+            this.availableParams.push({
+              "name": result.results[0].series[i].name,
+              "params": result.results[0].series[i].values[j][0]
+            });
+          }
+        }
+    });
+    */
   }
 
   // imposto sorgete selezionata dall'utente
@@ -166,12 +200,17 @@ export class importCtrl{
 
   setView(){
     if(this.view == 'Grafico'){
-    defaultDashboard.rows[0].panels[0].type = 'graph-prediction';
+      defaultDashboard.rows[0].height = "350px";
+      defaultDashboard.rows[0].panels[0].span = 12;
+      defaultDashboard.rows[0].panels[0].type = 'graph';
+      defaultDashboard.rows[0].panels[0].title = 'Grafico di Predizione';
     }
     else{
+      defaultDashboard.rows[0].height = "350px";
+      defaultDashboard.rows[0].panels[0].span = 4;
       defaultDashboard.rows[0].panels[0].type = 'singlestat';
-      defaultDashboard.rows[0].panels[0].colorBackground = 'true';
       defaultDashboard.rows[0].panels[0].title = 'Indicatore di Predizione';
+      defaultDashboard.rows[0].panels[0].colorBackground = 'true';
     }
   }
 

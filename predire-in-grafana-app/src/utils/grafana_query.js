@@ -4,7 +4,7 @@ class GrafanaApiQuery{
     this.backendSrv = backendSrv;
   }
 
-  async getDataSources(){
+  getDataSources(){
     return this.backendSrv.get('/api/datasources');
   }
   

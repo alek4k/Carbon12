@@ -11,56 +11,65 @@ class Influx extends DBConnection {
    * @param {query} String represents the query to database
    * @returns {Promise} Promise object represents query result
    */
-  async query(query) {
-    return $.ajax({
+  query(query) {
+    let result;
+    $.ajax({
+      async: false,
       url: `${this.host}:${this.port}/query?`,
       type: 'GET',
       contentType: 'application/octet-stream',
       data: query,
       processData: false,
       success: data => {
-        return data;
+        result = data;
       }
     });
+    return result;
   }
 
   /**
    *  Function which return collected sources
    * @returns {Promise} Promise object represents available sources
    */
-  async getSources() {
+  getSources() {
     const query = `q=show tag values on "${this.database}" with key = "instance"`;
-    return $.ajax({
+    let result;
+    $.ajax({
+      async: false,
       url: `${this.host}:${this.port}/query?`,
       type: 'GET',
       contentType: 'application/octet-stream',
       data: query,
       processData: false,
       success: data => {
-        return data;
+        result = data;
       }
     });
+    return result;
   }
 
   /**
    *  Function which return available parameters
    * @returns {Promise} Promise object represents available parameters
    */
-  async getParams() {
+  getParams() {
     const query = `q=show field keys on ${this.database}`;
-    return $.ajax({
+    let result;
+    $.ajax({
+      async: false,
       url: `${this.host}:${this.port}/query?`,
       type: 'GET',
       contentType: 'application/octet-stream',
       data: query,
       processData: false,
       success: data => {
-        return data;
+        result = data;
       },
       error: exception => {
         console.log("Error: " + exception);
       }
     });
+    return result;
   }
 
 }

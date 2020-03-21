@@ -5,8 +5,8 @@
         "train_version": "0.0.0"
     },
     "data_entry": {
-        "source1": "A",
-        "source2": "B"
+        "source0": "win_cpu",
+        "source1": "win_disk"
     },
     "model": "SVM",
     "file_version": "0",

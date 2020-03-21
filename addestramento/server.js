@@ -6,7 +6,7 @@
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
- * Changelog: nuovi file rw
+ * Changelog: gestione file di configurazione
  */
 
 const fs = require('fs');
@@ -18,7 +18,6 @@ const nconf = require('nconf');
 const RPredittore = require('./fileManager/r_predittore');
 const WPredittore = require('./fileManager/w_predittore');
 const CSVr = require('./fileManager/csv_reader.js');
-
 const SVM = require('./models/svm/svm');
 const RL = require('./models/rl/regression');
 
@@ -59,7 +58,22 @@ module.exports = class Server {
         form.parse(req, (err, fields, files) => {
             model = fields.modello;
             notes = fields.note;
-            nomePredittore = fields.nomeFile + '.json';
+            if (files.trainFile.name && files.trainFile.name !== '') {
+                console.log(files.trainFile.name + ' loaded');
+            } else {
+                console.log('Error: missing train file');
+                res.writeHead(301, { Location: '/' });
+                return res.end();
+            }
+            let configPresence = false;
+            if (files.configFile.name && files.configFile.name !== '') {
+                console.log(files.configFile.name + ' loaded');
+                configPresence = true;
+            }
+            if (fields.nomeFile === '') {
+                nomePredittore = 'predittore';
+            }
+            nomePredittore += '.json';
             // dir temporanea dove è salvato il file csv addestramento
             const pathTrainFile = files.trainFile.path;
             // dir temporanea dove è salvato il file json config
@@ -70,7 +84,6 @@ module.exports = class Server {
             * controllare che le data entry coincidano con quelle nel csv e
             * controllare che il modello coincida con quello scelto
             */
-            const configPresence = false;
             if (configPresence) {
                 const managePredittore = new RPredittore(pathConfigFile);
                 const title = managePredittore.getTitle();
@@ -112,19 +125,18 @@ module.exports = class Server {
             managePredittore.setNotes(notes);
             managePredittore.setConfiguration(strPredittore);
             fs.writeFileSync(nomePredittore, managePredittore.save());
-        });
 
-        // redirect alla pagina di download
-        res.writeHead(301, { Location: 'downloadPredittore' });
-        return res.end();
+            res.writeHead(301, { Location: 'downloadPredittore' });
+            return res.end();
+        });
     }
 
     downloadPredittore(req, res) {
-        const file = path.join(__dirname, '/predittore.json');
+        const file = path.join(__dirname, nomePredittore);
         const filename = path.basename(file);
         const mimetype = mime.getType(file);
 
-        res.setHeader('Content-disposition', 'attachment  filename=' + filename);
+        res.setHeader('Content-disposition', 'attachment; filename=' + filename);
         res.setHeader('Content-type', mimetype);
 
         const filestream = fs.createReadStream(file);

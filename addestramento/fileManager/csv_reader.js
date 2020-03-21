@@ -1,12 +1,12 @@
 /**
  * File name: csv_reader.js
- * Date: 2020-03-18
+ * Date: 2020-03-21
  *
  * @file classe per la lettura del file CSV
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
- * Changelog: modifiche effettuate
+ * Changelog: aggiunta funzione checkStructure
  */
 
 const fs = require('fs');
@@ -40,6 +40,18 @@ module.exports = class csvReader {
             this.columns = Object.keys(this.records[0]);
         }
     }
+
+    /**
+     * @returns {Boolean} Ritorna true se la prima colonna ha etichetta Time e l'ultima Labels
+     */
+    checkStructure() {
+        const columnsLength = this.columns.length - 1;
+        if (this.columns[0] === 'Time' && this.columns[columnsLength] === 'Labels') {
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      *

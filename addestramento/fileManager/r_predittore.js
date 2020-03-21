@@ -42,6 +42,17 @@ class RPredittore {
     /* @todo
      * gestione versione plugin, train, file
      */
+    checkVersion() {
+
+    }
+
+    /**
+     * Carica direttamente il contenuto del file JSON
+     * @param data contenuto in formato JSON
+     */
+    loadJSON(data) {
+        this.jsonContent = data;
+    }
 
     /**
      * @return {bool} verifica validità predittore in ingresso
@@ -145,14 +156,6 @@ class RPredittore {
             return JSON.stringify(this.jsonContent.configuration);
         }
         return '';
-    }
-
-    /**
-     *
-     * @returns {string} JSON da inserire nel file del predittore
-     */
-    save() {
-        return JSON.stringify(this.jsonContent, null, 4);
     }
 }
 

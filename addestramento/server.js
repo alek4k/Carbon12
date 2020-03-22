@@ -108,8 +108,10 @@ module.exports = class Server {
                     // aggiungere controllo titolo, versione, data entry
                     const config = managePredittore.getConfiguration();
                     // config va passata alla creazione della SVM
+
+                    console.log('json valido');
                 } else {
-                    console.log('Error: json non vaido');
+                    console.log('Error: json non valido');
                     error = 'Struttura json non valida';
                     res.writeHead(301, { Location: '/' });
                     return res.end();

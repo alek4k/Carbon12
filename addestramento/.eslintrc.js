@@ -28,6 +28,8 @@ module.exports = {
         // permesso di utilizzare parseInt senza il secondo argomento
         radix: "off",
         // i metodi delle classi possono non utilizzare 'this'
-        "class-methods-use-this": "off"
+        "class-methods-use-this": "off",
+        // permesso di utilizzare _ 
+        "no-underscore-dangle" : "off"
     }
 };

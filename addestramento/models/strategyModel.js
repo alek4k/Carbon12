@@ -18,7 +18,7 @@
  * predict()
  */
 
-class strategyModel {
+class StrategyModel {
     constructor() {
         this.strategy = null;
     }
@@ -48,4 +48,4 @@ class strategyModel {
     }
 }
 
-module.exports = strategyModel;
+module.exports = StrategyModel;

@@ -9,6 +9,7 @@
   "author": "Carbon12",
   "license": "ISC",
   "dependencies": {
+    "could-be-utils": "^0.2.4",
     "csv": "^5.3.1",
     "csv-parse": "^4.8.8",
     "ejs": "^3.0.1",

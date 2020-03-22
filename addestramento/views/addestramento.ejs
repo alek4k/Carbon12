@@ -17,7 +17,7 @@
         <% if (error == 'Struttura csv non valida') { %>
             <p class='error'>Struttura file csv non valida: la prima colonna deve avere etichetta <b>Time</b>,
                 l'ultima etichetta <b>Labels</b></p>
-        <%} else if (error == 'Struttura json non valida') { %>
+        <%} else { %>
             <p class='error'><%= error %></p>
         <%}%>
         <label for="trainFile">Seleziona il file coi dati di addestramento (formato CSV):</label>

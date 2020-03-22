@@ -104,11 +104,30 @@ module.exports = class Server {
             if (configPresence) {
                 const managePredittore = new RPredittore(pathConfigFile);
                 if (managePredittore.validity()) {
-                    const title = managePredittore.getTitle();
-                    // aggiungere controllo titolo, versione, data entry
                     const config = managePredittore.getConfiguration();
                     // config va passata alla creazione della SVM
 
+                    if (managePredittore.getFileVersion() > 0) {
+                        FILE_VERSION = managePredittore.getFileVersion() + 1;
+                    }
+
+                    // controllare che le data entry coincidano con quelle nel csv
+                    const dataSourceJson = managePredittore.getDataEntry();
+                    const dataSourceCsv = csvReader.getDataSource();
+                    if (dataSourceJson.length === dataSourceCsv.length
+                        && dataSourceJson.every((value, index) => value === dataSourceCsv[index])) {
+                        console.log('Error: wrong data entry');
+                        error = 'Le data entry non coincidono con quelle del file di addestramento';
+                        res.writeHead(301, { Location: '/' });
+                        return res.end();
+                    }
+                    // controllare che il modello coincida con quello scelto
+                    if (model === managePredittore.getModel()) {
+                        console.log('Error: wrong model');
+                        error = 'Il modello non coincide con quello selezionato';
+                        res.writeHead(301, { Location: '/' });
+                        return res.end();
+                    }
                     console.log('json valido');
                 } else {
                     console.log('Error: json non valido');

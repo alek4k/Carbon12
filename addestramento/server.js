@@ -25,6 +25,7 @@ let model;
 let sources;
 let notes;
 let nomePredittore;
+let error = '';
 let FILE_VERSION = 0;
 
 module.exports = class Server {
@@ -59,13 +60,7 @@ module.exports = class Server {
             model = fields.modello;
             notes = fields.note;
             nomePredittore = fields.nomeFile;
-            if (files.trainFile.name && files.trainFile.name !== '') {
-                console.log(files.trainFile.name + ' loaded');
-            } else {
-                console.log('Error: missing train file');
-                res.writeHead(301, { Location: '/' });
-                return res.end();
-            }
+
             let configPresence = false;
             if (files.configFile.name && files.configFile.name !== '') {
                 console.log(files.configFile.name + ' loaded');
@@ -75,11 +70,22 @@ module.exports = class Server {
                 nomePredittore = 'predittore';
             }
             nomePredittore += '.json';
-            console.log('nome'+nomePredittore);
+            console.log('nome' + nomePredittore);
             // dir temporanea dove è salvato il file csv addestramento
             const pathTrainFile = files.trainFile.path;
             // dir temporanea dove è salvato il file json config
             const pathConfigFile = files.configFile.path;
+
+            const csvReader = new CSVr(pathTrainFile, null);
+            if (csvReader.checkStructure()) {
+                console.log('csv valido');
+            } else {
+                console.log('Error: csv non valido');
+                error = 'Struttura csv non valida';
+                res.writeHead(301, { Location: '/' });
+                return res.end();
+            }
+
 
             /* @todo
             * aggiungere la lettura dei parametri del predittore caricato per verificare la validità
@@ -104,9 +110,7 @@ module.exports = class Server {
                 // chiamata function addestramento RL
                 console.log('regression');
             }
-
-            const csvReader = new CSVr(pathTrainFile, null);
-
+            
             // dati addestramento
             const data = csvReader.autoGetData();
             const labels = csvReader.autoGetLabel();
@@ -148,7 +152,7 @@ module.exports = class Server {
         this.app.use('/', this.router);
 
         this.router.get('/', (request, response) => {
-            response.render('addestramento');
+            response.render('addestramento', { error });
         });
 
         this.router.post('/fileupload', this.uploadForm);

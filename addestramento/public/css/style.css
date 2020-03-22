@@ -104,3 +104,8 @@ ul {
 #nameFile {
   font-size: 1em;
 }
+
+.error {
+  color: rgba(255, 0, 0, 0.774);
+  padding: 0%;
+}

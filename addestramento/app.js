@@ -1,8 +1,8 @@
 /**
- * File name: csv_reader.js
+ * File name: app.js
  * Date: 2020-03-18
  *
- * @file classe per la lettura del file CSV
+ * @file Script principale del programma di addestramento
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *

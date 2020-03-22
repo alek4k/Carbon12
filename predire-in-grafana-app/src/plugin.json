@@ -7,7 +7,7 @@
     "description": "Carbon12 plug-in di predizione.",
     "author": {
       "name": "Carbon12",
-      "url": "https://github.com/carbondodici/"
+      "url": "https://github.com/CarbonDodici/"
     },
     "keywords": ["carbondodici", "carbon12", "app", "lienear-regression", "support-vector-machine", "RL", "SVM"],
     "logos": {
@@ -15,7 +15,10 @@
       "large": "img/logo.svg"
     },
     "links": [
-      {"name": "GitHub", "url": "https://github.com/carbondodici/Predire_in_Grafana"}
+      {
+        "name": "GitHub",
+        "url": "https://github.com/carbondodici/Predire_in_Grafana"
+      }
     ],
     "version": "0.0.1",
     "updated": "2020-02-19"

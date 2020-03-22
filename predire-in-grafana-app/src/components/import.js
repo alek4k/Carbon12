@@ -142,30 +142,14 @@ export class importCtrl{
     // prelevo i parametri disponibili
     let params = influx.getParams().results[0].series;
     params.forEach((p) => {
-        // itero sui parametri della sorgente i
-        for (let j = 0; j < p.values.length; ++j) {
-          this.availableParams.push({
-            "name": p.name,
-            "params": p.values[j][0]
-          });
-        }
+      // itero sui parametri della sorgente i
+      for (let j = 0; j < p.values.length; ++j) {
+        this.availableParams.push({
+          "name": p.name,
+          "params": p.values[j][0]
+        });
+      }
     });
-
-    /*
-    influx.getParams()
-      .then(result => {
-        // itero sulle sorgenti disponibili
-        for (let i = 0; result.results[0].series[i].name; ++i){
-          // itero sui parametri della sorgente i
-          for (let j = 0; j < result.results[0].series[i].values.length; ++j){
-            this.availableParams.push({
-              "name": result.results[0].series[i].name,
-              "params": result.results[0].series[i].values[j][0]
-            });
-          }
-        }
-    });
-    */
   }
 
   // imposto sorgete selezionata dall'utente
@@ -198,6 +182,7 @@ export class importCtrl{
       });
   }
 
+  // imposto la visualizzazione selezionata dall'utente
   setView(){
     if(this.view == 'Grafico'){
       defaultDashboard.rows[0].height = "350px";

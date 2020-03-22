@@ -14,13 +14,11 @@ module.exports = {
                 "pattern": " * File name: [a-z | A-Z]"
             }, {
                 "pattern": " * Date: \\d{4}-\\d{2}-\\d{2}$"
-            }, " *",
-            {
+            }, " *", {
                 "pattern": " * @file [a-z | A-Z]"
             }, {
                 "pattern": " * @author [a-z | A-Z]"
-            },
-            {
+            }, {
                 "pattern": " * @version [a-z | A-Z | 0-9]"
             }, " *", {
                 "pattern": " * Changelog: [a-z | A-Z]"

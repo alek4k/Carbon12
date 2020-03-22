@@ -114,15 +114,15 @@ module.exports = class Server {
                     // controllare che le data entry coincidano con quelle nel csv
                     const dataSourceJson = managePredittore.getDataEntry();
                     const dataSourceCsv = csvReader.getDataSource();
-                    if (dataSourceJson.length === dataSourceCsv.length
-                        && dataSourceJson.every((value, index) => value === dataSourceCsv[index])) {
+                    if (dataSourceJson.length !== dataSourceCsv.length
+                        || dataSourceJson.every((value, index) => value !== dataSourceCsv[index])) {
                         console.log('Error: wrong data entry');
                         error = 'Le data entry non coincidono con quelle del file di addestramento';
                         res.writeHead(301, { Location: '/' });
                         return res.end();
                     }
                     // controllare che il modello coincida con quello scelto
-                    if (model === managePredittore.getModel()) {
+                    if (model !== managePredittore.getModel()) {
                         console.log('Error: wrong model');
                         error = 'Il modello non coincide con quello selezionato';
                         res.writeHead(301, { Location: '/' });

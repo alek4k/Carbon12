@@ -72,7 +72,8 @@ module.exports = class Server {
             if (nomePredittore.substr(-5) !== '.json') {
                 nomePredittore += '.json';
             }
-            console.log('nome' + nomePredittore);
+            console.log('nome: ' + nomePredittore);
+
             // dir temporanea dove è salvato il file csv addestramento
             const pathTrainFile = files.trainFile.path;
             // dir temporanea dove è salvato il file json config
@@ -88,6 +89,12 @@ module.exports = class Server {
                 return res.end();
             }
 
+            // dati addestramento
+            const data = csvReader.autoGetData();
+            const labels = csvReader.autoGetLabel();
+            const sourceNumberRL = csvReader.countSource() + 2;
+            // elenco sorgenti
+            sources = csvReader.getDataSource().toString();
 
             /* @todo
             * aggiungere la lettura dei parametri del predittore caricato per verificare la validità
@@ -96,10 +103,17 @@ module.exports = class Server {
             */
             if (configPresence) {
                 const managePredittore = new RPredittore(pathConfigFile);
-                const title = managePredittore.getTitle();
-                // aggiungere controllo titolo, versione, data entry
-                const config = managePredittore.getConfiguration();
-                // config va passata alla creazione della SVM
+                if (managePredittore.validity()) {
+                    const title = managePredittore.getTitle();
+                    // aggiungere controllo titolo, versione, data entry
+                    const config = managePredittore.getConfiguration();
+                    // config va passata alla creazione della SVM
+                } else {
+                    console.log('Error: json non vaido');
+                    error = 'Struttura json non valida';
+                    res.writeHead(301, { Location: '/' });
+                    return res.end();
+                }
             }
 
             /* @todo
@@ -112,13 +126,6 @@ module.exports = class Server {
                 // chiamata function addestramento RL
                 console.log('regression');
             }
-
-            // dati addestramento
-            const data = csvReader.autoGetData();
-            const labels = csvReader.autoGetLabel();
-            const sourceNumberRL = csvReader.countSource() + 2;
-            // elenco sorgenti
-            sources = csvReader.getDataSource().toString();
 
             const strPredittore = '';
             console.log('addestramento terminato');
@@ -155,6 +162,7 @@ module.exports = class Server {
 
         this.router.get('/', (request, response) => {
             response.render('addestramento', { error });
+            error = '';
         });
 
         this.router.post('/fileupload', this.uploadForm);

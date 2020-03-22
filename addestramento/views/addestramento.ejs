@@ -15,11 +15,11 @@
 <form action="fileupload" method="post" enctype="multipart/form-data">
     <fieldset>
         <% if (error != '') { %>
-            <p class='error'>Struttura file csv non valida: la prima colonna deve avere etichetta <b>Time</b>, 
+            <p class='error'>Struttura file csv non valida: la prima colonna deve avere etichetta <b>Time</b>,
                 l'ultima etichetta <b>Labels</b></p>
         <%}%>
         <label for="trainFile">Seleziona il file coi dati di addestramento (formato CSV):</label>
-        <input type="file"  id="trainFile" value="upload file" accept=".csv" name="trainFile" required>   
+        <input type="file"  id="trainFile" value="upload file" accept=".csv" name="trainFile" required>
         <label for="configFile">Seleziona il file con la configurazione del modello (formato JSON):</label>
         <input type="file" id="configFile" value="upload file" accept=".json" name="configFile">
         <label for="modelType">Seleziona il modello da addestrare:</label>
@@ -29,8 +29,8 @@
         </select>
         <label for="note">Inserisci delle note per il predittore</label>
         <textarea id="note" rows="4" cols="50" placeholder="le tue note..." name="note"></textarea>
-        <label for="nameFile">Inserisci il nome del file Predittore</label>
-        <input type="text" id="nameFile" name="nomeFile" placeholder="predittore">
+        <label for="nomeFile">Inserisci il nome del file Predittore</label>
+        <input type="text" id="nomeFile" name="nomeFile" placeholder="predittore">
         <input type="submit" id="submit" value="AVVIO ADDESTRAMENTO">
     </fieldset>
 </form>

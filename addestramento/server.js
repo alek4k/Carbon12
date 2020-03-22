@@ -69,7 +69,9 @@ module.exports = class Server {
             if (nomePredittore === '') {
                 nomePredittore = 'predittore';
             }
-            nomePredittore += '.json';
+            if (nomePredittore.substr(-5) !== '.json') {
+                nomePredittore += '.json';
+            }
             console.log('nome' + nomePredittore);
             // dir temporanea dove è salvato il file csv addestramento
             const pathTrainFile = files.trainFile.path;
@@ -110,7 +112,7 @@ module.exports = class Server {
                 // chiamata function addestramento RL
                 console.log('regression');
             }
-            
+
             // dati addestramento
             const data = csvReader.autoGetData();
             const labels = csvReader.autoGetLabel();

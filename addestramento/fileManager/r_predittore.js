@@ -55,11 +55,10 @@ class RPredittore {
     }
 
     /**
+     * Controlla che il JSON inserito abbia la struttura desiderata
      * @return {boolean} verifica validità predittore in ingresso
-     * struttura e proprietà
      */
     validity() {
-        // controllo che il JSON inserito abbia la struttura desiderata
         return arrayOfKeys.every(
             (key) => Object.prototype.hasOwnProperty.call(this.jsonContent, key),
         ) && this.jsonContent.header.title === property;
@@ -152,7 +151,7 @@ class RPredittore {
      */
     getConfiguration() {
         if (this.jsonContent.configuration) {
-            return JSON.stringify(this.jsonContent.configuration);
+            return this.jsonContent.configuration;
         }
         return '';
     }

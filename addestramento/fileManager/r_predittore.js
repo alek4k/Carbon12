@@ -47,7 +47,7 @@ class RPredittore {
     validity() {
         return arrayOfKeys.every(
             (key) => Object.prototype.hasOwnProperty.call(this.jsonContent, key),
-        ) && this.jsonContent.header.title === property;
+        ) && this.getTitle() === property;
     }
 
     /**

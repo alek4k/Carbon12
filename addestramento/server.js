@@ -95,7 +95,7 @@ module.exports = class Server {
             const sourceNumberRL = csvReader.countSource() + 2;
             // elenco sorgenti
             sources = csvReader.getDataSource().toString();
-            
+
             if (configPresence) {
                 const managePredittore = new RPredittore(pathConfigFile);
                 if (managePredittore.validity()) {

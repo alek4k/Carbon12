@@ -1,21 +1,20 @@
 /**
  * File name: r_redittore.js
- * Date: 2020-03-19
+ * Date: 2020-03-23
  *
  * @file classe per la lettura e scrittura del JSON con il predittore
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
- * Changelog: modifiche effettuate
+ * Changelog: modificato costruttore
  */
 
-const fs = require('fs');
 // const {string} property stringa per verifica validità predittore
 const property = 'Carbon12 Predire in Grafana';
 const arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', 'configuration'];
 
 /**
- * @param {string} path percorso dove viene salvato il file
+ * @param {string} contenuto in formato json
  *
  * uso:
  * import class require(classPath)
@@ -26,17 +25,9 @@ const arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', '
  * var campo = manage_predittore.getCampo();
  */
 class RPredittore {
-    constructor(path) {
-        this.path = path;
+    constructor(data) {
         this.sources = [];
-        this.contents = null;
-        if (path != null) this.contents = fs.readFileSync(this.path);
-        this.jsonContent = null;
-        if (this.contents != null) {
-            this.jsonContent = JSON.parse(this.contents);
-        } else {
-            this.jsonContent = {};
-        }
+        this.jsonContent = data !== null ? data : {};
     }
 
     /**
@@ -47,14 +38,6 @@ class RPredittore {
      */
     checkVersion(pluginV, trainV) {
         return this.getPluginVersion() >= pluginV && this.getTrainVersion() >= trainV;
-    }
-
-    /**
-     * Carica direttamente il contenuto del file JSON
-     * @param data contenuto in formato JSON
-     */
-    loadJSON(data) {
-        this.jsonContent = data;
     }
 
     /**

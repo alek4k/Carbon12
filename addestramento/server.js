@@ -18,8 +18,8 @@ const nconf = require('nconf');
 const RPredittore = require('./fileManager/r_predittore');
 const WPredittore = require('./fileManager/w_predittore');
 const CSVr = require('./fileManager/csv_reader.js');
-const SVM = require('./models/svm/svm');
-const RL = require('./models/rl/regression');
+// const SVM = require('./models/svm/svm');
+// const RL = require('./models/rl/regression');
 
 let model;
 let sources;
@@ -97,7 +97,9 @@ module.exports = class Server {
             sources = csvReader.getDataSource().toString();
 
             if (configPresence) {
-                const managePredittore = new RPredittore(pathConfigFile);
+                const managePredittore = new RPredittore(JSON.parse(
+                    fs.readFileSync(pathConfigFile).toString(),
+                ));
                 if (managePredittore.validity()) {
                     const config = managePredittore.getConfiguration();
                     // config va passata alla creazione della SVM

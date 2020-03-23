@@ -14,13 +14,13 @@ const property = 'Carbon12 Predire in Grafana';
 const arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', 'configuration'];
 
 /**
- * @param {string} contenuto in formato json
+ * @param {Object} contenuto in formato json
  *
  * uso:
  * import class require(classPath)
  * const rwpredittore = require('./r_w_predittore');
  * istanziazione
- * var manage_predittore = new rwpredittore(pathPredittore);
+ * var manage_predittore = new rwpredittore(data);
  * getter
  * var campo = manage_predittore.getCampo();
  */

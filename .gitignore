@@ -3,6 +3,6 @@
 /addestramento/.idea/
 /predire-in-grafana-app/.idea/
 /predire-in-grafana-app/.idea/
-/predire-in-grafana-app/package-lock.json/
-/predire-in-grafana-app/yarn.lock/
 /predire-in-grafana-app/dist/
+/predire-in-grafana-app/package-lock.json
+/predire-in-grafana-app/yarn.lock

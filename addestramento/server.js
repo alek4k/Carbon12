@@ -95,12 +95,7 @@ module.exports = class Server {
             const sourceNumberRL = csvReader.countSource() + 2;
             // elenco sorgenti
             sources = csvReader.getDataSource().toString();
-
-            /* @todo
-            * aggiungere la lettura dei parametri del predittore caricato per verificare la validità
-            * controllare che le data entry coincidano con quelle nel csv e
-            * controllare che il modello coincida con quello scelto
-            */
+            
             if (configPresence) {
                 const managePredittore = new RPredittore(pathConfigFile);
                 if (managePredittore.validity()) {
@@ -111,6 +106,13 @@ module.exports = class Server {
                         FILE_VERSION = managePredittore.getFileVersion() + 1;
                     }
 
+                    // controllo versioni
+                    if (managePredittore.checkVersion(
+                        nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'),
+                    ) === false) {
+                        console.log('Error: wrong versions');
+                        error = 'Versione file di addestramento non compatibile';
+                    }
                     // controllare che le data entry coincidano con quelle nel csv
                     const dataSourceJson = managePredittore.getDataEntry();
                     const dataSourceCsv = csvReader.getDataSource();

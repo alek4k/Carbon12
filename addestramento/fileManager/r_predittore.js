@@ -39,11 +39,14 @@ class RPredittore {
         }
     }
 
-    /* @todo
-     * gestione versione plugin, train, file
+    /**
+     * Controllo versione plugin, train
+     * @param pluginV versione plugin
+     * @param trainV versione addestramento
+     * @return {boolean}
      */
-    checkVersion() {
-
+    checkVersion(pluginV, trainV) {
+        return this.getPluginVersion() >= pluginV && this.getTrainVersion() >= trainV;
     }
 
     /**

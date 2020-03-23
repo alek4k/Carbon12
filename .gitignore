@@ -2,5 +2,7 @@
 /.idea/
 /addestramento/.idea/
 /predire-in-grafana-app/.idea/
-/predire-in-grafana-app/node_modules/
+/predire-in-grafana-app/.idea/
+/predire-in-grafana-app/package-lock.json/
+/predire-in-grafana-app/yarn.lock/
 /predire-in-grafana-app/dist/

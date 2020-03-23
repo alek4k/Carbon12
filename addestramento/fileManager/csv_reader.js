@@ -1,12 +1,12 @@
 /**
  * File name: csv_reader.js
- * Date: 2020-03-21
+ * Date: 2020-03-23
  *
  * @file classe per la lettura del file CSV
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
- * Changelog: aggiunta funzione checkStructure
+ * Changelog: eliminata lettura tempo
  */
 
 const fs = require('fs');
@@ -82,14 +82,13 @@ module.exports = class csvReader {
 
     /**
      * @returns {Array} Ritorna una matrice contenente i dati.
-     * Usa la formattazione Series-Dati-Labels, ed in più scarta la colonna vuota che inserisce grafana.
      * Converte i numeri in float, i null in 0 e le date in secondi.
      */
     autoGetData() {
         // seleziona tutte le colonne, eccetto quella delle data entry(Series), delle Labels e quella vuota che mette grafana
         const dataColumns = [];
         this.columns.forEach((element) => {
-            if (!(element === 'Labels')) {
+            if ((!(element === 'Labels')) && (!(element === 'Time'))) {
                 dataColumns.push(element);
             }
         });
@@ -97,8 +96,6 @@ module.exports = class csvReader {
 
         // converte i valori ottenuti nel giusto formato
         for (let i = 0; i < res.length; i++) {
-            // converte le date(dando per scontato che siano nella prima colonna dati) in secondi
-            res[i][0] = Date.parse(res[i][0]);
             // converte i valori in float
             for (let j = 1; j < res[i].length; j++) {
                 if (res[i][j] === 'null') {

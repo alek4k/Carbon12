@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir);
@@ -16,6 +15,7 @@ module.exports = {
   entry: {
     './module': './module.js',
     'components/config': './components/config.js',
+    'components/config': './components/import.js',
   },
   output: {
     filename: "[name].js",

@@ -9,8 +9,8 @@
  * Changelog: modifiche effettuate
  */
 
-import { PredireInGrafanaAppConfigCtrl } from './components/config';
-import { importCtrl } from './components/import';
+import PredireInGrafanaAppConfigCtrl from './components/config';
+import importCtrl from './components/import';
 
 export {
     PredireInGrafanaAppConfigCtrl as ConfigCtrl,

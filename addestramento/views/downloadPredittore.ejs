@@ -5,6 +5,7 @@
     <meta author="Carbon12">
     <title>Pagina di addestramento</title>
     <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 </head>
 <body>
 <img src="/images/C.png" alt=""/>
@@ -15,6 +16,8 @@
     <ul><strong>Parametri di allenamento:</strong>
         <li>Modello utilizzato: <%= model %></li>
         <li>Sorgenti analizzate: <%= sources %></li>
+        <li>Data: <%= data[1][0] %></li>
+        <li>Data: <%= data[1][1] %></li>
     </ul>
     <form action="downloadFile" method="post" id="formDownload">
         <fieldset>
@@ -23,5 +26,49 @@
     </form>
 </div>
 <button type="button" onclick="window.location.href='/'" id="home">Torna all'homepage</button>
+<div id="mychart">
+  <canvas id="chart" width="50px" height="50px"></canvas>
+  <script>
+    const ctx = document.getElementById('chart').getContext('2d');
+    const scatterChart = new Chart(ctx, {
+      type: 'scatter',
+      data: {
+          datasets: [{
+              label: 'Scatter Dataset',
+              data:  [
+                <% for (var i =0; i <60;  i++ ) { %>
+                  {
+                  x: <%= data[i][0] %>,
+                  y: <%= data[i][1] %>
+                  },
+                <% } %>
+                ],
+              pointBackgroundColor: 'rgba(223, 43, 43, 1)',
+              backgroundColor: 'rgba(223, 43, 43, 1)',
+              borderColor:  'rgba(223, 43, 43, 1)',
+              pointBorderColor: 'rgba(223, 43, 43, 1)'
+          }]
+      },
+      options: {
+        scales: {
+            yAxes: [{
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'CPU'
+              }
+            }],
+            xAxes: [{
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'RAM'
+              }
+            }]
+      }
+    }
+  });
+  </script>
+</div>
 </body>
 </html>

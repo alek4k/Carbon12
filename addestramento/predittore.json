@@ -9,16 +9,7 @@
         "source1": "B"
     },
     "model": "SVM",
-    "file_version": "0",
-    "configuration": {
-        "N": 60,
-        "D": 3,
-        "b": -19514617969508350,
-        "kernelType": "linear",
-        "w": [
-            -6154.42578125,
-            594.9842554042318,
-            469.1310179197698
-        ]
-    }
+    "file_version": 0,
+    "notes": "wewewew",
+    "configuration": ""
 }

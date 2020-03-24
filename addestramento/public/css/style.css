@@ -1,3 +1,7 @@
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 h1, h2, h3 {
   font-weight: bold;
 }
@@ -95,4 +99,13 @@ img {
 
 ul {
   font-size: 1.1em;
+}
+
+#nameFile {
+  font-size: 1em;
+}
+
+.error {
+  color: rgba(255, 0, 0, 0.774);
+  padding: 0%;
 }

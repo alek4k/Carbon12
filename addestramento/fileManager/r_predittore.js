@@ -1,58 +1,53 @@
 /**
- * File name: r_w_predittore.js
- * Date: 2020-03-18
+ * File name: r_redittore.js
+ * Date: 2020-03-23
  *
  * @file classe per la lettura e scrittura del JSON con il predittore
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
- * Changelog: modifiche effettuate
+ * Changelog: modificato costruttore
  */
 
-const fs = require('fs');
 // const {string} property stringa per verifica validità predittore
 const property = 'Carbon12 Predire in Grafana';
 const arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', 'configuration'];
 
 /**
- * @param {string} path percorso dove viene salvato il file
+ * @param {Object} contenuto in formato json
  *
  * uso:
  * import class require(classPath)
  * const rwpredittore = require('./r_w_predittore');
  * istanziazione
- * var manage_predittore = new rwpredittore(pathPredittore);
+ * var manage_predittore = new rwpredittore(data);
  * getter
  * var campo = manage_predittore.getCampo();
  */
-class RWPredittore {
-    constructor(path) {
-        this.path = path;
+class RPredittore {
+    constructor(data) {
         this.sources = [];
-        this.contents = null;
-        if (path != null) this.contents = fs.readFileSync(this.path);
-        this.jsonContent = null;
-        if (this.contents != null) {
-            this.jsonContent = JSON.parse(this.contents);
-        } else {
-            this.jsonContent = {};
-        }
+        this.jsonContent = data !== null ? data : {};
     }
 
-    /* @todo
-     * gestione versione plugin, train, file
+    /**
+     * Controllo versione plugin, train
+     * @param pluginV versione plugin
+     * @param trainV versione addestramento
+     * @return {boolean}
      */
+    checkVersion(pluginV, trainV) {
+        return this.getPluginVersion() >= pluginV && this.getTrainVersion() >= trainV;
+    }
 
     /**
-     * @return {bool} verifica validità predittore in ingresso
-     * struttura e proprietà
+     * Controlla che il JSON inserito abbia la struttura desiderata
+     * @return {boolean} verifica validità predittore in ingresso
      */
     validity() {
-        // controllo che il JSON inserito abbia la struttura desiderata
-        if ((arrayOfKeys.every((key) => json.hasOwnProperty(key))) && (this.jsonContent.header.title === property)) {
-            return true;
-        }
-        return false;
+        return arrayOfKeys.every(
+            (key) => Object.prototype.hasOwnProperty.call(this.jsonContent, key),
+        ) && this.getTitle() === property;
     }
 
     /**
@@ -63,20 +58,6 @@ class RWPredittore {
             return this.jsonContent.header.title;
         }
         return '';
-    }
-
-    /**
-     * Impostazione header predittore
-     * @param pluginVersion
-     * @param trainVersion
-     * @param title Titolo da inserire nell'header [opzionale]
-     */
-    setHeader(pluginVersion, trainVersion, title) {
-        const jsonTitle = title == null ? property : title;
-        this.jsonContent.header = {};
-        this.jsonContent.header.title = jsonTitle;
-        this.jsonContent.header.plugin_version = pluginVersion;
-        this.jsonContent.header.train_version = trainVersion;
     }
 
     /**
@@ -120,19 +101,6 @@ class RWPredittore {
     }
 
     /**
-     * @param {array} sources array con l'elenco delle sorgenti
-     * @param {int} n numero sorgenti
-     */
-    setDataEntry(array, n) {
-        this.jsonContent.data_entry = {};
-        let index = 0;
-        for (index = 0; index < n; index++) {
-            const source = 'source' + index;
-            this.jsonContent.data_entry[source] = array[index];
-        }
-    }
-
-    /**
      * @return {string} modello utilizzato per l'allenamento
      */
     getModel() {
@@ -143,14 +111,6 @@ class RWPredittore {
     }
 
     /**
-     *
-     * @param model Modello utilizzato per l'addestramento
-     */
-    setModel(model) {
-        this.jsonContent.model = model;
-    }
-
-    /**
      * @return {string} versione file allenamento
      */
     getFileVersion() {
@@ -158,14 +118,6 @@ class RWPredittore {
             return this.jsonContent.file_version;
         }
         return '';
-    }
-
-    /**
-     *
-     * @param version
-     */
-    setFileVersion(version) {
-        this.jsonContent.file_version = version;
     }
 
     /**
@@ -180,39 +132,15 @@ class RWPredittore {
     }
 
     /**
-     *
-     * @param notes
-     */
-    setNotes(notes) {
-        this.jsonContent.notes = notes;
-    }
-
-    /**
      * @return {string} configuration
      * stringa JSON con la configurazione salvata per la creazione del modello
      */
     getConfiguration() {
         if (this.jsonContent.configuration) {
-            return JSON.stringify(this.jsonContent.configuration);
+            return this.jsonContent.configuration;
         }
         return '';
     }
-
-    /**
-     *
-     * @param config
-     */
-    setConfiguration(config) {
-        this.jsonContent.configuration = config;
-    }
-
-    /**
-     *
-     * @returns {string} JSON da inserire nel file del predittore
-     */
-    save() {
-        return JSON.stringify(this.jsonContent, null, 4);
-    }
 }
 
-module.exports = RWPredittore;
+module.exports = RPredittore;

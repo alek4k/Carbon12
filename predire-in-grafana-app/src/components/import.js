@@ -58,9 +58,10 @@ export default class importCtrl {
     onUpload(json) {
         // controllo che il JSON inserito abbia la struttura desiderata
         /* eslint-disable no-prototype-builtins */
-        this.jsonx=json;
+        
         let fPredictor = new FilePredictor(json);
         if (fPredictor.validity()) {
+            this.jsonx=fPredictor.getConfiguration();
             this.error = '';
             this.model = fPredictor.getModel();
             this.view = (this.model === 'SVM') ? 'Indicatore' : 'Grafico';
@@ -191,7 +192,7 @@ export default class importCtrl {
         }
 
     }
-
+    
     // imposto la visualizzazione selezionata dall'utente
     setView() {
         if (this.view === 'Grafico') {
@@ -241,7 +242,7 @@ export default class importCtrl {
         if (!this.error) {
             this.setDashboard();
             this.setView();
-            //this.setValues();
+            this.setValues();
             this.grafana
                 .postDashboard(defaultDashboard)
                 .then((db) => {

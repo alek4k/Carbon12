@@ -112,13 +112,13 @@ class RPredittore {
     }
 
     /**
-     * @return {string} versione file allenamento
+     * @return {int} versione file allenamento
      */
     getFileVersion() {
         if (this.jsonContent.file_version) {
-            return this.jsonContent.file_version;
+            return parseInt(this.jsonContent.file_version);
         }
-        return '';
+        return 0;
     }
 
     /**

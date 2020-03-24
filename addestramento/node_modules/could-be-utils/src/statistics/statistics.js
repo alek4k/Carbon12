@@ -1,5 +1,12 @@
 const zeros = require("../array/array").zeros;
-
+/**
+ * @name variance
+ * @description
+ * Calculate the variance between the points inside `data`
+ * - returns just the variance value if `data` is an array of values
+ * - returns an array of variances if `data` is an array of arrays
+ * @param {Array} data input for the variance
+ */
 function variance(data) {
   let avg = average(data);
   let variance;
@@ -23,6 +30,14 @@ function variance(data) {
   return variance;
 }
 
+/**
+ * @name average
+ * @description
+ * Calculate the average between the points inside `data`
+ * - returns just the average value if `data` is an array of values
+ * - returns an array of averages if `data` is an array of arrays
+ * @param {Array} data input for the average
+ */
 function average(data) {
   let avg;
   let N = data.length;

@@ -24,7 +24,7 @@ test("function arrayWith should return an array with N values all equals", () =>
 
 test("function objectToArray should return an array of arrays", () => {
   let objectArray = [
-    { x: 1, y: 2 },
+    { x: 1, y: 2, z: 1 },
     { x: 2, y: 3 },
     { x: -3, y: 0 },
     { x: 5, y: -2 },
@@ -32,14 +32,14 @@ test("function objectToArray should return an array of arrays", () => {
   ];
   let v = array.objectToArray(objectArray);
   for (let i = 0; i < v.length; i++) {
-    expect(v[i].length).toEqual(2);
+    expect(v[i].length).toEqual(array.extractKeys(objectArray[i]).length);
   }
 });
 
 test("function objectToArray should return an array of objects", () => {
   let v = [[1, 2], [2, 3], [-3, 0], [5, -2], [4, -1]];
-  let objectArray = array.arrayToObject(v);
+  let objectArray = array.arrayToObject(v, ["x", "y"]);
   for (let i = 0; i < objectArray.length; i++) {
-    expect(objectArray[i].length).toEqual(undefined);
+    expect(array.extractKeys(objectArray[i])).toEqual(["x", "y"]);
   }
 });

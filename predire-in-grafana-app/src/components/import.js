@@ -14,6 +14,7 @@ import defaultDashboard from '../dashboards/default.json';
 
 const GrafanaApiQuery = require('../utils/grafana_query.js');
 const Influx = require('../utils/influx.js');
+const FilePredictor = require('../utils/r_predittore.js');
 
 // chiavi della struttura base del predittore
 const arrayOfKeys = ['header', 'data_entry', 'model', 'file_version', 'configuration'];
@@ -57,12 +58,13 @@ export default class importCtrl {
     onUpload(json) {
         // controllo che il JSON inserito abbia la struttura desiderata
         /* eslint-disable no-prototype-builtins */
-        if (arrayOfKeys.every((key) => json.hasOwnProperty(key))) {
+        let fPredictor = new FilePredictor(json);
+        if (fPredictor.validity()) {
             this.error = '';
-            this.model = json.model;
-            this.view = (json.model === 'SVM') ? 'Indicatore' : 'Grafico';
-            // creo l'array con i predittori
-            this.availablePredictors = Object.values(json.data_entry);
+            this.model = fPredictor.getModel();
+            this.view = (this.model === 'SVM') ? 'Indicatore' : 'Grafico';
+            //creo l'array con le sorgenti di addestramento
+            this.availablePredictors = fPredictor.getDataEntry();
             this.step = 2;
         } else {
             this.error = 'Il JSON inserito non è un predittore';

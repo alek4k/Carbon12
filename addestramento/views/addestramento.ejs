@@ -5,9 +5,8 @@
     <meta author="Carbon12">
     <title>Pagina di addestramento</title>
     <link href="/css/style.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="/script/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
 <img src="/images/C.png" alt=""/>
@@ -42,5 +41,71 @@
 <div id="mychart">
     <canvas id="chart" width="50px" height="50px"></canvas>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $(document).on('change', '#trainFile', function(){
+            var name = document.getElementById("trainFile").files[0].name;
+            var form_data = new FormData();
+            var ext = name.split('.').pop().toLowerCase();
+            if(jQuery.inArray(ext, ['csv']) !== -1)
+            {
+                form_data.append('trainFile', document.getElementById('trainFile').files[0]);
+                $.ajax({
+                    url:"/loadCsv",
+                    method:"POST",
+                    data: form_data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success:function(response)
+                    {
+                        const result = JSON.parse(response);
+                        let buildData = [];
+                        for (var i = 0; i < result.length; i++) {
+                            buildData.push({x: result[i][0], y: result[i][1]});
+                        }
+
+                        const ctx = document.getElementById('chart').getContext('2d');
+                        const scatterChart = new Chart(ctx, {
+                            type: 'scatter',
+                            data: {
+                                datasets: [{
+                                    label: 'Scatter Dataset',
+                                    data: buildData,
+                                    pointBackgroundColor: 'rgba(223, 43, 43, 1)',
+                                    backgroundColor: 'rgba(223, 43, 43, 1)',
+                                    borderColor:  'rgba(223, 43, 43, 1)',
+                                    pointBorderColor: 'rgba(223, 43, 43, 1)'
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'CPU'
+                                        }
+                                    }],
+                                    xAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'RAM'
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+
+
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

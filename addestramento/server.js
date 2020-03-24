@@ -198,6 +198,26 @@ module.exports = class Server {
         });
 
         this.router.post('/downloadFile', this.downloadPredittore);
+
+        this.router.post('/loadCsv', (request, response) => {
+            const form = new formidable.IncomingForm();
+            form.multiples = false;
+            let result = null;
+            form.on('file', (fields, file) => {
+                const pathTrainFile = file.path;
+                const csvReader = new CSVr(pathTrainFile, null);
+                if (csvReader.checkStructure()) {
+                    result = csvReader.autoGetData();
+                }
+                return null;
+            });
+
+            form.on('end', () => {
+                response.end(JSON.stringify(result));
+            });
+
+            form.parse(request);
+        });
     }
 
     startServer() {

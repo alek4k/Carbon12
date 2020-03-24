@@ -17,6 +17,27 @@ class GrafanaApiQuery {
     getDataSources() {
         return this.backendSrv.get('/api/datasources');
     }
+
+    postDataSource(name, database, host, port) {
+        return this.backendSrv.post('api/datasources', {
+            name: name,
+            type: 'influxdb',
+            access: 'proxy',
+            database: database,
+            url: host + ':' + port,
+            readOnly: false,
+            editable: true,
+        });
+    }
+
+    postDashboard(defaultDashboard) {
+        return this.backendSrv.post('api/dashboards/import', {
+            // creo e salvo la dashboard
+            dashboard: defaultDashboard,
+            folderId: 0,
+            overwrite: true,
+        });
+    }
 }
 
 module.exports = GrafanaApiQuery;

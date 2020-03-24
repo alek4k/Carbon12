@@ -1,5 +1,5 @@
 /**
- * File name: import.js
+ * File name: config.js
  * Date: 2020-03-18
  *
  * @file Script principale del programma di addestramento

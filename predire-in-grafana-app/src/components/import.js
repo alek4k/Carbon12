@@ -14,6 +14,7 @@ import defaultDashboard from '../dashboards/default.json';
 
 const GrafanaApiQuery = require('../utils/grafana_query.js');
 const Influx = require('../utils/influx.js');
+const SVM = require("../utils/models/svm/svm.js");
 const FilePredictor = require('../utils/r_predittore.js');
 
 // chiavi della struttura base del predittore
@@ -33,16 +34,15 @@ export default class importCtrl {
         this.host = 'http://localhost';
         this.port = '8086';
         this.model = '';
-        this.availableMeasurement = [];
         this.availableParams = [];
-        this.param = '';
+        this.params = [];
         this.selectedSourceParams = [];
-        this.availablePredictors = [];
-        this.predictor = '';
+        this.availableDataEntry = [];
         this.availableSources = [];
-        this.source = '';
+        this.sources = [];
         this.view = '';
         this.grafana = new GrafanaApiQuery(this.backendSrv);
+        this.jsonx;
 
         // prelevo le data sources disponibili
         this.grafana.getDataSources()
@@ -58,13 +58,14 @@ export default class importCtrl {
     onUpload(json) {
         // controllo che il JSON inserito abbia la struttura desiderata
         /* eslint-disable no-prototype-builtins */
+        this.jsonx=json;
         let fPredictor = new FilePredictor(json);
         if (fPredictor.validity()) {
             this.error = '';
             this.model = fPredictor.getModel();
             this.view = (this.model === 'SVM') ? 'Indicatore' : 'Grafico';
             //creo l'array con le sorgenti di addestramento
-            this.availablePredictors = fPredictor.getDataEntry();
+            this.availableDataEntry = fPredictor.getDataEntry();
             this.step = 2;
         } else {
             this.error = 'Il JSON inserito non è un predittore';
@@ -117,17 +118,11 @@ export default class importCtrl {
     addDataSource() {
         const configComplete = this.name && this.database && this.host && this.port;
         if (configComplete) {
-            this.backendSrv.post('api/datasources', {
-                name: this.name,
-                type: 'influxdb',
-                access: 'proxy',
-                database: this.database,
-                url: this.host + ':' + this.port,
-                readOnly: false,
-                editable: true,
-            }).then(() => {
-                this.setDataSource(this.name);
-            });
+            this.grafana
+                .postDataSource(this.name, this.database, this.host, this.port)
+                .then(() => {
+                    this.setDataSource(this.name);
+                });
         } else {
             this.error = 'La configurazione non è completa';
         }
@@ -141,10 +136,6 @@ export default class importCtrl {
         const sources = influx.getSources().results[0].series;
         sources.forEach((source) => {
             for (let j = 0; j < source.values.length; ++j) {
-                this.availableMeasurement.push({
-                    name: source.name,
-                    instance: source.values[j][1],
-                });
                 this.availableSources.push(source.name + '\n' + source.values[j][1]);
             }
         });
@@ -162,38 +153,43 @@ export default class importCtrl {
         });
     }
 
-    // imposto sorgete selezionata dall'utente
-    setMeasurement(index) {
-        defaultDashboard.rows[0].panels[0].targets[0].measurement = this.availableMeasurement[index].name;
-    }
+    setDashboard(){
+        for (let i = 0; i < this.availableDataEntry.length; ++i) {
+            defaultDashboard.rows[0].panels[0].targets.push({
+                refId: this.availableDataEntry[i],
+                measurement: this.sources[i].substring(0, this.sources[i].indexOf('\n')),
+                policy: "default",
+                resultFormat: "time_series",
+                orderByTime: "ASC",
+                tags: [{
+                  key: "instance",
+                  operator: "=",
+                  value: this.sources[i].substring(this.sources[i].indexOf('\n') + 1)
+                }],
+                select: [[{
+                    type: 'field',
+                    params: [
+                        this.params[i]
+                    ],
+                }, {
+                    type: 'mean',
+                    params: [],
+                }]],
+            });
+            defaultDashboard.rows[0].panels[0].groupBy.push({
+                type: "time",
+                params: [
+                  "$__interval"
+                ]
+              },
+              {
+                type: "fill",
+                params: [
+                  "null"
+                ]
+              });
+        }
 
-    // imposto istanza selezionata dall'utente
-    setInstance(index) {
-        defaultDashboard.rows[0].panels[0].targets[0].tags[0].value = this.availableMeasurement[index].instance;
-    }
-
-    // imposto il predittore selezionato dall'utente
-    setPredictor(index) {
-        // console.log da togliere quando si utilizzera l'index
-        console.log(index);
-        defaultDashboard.rows[0].panels[0].targets[0].refId = this.predictor;
-    }
-
-    // imposto il parametro selezionato dall'utente
-    setParams(index) {
-        // console.log da togliere quando si utilizzera index
-        console.log(index);
-        defaultDashboard.rows[0].panels[0].targets[0].select[0].pop();
-        defaultDashboard.rows[0].panels[0].targets[0].select[0].pop();
-        defaultDashboard.rows[0].panels[0].targets[0].select[0].push({
-            type: 'field',
-            params: [
-                this.param,
-            ],
-        }, {
-            type: 'mean',
-            params: [],
-        });
     }
 
     // imposto la visualizzazione selezionata dall'utente
@@ -213,45 +209,41 @@ export default class importCtrl {
     }
 
     // costruisco l'array dei parametri relativo alla sorgente selezionta
-    buildParams() {
-        this.selectedSourceParams = [];
-        const sourceName = this.source.substring(0, this.source.indexOf('\n'));
+    buildParams(index) {
+        this.selectedSourceParams[index] = [];
+        const sourceName = this.sources[index].substring(0, this.sources[index].indexOf('\n'));
         let i = 0;
-
         // trovo l'indice del prima sorgente accettabile
         for (; this.availableParams[i].name !== sourceName; ++i);
         // seleziono i parametri relativi alla sorgente
         for (; this.availableParams[i].name === sourceName; ++i) {
-            this.selectedSourceParams.push(this.availableParams[i].params);
+            this.selectedSourceParams[index].push(this.availableParams[i].params);
         }
+        this.params[index] = this.selectedSourceParams[index][0];
+    }
 
-        this.param = this.selectedSourceParams[0];
+    setValues(){
+        let svm = new SVM();
+        svm.fromJSON(this.jsonx);
+        let x = new Influx(this.host, parseInt(this.port, 10), this.database);
+        let point = [x.getLastValue('win_cpu', 'Percent_DPC_Time'), x.getLastValue('win_cpu', 'Percent_DPC_Time')];
+        let result = svm.predictClass(point); // value = 1 || value = -1
     }
 
     // creo il pannello
     createPanel() {
-        if (!this.predictor || !this.source) {
-            this.error = 'È necessario selezionare ';
-            if (!this.predictor && !this.source) {
-                this.error += 'un predittore e una sorgente';
-            } else {
-                this.error += !this.predictor ? 'un predittore' : 'una sorgente';
+        this.error = '';
+        for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
+            if (this.sources[i] == undefined) {
+                this.error = 'La sorgente di ' + this.availableDataEntry[i] + ' non è stata selezionata';
             }
-        } else {
-            this.error = '';
-            const sourceIndex = this.availableSources.indexOf(this.source);
-            this.setMeasurement(sourceIndex);
-            this.setInstance(sourceIndex);
-            this.setPredictor(sourceIndex);
-            this.setParams(sourceIndex);
+        }
+        if (!this.error) {
+            this.setDashboard();
             this.setView();
-            this.backendSrv
-                .post('api/dashboards/import', {
-                    // creo e salvo la dashboard contenente il pannello 'Carbon12 Graph Prediction'
-                    dashboard: defaultDashboard,
-                    folderId: 0,
-                    overwrite: true,
-                })
+            //this.setValues();
+            this.grafana
+                .postDashboard(defaultDashboard)
                 .then((db) => {
                     // reindirizzo alla pagina della dashboard appena creata
                     this.$location.url(db.importedUrl);

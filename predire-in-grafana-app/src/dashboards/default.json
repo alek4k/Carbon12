@@ -65,34 +65,8 @@
         "value_type": "cumulative",
         "query_as_alias": true
       },
-      "targets": [{
-        "refId": "",
-        "policy": "default",
-        "resultFormat": "time_series",
-        "orderByTime": "ASC",
-        "tags": [{
-          "key": "instance",
-          "operator": "=",
-          "value": ""
-        }],
-        "groupBy": [{
-            "type": "time",
-            "params": [
-              "$__interval"
-            ]
-          },
-          {
-            "type": "fill",
-            "params": [
-              "null"
-            ]
-          }
-        ],
-        "select": [
-          []
-        ],
-        "measurement": ""
-      }],
+      "targets": [],
+      "groupBy": [],
       "aliasColors": {},
       "aliasYAxis": {},
       "renderer": "flot",
@@ -135,7 +109,7 @@
   }],
   "time": {
     "from": "now-15m",
-    "to": "now"
+    "to": "now+15m"
   },
   "templating": {
     "list": []

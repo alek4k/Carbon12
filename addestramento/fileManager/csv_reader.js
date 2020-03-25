@@ -97,7 +97,7 @@ module.exports = class csvReader {
         // converte i valori ottenuti nel giusto formato
         for (let i = 0; i < res.length; i++) {
             // converte i valori in float
-            for (let j = 1; j < res[i].length; j++) {
+            for (let j = 0; j < res[i].length; j++) {
                 if (res[i][j] === 'null') {
                     res[i][j] = 0;
                 } else {

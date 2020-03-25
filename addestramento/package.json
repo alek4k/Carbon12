@@ -4,7 +4,8 @@
   "description": "Programma di addestramento predittore",
   "main": "app.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "testwatch": "jest --watchAll"
   },
   "author": "Carbon12",
   "license": "ISC",

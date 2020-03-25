@@ -190,7 +190,9 @@ module.exports = class Server {
             error = '';
         });
 
-        this.router.post('/fileupload', this.uploadForm);
+        this.router.post('/fileupload', (request, response) => {
+            this.uploadForm(request, response);
+        });
 
         this.router.get('/downloadPredittore', (request, response) => {
             response.render('downloadPredittore', { model, sources });

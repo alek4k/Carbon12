@@ -51,19 +51,17 @@
             if(jQuery.inArray(ext, ['csv']) !== -1)
             {
                 form_data.append('trainFile', document.getElementById('trainFile').files[0]);
-                $.ajax({
-                    url:"/loadCsv",
-                    method:"POST",
-                    data: form_data,
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success:function(response)
-                    {
+                let drawChart = function (response) {
                         const result = JSON.parse(response);
+                        const data = result[0];
+                        const label = result[1];
+                        const xAxesName = result[2][0];
+                        const yAxesName = result[2][1];
+                        let dataLabel = 'correlazione ' + xAxesName + '-' + yAxesName;
                         let buildData = [];
-                        for (var i = 0; i < result.length; i++) {
-                            buildData.push({x: result[i][0], y: result[i][1]});
+                        for (var i = 0; i < data.length; i++) {
+                            buildData.push({x: data[i][0], y: data[i][1]});
+                            
                         }
 
                         const ctx = document.getElementById('chart').getContext('2d');
@@ -71,40 +69,170 @@
                             type: 'scatter',
                             data: {
                                 datasets: [{
-                                    label: 'Scatter Dataset',
+                                    label: dataLabel,
                                     data: buildData,
-                                    pointBackgroundColor: 'rgba(223, 43, 43, 1)',
-                                    backgroundColor: 'rgba(223, 43, 43, 1)',
-                                    borderColor:  'rgba(223, 43, 43, 1)',
-                                    pointBorderColor: 'rgba(223, 43, 43, 1)'
+                                    backgroundColor: 'rgba(189, 232, 255, 0.5)',
+                                    borderColor:  'rgba(22, 117, 170, 1)'
                                 }]
                             },
                             options: {
                                 scales: {
-                                    yAxes: [{
-                                        display: true,
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'CPU'
-                                        }
-                                    }],
                                     xAxes: [{
                                         display: true,
                                         scaleLabel: {
                                             display: true,
-                                            labelString: 'RAM'
+                                            labelString: xAxesName
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: yAxesName
                                         }
                                     }]
                                 }
                             }
                         });
 
+                }
+                let SVM_Chart = function (response) {
+                        const result = JSON.parse(response);
+                        const data = result[0];
+                        const label = result[1];
+                        const xAxesName = result[2][0];
+                        const yAxesName = result[2][1];
+                        let greenData = [];
+                        let redData = [];
+                        for (var i = 0; i < data.length; i++) {
+                            if(label[i]===1)
+                                greenData.push({x: data[i][0], y: data[i][1]});
+                            else 
+                                redData.push({x: data[i][0], y: data[i][1]});
+                            
+                        }
+                        const ctx = document.getElementById('chart').getContext('2d');
+                        const scatterChart = new Chart(ctx, {
+                            type: 'scatter',
+                            data: {
+                                datasets: [{
+                                    label: 'Green Data',
+                                    data: greenData,
+                                    backgroundColor: 'rgba(80, 220, 108, 0.5)',
+                                    borderColor:  'rgba(27, 115, 45, 1)'
+                                },{
+                                    label: 'Red Data',
+                                    data: redData,
+                                    backgroundColor: 'rgba(222, 83, 83, 0.5)',
+                                    borderColor:  'rgba(216, 18, 18, 1)'
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    xAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: xAxesName
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: yAxesName
+                                        }
+                                    }]
+                                }
+                            }
+                        });
 
-                    }
+                }
+                let RL_Chart = function (response) {
+                        const result = JSON.parse(response);
+                        const data = result[0];
+                        const label = result[1];
+                        const xAxesName = result[2][0];
+                        const yAxesName = result[2][1];
+                        let dataLabel = 'correlazione ' + xAxesName + '-' + yAxesName;
+                        let pointData = [];
+                        for (var i = 0; i < data.length; i++) {
+                            pointData.push({x: data[i][0], y: data[i][1]});
+                            
+                        }
+                        let lineData = []; 
+                        lineData.push({x: data[0][0], y: label[0]});
+                        lineData.push({x: data[data.length-1][0], y: label[data.length-1]});
+                        console.log(label)
+                        const ctx = document.getElementById('chart').getContext('2d');
+                        const scatterChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                datasets: [{
+                                    type: 'scatter',
+                                    label: 'Data',
+                                    data: pointData,
+                                    backgroundColor: 'rgba(189, 232, 255, 0.5)',
+                                    borderColor:  'rgba(22, 117, 170, 1)',
+                                    xAxisID: 'x-axis-1'
+                                },{
+                                    type: 'line',
+                                    label: 'Linear Regression',
+                                    data: lineData,
+                                    backgroundColor: 'rgba(222, 83, 83, 0.5)',
+                                    borderColor:  'rgba(216, 18, 18, 1)',
+                                    fill: false,
+                                    pointRadius: 0
+                                }]
+                            },
+                            options: {
+                                title: {
+                                    display: true,
+                                    text: 'Chart.js - Line Chart With Multiple X Scales (X Axes)'
+                                },
+                                scales: {
+                                    xAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: xAxesName
+                                        }
+                                    }, {
+                                        id: 'x-axis-1',
+                                        type: 'linear',
+                                        display: true,
+                                        ticks: {
+                                        min: 9000,
+                                        max: 18000,
+                                        stepSize: 35
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: yAxesName
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+
+                }
+                $.ajax({
+                    url:"/loadCsv",
+                    method:"POST",
+                    data: form_data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: RL_Chart
                 });
+                
             }
         });
     });
+   
 </script>
 
 </body>

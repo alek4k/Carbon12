@@ -58,7 +58,7 @@ input[type=submit]:hover {
 }
 
 fieldset {
-  background-color: #BFE9FF;
+  background-color: rgb(189, 232, 255);
 }
 
 img {
@@ -81,7 +81,7 @@ img {
 
 #home:hover {
   color: #FFFFFF;
-  border-color: #1675AA;
+  border-color: rgb(22, 117, 170);
   background-color: #1675AA;
   font-size: 1em;
 }
@@ -111,6 +111,6 @@ ul {
 }
 
 #mychart {
-  width: 500px;
-  height: 500px;
+  margin: 0 25%;
+  height: 20%;
 }

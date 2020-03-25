@@ -202,12 +202,14 @@ module.exports = class Server {
         this.router.post('/loadCsv', (request, response) => {
             const form = new formidable.IncomingForm();
             form.multiples = false;
-            let result = null;
+            let result = [];
             form.on('file', (fields, file) => {
                 const pathTrainFile = file.path;
                 const csvReader = new CSVr(pathTrainFile, null);
                 if (csvReader.checkStructure()) {
-                    result = csvReader.autoGetData();
+                    result.push(csvReader.autoGetData());
+                    result.push(csvReader.autoGetLabel());
+                    result.push(csvReader.getDataSource());
                 }
                 return null;
             });

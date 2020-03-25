@@ -27,7 +27,6 @@ let notes;
 let nomePredittore;
 let error = '';
 let FILE_VERSION = 0;
-let data;
 
 module.exports = class Server {
     constructor() {
@@ -91,7 +90,7 @@ module.exports = class Server {
             }
 
             // dati addestramento
-            data = csvReader.autoGetData();
+            const data = csvReader.autoGetData();
             const labels = csvReader.autoGetLabel();
             const sourceNumberRL = csvReader.countSource() + 2;
             // elenco sorgenti
@@ -194,7 +193,7 @@ module.exports = class Server {
         this.router.post('/fileupload', this.uploadForm);
 
         this.router.get('/downloadPredittore', (request, response) => {
-            response.render('downloadPredittore', { model, sources, data });
+            response.render('downloadPredittore', { model, sources });
         });
 
         this.router.post('/downloadFile', this.downloadPredittore);
@@ -211,6 +210,7 @@ module.exports = class Server {
                     result.push(csvReader.autoGetLabel());
                     result.push(csvReader.getDataSource());
                 }
+                console.log(result);
                 return null;
             });
 

@@ -46,9 +46,9 @@ class Regression extends StrategyModel {
     toJSON() {
         const json = {};
         json._parametroN = 'numero di dati inseriti';
-        json.N = this.N
+        json.N = this.N;
         json._parametroD = 'numero di sorgenti analizzate';
-        json.D = this.D
+        json.D = this.D;
         json._parametroAlpha = 'coefficienti della retta risultante';
         json.alpha = this.calculate();
         return json;

@@ -1,15 +1,15 @@
 {
   "title": "Predire in Grafana",
-  "tags": [],
+  "tags": ["Carbon12"],
   "style": "dark",
   "timezone": "browser",
   "editable": true,
-  "hideControls": false,
   "rows": [{
     "height": "",
     "collapse": false,
     "editable": true,
     "panels": [{
+      "title": "",
       "span": 0,
       "colorBackground": false,
       "type": "",
@@ -67,13 +67,10 @@
       },
       "targets": [],
       "groupBy": [],
-      "aliasColors": {},
-      "aliasYAxis": {},
       "renderer": "flot",
       "annotate": {
         "enable": false
-      },
-      "title": ""
+      }
     }]
   }],
   "nav": [{
@@ -81,18 +78,6 @@
     "collapse": false,
     "enable": true,
     "status": "Stable",
-    "time_options": [
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ],
     "refresh_intervals": [
       "5s",
       "10s",
@@ -110,10 +95,5 @@
   "time": {
     "from": "now-15m",
     "to": "now+15m"
-  },
-  "templating": {
-    "list": []
-  },
-  "refresh": "10s",
-  "version": 0
+  }
 }

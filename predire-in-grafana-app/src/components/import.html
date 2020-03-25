@@ -97,7 +97,7 @@
     </div>
   </div>
 
-  <div ng-if="ctrl.step === 3" class="gf-form-group">
+  <div ng-if="ctrl.step >= 3" class="gf-form-group">
     <div class="text-success p-l-1">
       <i class="fa fa-check"></i>
       {{'JSON importato'}}
@@ -114,6 +114,17 @@
     <br/>
 
     <div class="gf-form-group">
+      <button ng-if="ctrl.step === 3" type="button" class="btn btn-secondary"
+        ng-click="ctrl.step = (ctrl.step === 3) ?  4 : 3">Visualizza note JSON</button>
+      <button ng-if="ctrl.step === 4" type="button" class="btn btn-secondary"
+        ng-click="ctrl.step = (ctrl.step === 3) ?  4 : 3">Chiudi note JSON</button>
+      <div ng-if="ctrl.step === 4">
+        <textarea class="gf-form-input h6 width-30" readonly
+          ng-model="ctrl.notes"></textarea>
+      </div>
+    </div>
+
+    <div class="gf-form-group">
       <div class="gf-form">
         <label class="gf-form-label width-8">Modello:</label>
         <input type="text" class="gf-form-input width-4" readonly
@@ -128,19 +139,27 @@
             <p class="card-item-header h6 text-center">{{dataEntry}}</p>
             <div class="card-item-body">
               <div class="card-item-details">
-                  <div class="gf-form align-items-center">
+                  <div class="gf-form">
                     <label class="gf-form-label width-6">Sorgente:</label>
                     <div class="gf-form-select-wrapper">
-                      <select class="gf-form-input"
+                      <select class="gf-form-input width-22"
                         ng-model="ctrl.sources[$index]"
                         ng-options="s for s in ctrl.availableSources"
-                        ng-change="ctrl.buildParams($index)"/>
+                        ng-change="ctrl.buildInstances($index); ctrl.buildParams($index)"/>
+                    </div>
+                  </div>
+                  <div class="gf-form">
+                    <label class="gf-form-label width-6">Istanza:</label>
+                    <div class="gf-form-select-wrapper">
+                      <select class="gf-form-input width-22"
+                        ng-model="ctrl.instances[$index]"
+                        ng-options="i for i in ctrl.selectedSourceInstances[$index]"/>
                     </div>
                   </div>
                   <div class="gf-form">
                     <label class="gf-form-label width-6">Parametro:</label>
                     <div class="gf-form-select-wrapper">
-                      <select class="gf-form-input"
+                      <select class="gf-form-input width-22"
                       ng-model="ctrl.params[$index]"
                       ng-options="p for p in ctrl.selectedSourceParams[$index]"/>
                     </div>

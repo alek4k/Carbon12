@@ -17,39 +17,34 @@ class Influx {
         this.host = 'http://localhost:8086';
     }
 
-    async getSources(){
-        let query = 'q=show tag values on "telegraf" with key = "instance"';
+    async getSources() {
+        const query = 'q=show tag values on "telegraf" with key = "instance"';
         return $.ajax({
             url: this.host + '/query?',
             type: 'GET',
             contentType: 'application/octet-stream',
             data: query,
             processData: false,
-            success: data => {
-            return data;
+            success: (data) => data,
+            error: (exception) => {
+                console.log('Error: ' + exception);
             },
-            error: exception => {
-            console.log("Error: " + exception);
-            }
         });
     }
 
-  async getParams(){
-    let query = 'q=show field keys on telegraf';
-    return $.ajax({
-      url: this.host + '/query?',
-      type: 'GET',
-      contentType: 'application/octet-stream',
-      data: query,
-      processData: false,
-      success: data => {
-        return data;
-      },
-      error: exception => {
-        console.log("Error: " + exception);
-      }
-    });
-  }
-
+    async getParams() {
+        const query = 'q=show field keys on telegraf';
+        return $.ajax({
+            url: this.host + '/query?',
+            type: 'GET',
+            contentType: 'application/octet-stream',
+            data: query,
+            processData: false,
+            success: (data) => data,
+            error: (exception) => {
+                console.log('Error: ' + exception);
+            },
+        });
+    }
 }
 module.exports = Influx;

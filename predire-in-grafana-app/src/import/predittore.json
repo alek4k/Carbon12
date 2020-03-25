@@ -5,8 +5,8 @@
         "train_version": "0.0.0"
     },
     "data_entry": {
-        "source0": "win_cpu",
-        "source1": "win_disk"
+        "source0": "A",
+        "source1": "B"
     },
     "model": "SVM",
     "file_version": "0",
@@ -20,5 +20,6 @@
             573.0467777777778,
             42.693999999999996
         ]
-    }
+    },
+    "notes": "Nota di prova"
 }

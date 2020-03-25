@@ -20,10 +20,10 @@ class GrafanaApiQuery {
 
     postDataSource(name, database, host, port) {
         return this.backendSrv.post('api/datasources', {
-            name: name,
+            name,
             type: 'influxdb',
             access: 'proxy',
-            database: database,
+            database,
             url: host + ':' + port,
             readOnly: false,
             editable: true,

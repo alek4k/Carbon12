@@ -9,16 +9,13 @@
  * Changelog: modifiche effettuate
  */
 
-// importo la dashboard già configurata con il pannello 'Carbon12 Graph Prediction'
+// importo il template della dashboard per la creazione del pannello
 import defaultDashboard from '../dashboards/default.json';
 
 const GrafanaApiQuery = require('../utils/grafana_query.js');
 const Influx = require('../utils/influx.js');
-const SVM = require("../utils/models/svm/svm.js");
+const SVM = require('../utils/models/svm/svm.js');
 const FilePredictor = require('../utils/r_predittore.js');
-
-// chiavi della struttura base del predittore
-const arrayOfKeys = ['header', 'data_entry', 'model', 'file_version', 'configuration'];
 
 export default class importCtrl {
     /** @ngInject */
@@ -33,16 +30,21 @@ export default class importCtrl {
         this.database = '';
         this.host = 'http://localhost';
         this.port = '8086';
+        this.notes = '';
         this.model = '';
-        this.availableParams = [];
-        this.params = [];
-        this.selectedSourceParams = [];
         this.availableDataEntry = [];
         this.availableSources = [];
+        this.availableInstances = [];
+        this.availableParams = [];
+        this.selectedSourceInstances = [];
+        this.selectedSourceParams = [];
         this.sources = [];
+        this.instances = [];
+        this.params = [];
         this.view = '';
+        this.influx = null;
         this.grafana = new GrafanaApiQuery(this.backendSrv);
-        this.jsonx;
+        this.predictor = {};
 
         // prelevo le data sources disponibili
         this.grafana.getDataSources()
@@ -57,15 +59,14 @@ export default class importCtrl {
     // carico il file del predittore
     onUpload(json) {
         // controllo che il JSON inserito abbia la struttura desiderata
-        /* eslint-disable no-prototype-builtins */
-        
-        let fPredictor = new FilePredictor(json);
+        const fPredictor = new FilePredictor(json);
         if (fPredictor.validity()) {
-            this.jsonx=fPredictor.getConfiguration();
+            this.predictor = fPredictor.getConfiguration();
             this.error = '';
+            this.notes = fPredictor.getNotes();
             this.model = fPredictor.getModel();
             this.view = (this.model === 'SVM') ? 'Indicatore' : 'Grafico';
-            //creo l'array con le sorgenti di addestramento
+            // creo l'array con le sorgenti di addestramento
             this.availableDataEntry = fPredictor.getDataEntry();
             this.step = 2;
         } else {
@@ -99,8 +100,9 @@ export default class importCtrl {
                             found = true;
                             // vado ad estrarre le informazioni della data source selezionata
                             this.database = dataSource[i].database;
-                            this.host = dataSource[i].url.substring(0, dataSource[i].url.lastIndexOf(':'));
-                            this.port = dataSource[i].url.substring(dataSource[i].url.lastIndexOf(':') + 1);
+                            const endOfHost = dataSource[i].url.lastIndexOf(':');
+                            this.host = dataSource[i].url.substring(0, endOfHost);
+                            this.port = dataSource[i].url.substring(endOfHost + 1);
                             this.connections();
                         }
                     }
@@ -131,46 +133,51 @@ export default class importCtrl {
 
     connections() {
         // creo la connessione con il database
-        const influx = new Influx(this.host, parseInt(this.port, 10), this.database);
+        this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
 
         // prelevo le sorgenti disponibili
-        const sources = influx.getSources().results[0].series;
+        const sources = this.influx.getSources().results[0].series;
         sources.forEach((source) => {
-            for (let j = 0; j < source.values.length; ++j) {
-                this.availableSources.push(source.name + '\n' + source.values[j][1]);
+            this.availableSources.push(source.name);
+            // itero sulle istanze di ogni sorgente
+            for (let i = 0; i < source.values.length; ++i) {
+                this.availableInstances.push({
+                    name: source.name,
+                    instance: source.values[i][1],
+                });
             }
         });
 
         // prelevo i parametri disponibili
-        const params = influx.getParams().results[0].series;
+        const params = this.influx.getParams().results[0].series;
         params.forEach((param) => {
-        // itero sui parametri della sorgente i
-            for (let j = 0; j < param.values.length; ++j) {
+            // itero sui parametri di ogni sorgente
+            for (let i = 0; i < param.values.length; ++i) {
                 this.availableParams.push({
                     name: param.name,
-                    params: param.values[j][0],
+                    param: param.values[i][0],
                 });
             }
         });
     }
 
-    setDashboard(){
+    setDashboard() {
         for (let i = 0; i < this.availableDataEntry.length; ++i) {
             defaultDashboard.rows[0].panels[0].targets.push({
                 refId: this.availableDataEntry[i],
-                measurement: this.sources[i].substring(0, this.sources[i].indexOf('\n')),
-                policy: "default",
-                resultFormat: "time_series",
-                orderByTime: "ASC",
+                measurement: this.sources[i],
+                policy: 'default',
+                resultFormat: 'time_series',
+                orderByTime: 'ASC',
                 tags: [{
-                  key: "instance",
-                  operator: "=",
-                  value: this.sources[i].substring(this.sources[i].indexOf('\n') + 1)
+                    key: 'instance',
+                    operator: '=',
+                    value: this.instances[i],
                 }],
                 select: [[{
                     type: 'field',
                     params: [
-                        this.params[i]
+                        this.params[i],
                     ],
                 }, {
                     type: 'mean',
@@ -178,21 +185,19 @@ export default class importCtrl {
                 }]],
             });
             defaultDashboard.rows[0].panels[0].groupBy.push({
-                type: "time",
+                type: 'time',
                 params: [
-                  "$__interval"
-                ]
-              },
-              {
-                type: "fill",
+                    '$__interval',
+                ],
+            }, {
+                type: 'fill',
                 params: [
-                  "null"
-                ]
-              });
+                    'null',
+                ],
+            });
         }
-
     }
-    
+
     // imposto la visualizzazione selezionata dall'utente
     setView() {
         if (this.view === 'Grafico') {
@@ -209,34 +214,52 @@ export default class importCtrl {
         }
     }
 
-    // costruisco l'array dei parametri relativo alla sorgente selezionta
-    buildParams(index) {
-        this.selectedSourceParams[index] = [];
-        const sourceName = this.sources[index].substring(0, this.sources[index].indexOf('\n'));
+    // costruisco l'array delle istanze relative alla sorgente selezionta
+    buildInstances(index) {
+        this.selectedSourceInstances[index] = [];
         let i = 0;
         // trovo l'indice del prima sorgente accettabile
-        for (; this.availableParams[i].name !== sourceName; ++i);
+        for (; this.availableInstances[i].name !== this.sources[index]; ++i);
         // seleziono i parametri relativi alla sorgente
-        for (; this.availableParams[i].name === sourceName; ++i) {
-            this.selectedSourceParams[index].push(this.availableParams[i].params);
+        for (; i < this.availableInstances.length
+                && this.availableInstances[i].name === this.sources[index]; ++i) {
+            this.selectedSourceInstances[index].push(this.availableInstances[i].instance);
+        }
+        this.instances[index] = this.selectedSourceInstances[index][0];
+    }
+
+    // costruisco l'array dei parametri relativi alla sorgente selezionta
+    buildParams(index) {
+        this.selectedSourceParams[index] = [];
+        let i = 0;
+        // trovo l'indice del prima sorgente accettabile
+        for (; this.availableParams[i].name !== this.sources[index]; ++i);
+        // seleziono i parametri relativi alla sorgente
+        for (; i < this.availableParams.length
+                && this.availableParams[i].name === this.sources[index]; ++i) {
+            this.selectedSourceParams[index].push(this.availableParams[i].param);
         }
         this.params[index] = this.selectedSourceParams[index][0];
     }
 
-    setValues(){
-        let svm = new SVM();
-        svm.fromJSON(this.jsonx);
-        let x = new Influx(this.host, parseInt(this.port, 10), this.database);
-        let point = [x.getLastValue('win_cpu', 'Percent_DPC_Time'), x.getLastValue('win_cpu', 'Percent_DPC_Time')];
-        let result = svm.predictClass(point); // value = 1 || value = -1
+    setValues() {
+        const svm = new SVM();
+        svm.fromJSON(this.predictor);
+        const point = [
+            this.influx.getLastValue('win_cpu', 'Percent_DPC_Time'),
+            this.influx.getLastValue('win_cpu', 'Percent_DPC_Time'),
+        ];
+        const result = svm.predictClass(point); // value = 1 || value = -1
+        return result;
     }
 
     // creo il pannello
     createPanel() {
         this.error = '';
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
-            if (this.sources[i] == undefined) {
-                this.error = 'La sorgente di ' + this.availableDataEntry[i] + ' non è stata selezionata';
+            if (this.sources[i] === undefined) {
+                this.error = 'La sorgente di '
+                    + this.availableDataEntry[i] + ' non è stata selezionata';
             }
         }
         if (!this.error) {

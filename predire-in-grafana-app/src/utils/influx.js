@@ -70,30 +70,6 @@ class Influx extends DBConnection {
      * @returns {Array} Array contenente i nomi delle datasources monitorate
      */
     getSources() {
-        const query = `q=show tag keys on ${this.database}`;
-        let result;
-        $.ajax({
-            async: false,
-            url: `${this.host}:${this.port}/query?`,
-            type: 'GET',
-            contentType: 'application/octet-stream',
-            data: query,
-            processData: false,
-            success: (data) => {
-                result = data;
-            },
-            error: (test, status, exception) => {
-                console.log(`Error: ${exception}`);
-            },
-        });
-        return result;
-    }
-
-    /**
-     *  Ritorna i parametri disponibili per le datasources
-     * @returns {Array} Array che contiene i nomi dei parametri disponibili
-     */
-    getParams() {
         const query = `q=show field keys on ${this.database}`;
         let result;
         $.ajax({
@@ -114,8 +90,31 @@ class Influx extends DBConnection {
     }
 
     /**
+     *  Ritorna i parametri disponibili per le datasources
+     * @returns {Array} Array contenente i nomi delle datasources monitorate
+     */
+    getInstances() {
+        const query = `q=show tag values on "${this.database}" with key = "instance"`;
+        let result;
+        $.ajax({
+            async: false,
+            url: `${this.host}:${this.port}/query?`,
+            type: 'GET',
+            contentType: 'application/octet-stream',
+            data: query,
+            processData: false,
+            success: (data) => {
+                result = data;
+            },
+            error: (test, status, exception) => {
+                console.log(`Error: ${exception}`);
+            },
+        });
+        return result;
+    }
+
+    /**
      *  Scrive sul database il valore passato nel relativo measurement
-     *
      * @param {measurement} String che rappresenta il measurement su cui salvare il dato
      * @param {value} Number che rappresenta il valore da salvare sul database
      */

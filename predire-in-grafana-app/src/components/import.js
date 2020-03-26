@@ -36,8 +36,6 @@ export default class importCtrl {
         this.availableSources = [];
         this.availableInstances = [];
         this.availableParams = [];
-        this.selectedSourceInstances = [];
-        this.selectedSourceParams = [];
         this.sources = [];
         this.instances = [];
         this.params = [];
@@ -135,30 +133,26 @@ export default class importCtrl {
         // creo la connessione con il database
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
 
-        // prelevo le sorgenti disponibili
         const sources = this.influx.getSources().results[0].series;
-        sources.forEach((source) => {
-            this.availableSources.push(source.name);
-            // itero sulle istanze di ogni sorgente
-            for (let i = 0; i < source.values.length; ++i) {
-                this.availableInstances.push({
-                    name: source.name,
-                    instance: source.values[i][1],
-                });
+        const instances = this.influx.getInstances().results[0].series;
+        for (let i = 0, k = 0; i < sources.length; ++i) {
+            // itero sul totale delle sorgenti
+            this.availableSources.push(sources[i].name);
+            this.availableParams[i] = [];
+            this.availableInstances[i] = [];
+            for (let j = 0; j < sources[i].values.length; ++j) {
+                // itero sui parametri della sorgente i
+                this.availableParams[i].push(sources[i].values[j][0]);
             }
-        });
-
-        // prelevo i parametri disponibili
-        const params = this.influx.getParams().results[0].series;
-        params.forEach((param) => {
-            // itero sui parametri di ogni sorgente
-            for (let i = 0; i < param.values.length; ++i) {
-                this.availableParams.push({
-                    name: param.name,
-                    param: param.values[i][0],
-                });
+            if (k < instances.length && sources[i].name === instances[k].name) {
+                for (let j = 0; j < instances[k].values.length; ++j) {
+                    // itero sulle istanze della sorgente i
+                    this.availableInstances[i].push(instances[k].values[j][1]);
+                }
+                ++k;
             }
-        });
+            // se una sorgente non ha istanze rimane availableInstances[x] = [];
+        }
     }
 
     setDashboard() {
@@ -172,7 +166,7 @@ export default class importCtrl {
                 tags: [{
                     key: 'instance',
                     operator: '=',
-                    value: this.instances[i],
+                    value: this.instances[i] ? this.instances[i] : '',
                 }],
                 select: [[{
                     type: 'field',
@@ -212,34 +206,6 @@ export default class importCtrl {
             defaultDashboard.rows[0].panels[0].title = 'Indicatore di Predizione';
             defaultDashboard.rows[0].panels[0].colorBackground = 'true';
         }
-    }
-
-    // costruisco l'array delle istanze relative alla sorgente selezionta
-    buildInstances(index) {
-        this.selectedSourceInstances[index] = [];
-        let i = 0;
-        // trovo l'indice del prima sorgente accettabile
-        for (; this.availableInstances[i].name !== this.sources[index]; ++i);
-        // seleziono i parametri relativi alla sorgente
-        for (; i < this.availableInstances.length
-                && this.availableInstances[i].name === this.sources[index]; ++i) {
-            this.selectedSourceInstances[index].push(this.availableInstances[i].instance);
-        }
-        this.instances[index] = this.selectedSourceInstances[index][0];
-    }
-
-    // costruisco l'array dei parametri relativi alla sorgente selezionta
-    buildParams(index) {
-        this.selectedSourceParams[index] = [];
-        let i = 0;
-        // trovo l'indice del prima sorgente accettabile
-        for (; this.availableParams[i].name !== this.sources[index]; ++i);
-        // seleziono i parametri relativi alla sorgente
-        for (; i < this.availableParams.length
-                && this.availableParams[i].name === this.sources[index]; ++i) {
-            this.selectedSourceParams[index].push(this.availableParams[i].param);
-        }
-        this.params[index] = this.selectedSourceParams[index][0];
     }
 
     setValues() {

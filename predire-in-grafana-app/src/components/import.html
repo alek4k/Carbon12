@@ -144,16 +144,24 @@
                     <div class="gf-form-select-wrapper">
                       <select class="gf-form-input width-22"
                         ng-model="ctrl.sources[$index]"
-                        ng-options="s for s in ctrl.availableSources"
-                        ng-change="ctrl.buildInstances($index); ctrl.buildParams($index)"/>
+                        ng-options="s for s in ctrl.availableSources "
+                        ng-change="
+                          ctrl.instances[$index] = ctrl.availableInstances[
+                            ctrl.availableSources.indexOf(ctrl.sources[$index])
+                          ][0];
+                          ctrl.params[$index] = ctrl.availableParams[
+                            ctrl.availableSources.indexOf(ctrl.sources[$index])
+                          ][0]"/>
                     </div>
                   </div>
-                  <div class="gf-form">
+                  <div ng-if="!ctrl.sources[$index] || ctrl.instances[$index]" class="gf-form">
                     <label class="gf-form-label width-6">Istanza:</label>
                     <div class="gf-form-select-wrapper">
                       <select class="gf-form-input width-22"
                         ng-model="ctrl.instances[$index]"
-                        ng-options="i for i in ctrl.selectedSourceInstances[$index]"/>
+                        ng-options="i for i in ctrl.availableInstances[
+                          ctrl.availableSources.indexOf(ctrl.sources[$index])
+                        ]"/>
                     </div>
                   </div>
                   <div class="gf-form">
@@ -161,7 +169,9 @@
                     <div class="gf-form-select-wrapper">
                       <select class="gf-form-input width-22"
                       ng-model="ctrl.params[$index]"
-                      ng-options="p for p in ctrl.selectedSourceParams[$index]"/>
+                      ng-options="p for p in ctrl.availableParams[
+                        ctrl.availableSources.indexOf(ctrl.sources[$index])
+                      ]"/>
                     </div>
                   </div>
               </div>

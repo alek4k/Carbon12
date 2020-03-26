@@ -30,7 +30,7 @@ class Influx extends DBConnection {
             data: query,
             processData: false,
             success: (data) => {
-                result = data.results[0].series[0].values[0][1];
+                result = data.results[0].series[0].values;
             },
             error: (test, status, exception) => {
                 console.log(`Error: ${exception}`);
@@ -70,7 +70,7 @@ class Influx extends DBConnection {
      * @returns {Array} Array contenente i nomi delle datasources monitorate
      */
     getSources() {
-        const query = `q=show tag values on "${this.database}" with key = "instance"`;
+        const query = `q=show field keys on ${this.database}`;
         let result;
         $.ajax({
             async: false,

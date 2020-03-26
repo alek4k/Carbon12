@@ -1,26 +1,22 @@
 const fs = require('fs');
 const RPredittore = require('../../fileManager/r_predittore.js');
 
-const managePredittore = new RPredittore(JSON.parse(
-    fs.readFileSync('./tests/files/predittore_test.json').toString(),
-));
 
 describe("Test json", () => {
     test("It should response that file.json was written correctly", () => {
-        const title = "Carbon12 Predire in Grafana";
-        expect(managePredittore.getTitle()).toEqual(title);
+        const managePredittore = new RPredittore(JSON.parse(
+            fs.readFileSync('./tests/files/predittore_test.json').toString(),
+        ));
 
-        const source = ['A', 'B'];
-        expect(managePredittore.getDataEntry()).toEqual(source);
+        expect(managePredittore.getTitle()).toEqual("Carbon12 Predire in Grafana");
 
-        const model = 'SVM';
-        expect(managePredittore.getModel()).toEqual(model);
+        expect(managePredittore.getDataEntry()).toEqual(['A', 'B']);
 
-        const fileVersion = 0;
-        expect(managePredittore.getFileVersion()).toBe(fileVersion);
+        expect(managePredittore.getModel()).toEqual('SVM');
 
-        const nota = "test";
-        expect(managePredittore.getNotes()).toEqual(nota);
+        expect(managePredittore.getFileVersion()).toBe(0);
+
+        expect(managePredittore.getNotes()).toEqual("test");
 
         const k = {};
         k.N = 60;

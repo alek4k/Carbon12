@@ -18,7 +18,7 @@ const nconf = require('nconf');
 const RPredittore = require('./fileManager/r_predittore');
 const WPredittore = require('./fileManager/w_predittore');
 const CSVr = require('./fileManager/csv_reader.js');
-// const SVM = require('./models/svm/svm');
+const SVM = require('./models/svm/svm');
 // const RL = require('./models/rl/regression');
 
 let model;
@@ -141,18 +141,23 @@ module.exports = class Server {
             }
             console.log('json valido');
 
+            let strPredittore = "";
             /* @todo
             * chiamata a trainSVM o trainRL
             */
             if (model === 'SVM') {
-                // chiamata function addestramento SVM
-                console.log('support');
+                let options = {
+                    kernel: "linear",
+                    karpathy: true
+                  };
+                  let svm = new SVM();
+                  svm.train(data, labels, options);
+                  strPredittore = svm.toJSON();
             } else {
                 // chiamata function addestramento RL
                 console.log('regression');
             }
 
-            const strPredittore = '';
             console.log('addestramento terminato');
 
             // salvataggio predittore

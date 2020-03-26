@@ -9,8 +9,6 @@
  * Changelog: modifiche effettuate
  */
 
-import StrategyModel from '../strategyModel';
-
 const utils = require('could-be-utils');
 const kernels = require('./kernels.js');
 
@@ -108,7 +106,6 @@ SVM.prototype = {
     train(data, labels) {
         this.data = data;
         this.labels = labels;
-
         // parameters
         // options = options || {};
         this.options = this.options || {};
@@ -226,6 +223,7 @@ SVM.prototype = {
             }
             this.store();
         }
+        console.log('here' + this.w + this.b);
     },
 
     karpathySMO() {
@@ -509,6 +507,7 @@ SVM.prototype = {
             }
             w[j] = s;
         }
+        
         return { w, b: this.b };
     },
 

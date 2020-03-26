@@ -4,9 +4,9 @@
   "version": "0.0.1",
   "description": "Carbon12 plug-in di predizione",
   "scripts": {
-    "build": "webpack --config webpack/webpack.prod.conf.js --progress --colors",
-    "dev": "webpack --config webpack/webpack.dev.conf.js --progress --colors",
-    "watch": "webpack --config webpack/webpack.dev.conf.js --progress --colors",
+    "build": "webpack --config webpack/webpack.prod.conf.js --progress",
+    "dev": "webpack --config webpack/webpack.dev.conf.js --progress",
+    "watch": "webpack --config webpack/webpack.dev.conf.js --progress",
     "test": "jest"
   },
   "author": "Carbon12",

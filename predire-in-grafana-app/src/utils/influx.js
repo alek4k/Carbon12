@@ -70,7 +70,7 @@ class Influx extends DBConnection {
      * @returns {Array} Array contenente i nomi delle datasources monitorate
      */
     getSources() {
-        const query = `q=show field keys on ${this.database}`;
+        const query = `q=show tag keys on ${this.database}`;
         let result;
         $.ajax({
             async: false,

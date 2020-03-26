@@ -21,7 +21,7 @@ const CSVr = require('./fileManager/csv_reader.js');
 const SVM = require('./models/svm/svm');
 // const RL = require('./models/rl/regression');
 
-let model;
+let model = 'SVM';
 let sources;
 let notes;
 let nomePredittore;
@@ -55,14 +55,12 @@ module.exports = class Server {
     }
 
     validityCsv(csvReader) {
-        if (csvReader.checkStructure()) {
-            console.log('csv valido');
-        } else {
+        if (csvReader.checkStructure() === false) {
             console.log('Error: csv non valido');
-            error = 'Struttura csv non valida';
-            return false;
+            return 'Struttura csv non valida';
         }
-        return true;
+        console.log('csv valido');
+        return '';
     }
 
     validityJson(managePredittore, dataSourceCsv) {
@@ -76,8 +74,7 @@ module.exports = class Server {
                 nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'),
             ) === false) {
                 console.log('Error: wrong versions');
-                error = 'Versione file di addestramento non compatibile';
-                return false;
+                return 'Versione file di addestramento non compatibile';
             }
             // controllare che le data entry coincidano con quelle nel csv
             const dataSourceJson = managePredittore.getDataEntry();
@@ -85,22 +82,55 @@ module.exports = class Server {
                 (value, index) => value === dataSourceCsv[index],
             ) === false) {
                 console.log('Error: wrong data entry');
-                error = 'Le data entry non coincidono con quelle del file di addestramento';
-                return false;
+                return 'Le data entry non coincidono con quelle del file di addestramento';
             }
             // controllare che il modello coincida con quello scelto
             if (model !== managePredittore.getModel()) {
                 console.log('Error: wrong model');
-                error = 'Il modello non coincide con quello selezionato';
-                return false;
+                return 'Il modello non coincide con quello selezionato';
             }
         } else {
             console.log('Error: json non valido');
-            error = 'Struttura json non valida';
-            return false;
+            return 'Struttura json non valida';
         }
 
-        return true;
+        console.log('json valido');
+        return '';
+    }
+
+    addestramento(data, labels, n) {
+        /* @todo
+            * chiamata a trainSVM o trainRL
+            */
+        const options = {
+            kernel: 'linear',
+            karpathy: true,
+        };
+
+        if (model === 'SVM') {
+            // chiamata function addestramento SVM
+            let svm = new SVM();
+            console.log('support');
+            svm.train(data, labels, options);
+            return svm.toJSON();
+        }
+        // chiamata function addestramento RL
+        // let rl = new RL();
+        console.log('regression');
+        // return rl.train(data, labels, n);
+        return null;
+    }
+
+    savePredittore(csvReader, strPredittore, nome) {
+        // salvataggio predittore
+        const managePredittore = new WPredittore();
+        managePredittore.setHeader(nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'));
+        managePredittore.setDataEntry(csvReader.getDataSource(), csvReader.countSource());
+        managePredittore.setModel(model);
+        managePredittore.setFileVersion(FILE_VERSION);
+        managePredittore.setNotes(notes);
+        managePredittore.setConfiguration(strPredittore);
+        fs.writeFileSync(nome, managePredittore.save());
     }
 
     uploadForm(req, res) {
@@ -129,7 +159,8 @@ module.exports = class Server {
             const pathConfigFile = files.configFile.path;
 
             const csvReader = new CSVr(pathTrainFile, null);
-            if (this.validityCsv(csvReader) === false) {
+            error = this.validityCsv(csvReader);
+            if (error.length > 0) {
                 res.writeHead(301, { Location: '/' });
                 return res.end();
             }
@@ -149,35 +180,18 @@ module.exports = class Server {
                 const config = managePredittore.getConfiguration();
                 // config va passata alla creazione della SVM
 
-                if (this.validityJson(managePredittore, dataSourceCsv) === false) {
+                error = this.validityJson(managePredittore, dataSourceCsv);
+                if (error.length > 0) {
                     res.writeHead(301, { Location: '/' });
                     return res.end();
                 }
-                console.log('json valido');
             }
 
-            let strPredittore = '';
-            /* @todo
-            * chiamata a trainSVM o trainRL
-            */
-            if (model === 'SVM') {
-                console.log('svm');
-            } else {
-                // chiamata function addestramento RL
-                console.log('regression');
-            }
+            const strPredittore = this.addestramento(data, labels, sourceNumberRL);
 
             console.log('addestramento terminato');
 
-            // salvataggio predittore
-            const managePredittore = new WPredittore();
-            managePredittore.setHeader(nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'));
-            managePredittore.setDataEntry(csvReader.getDataSource(), csvReader.countSource());
-            managePredittore.setModel(model);
-            managePredittore.setFileVersion(FILE_VERSION);
-            managePredittore.setNotes(notes);
-            managePredittore.setConfiguration(strPredittore);
-            fs.writeFileSync(nomePredittore, managePredittore.save());
+            this.savePredittore(csvReader, strPredittore, nomePredittore);
 
             res.writeHead(301, { Location: 'downloadPredittore' });
             return res.end();
@@ -199,7 +213,7 @@ module.exports = class Server {
     getChartData(request, response) {
         const form = new formidable.IncomingForm();
         form.multiples = false;
-        let result = [];
+        const result = [];
         form.on('file', (fields, file) => {
             const pathTrainFile = file.path;
             const csvReader = new CSVr(pathTrainFile, null);

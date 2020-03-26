@@ -156,18 +156,12 @@ module.exports = class Server {
                 console.log('json valido');
             }
 
-            let strPredittore = "";
+            let strPredittore = '';
             /* @todo
             * chiamata a trainSVM o trainRL
             */
             if (model === 'SVM') {
-                let options = {
-                    kernel: "linear",
-                    karpathy: true
-                  };
-                  let svm = new SVM();
-                  svm.train(data, labels, options);
-                  strPredittore = svm.toJSON();
+                console.log('svm');
             } else {
                 // chiamata function addestramento RL
                 console.log('regression');

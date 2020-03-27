@@ -135,21 +135,21 @@ export default class importCtrl {
 
         const sources = this.influx.getSources().results[0].series;
         const instances = this.influx.getInstances().results[0].series;
-        for (let i = 0, k = 0; i < sources.length; ++i) {
+        for (let i = 0, j = 0; i < sources.length; ++i) {
             // itero sul totale delle sorgenti
             this.availableSources.push(sources[i].name);
             this.availableParams[i] = [];
             this.availableInstances[i] = [];
-            for (let j = 0; j < sources[i].values.length; ++j) {
-                // itero sui parametri della sorgente i
-                this.availableParams[i].push(sources[i].values[j][0]);
-            }
-            if (k < instances.length && sources[i].name === instances[k].name) {
-                for (let j = 0; j < instances[k].values.length; ++j) {
-                    // itero sulle istanze della sorgente i
-                    this.availableInstances[i].push(instances[k].values[j][1]);
-                }
-                ++k;
+            sources[i].values.forEach((source) => {
+                // aggiungo i parametri di ogni sorgente
+                this.availableParams[i].push(source[0]);
+            });
+            if (j < instances.length && sources[i].name === instances[j].name) {
+                instances[j].values.forEach((instance) => {
+                    // aggiungo le istanze di ogni sorgente, ove possibile
+                    this.availableInstances[i].push(instance[1]);
+                });
+                ++j;
             }
             // se una sorgente non ha istanze rimane availableInstances[x] = [];
         }

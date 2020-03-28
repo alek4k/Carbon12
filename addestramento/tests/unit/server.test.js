@@ -1,9 +1,7 @@
 const request = require("supertest");
 const Server = require('../../server');
 const CSVr = require('../../fileManager/csv_reader.js');
-const streamEqual = require('stream-equal');
 const fs = require('fs');
-const assert      = require('assert');
 
 const server = new Server();
 

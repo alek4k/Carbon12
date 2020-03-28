@@ -9,8 +9,9 @@
     "collapse": false,
     "editable": true,
     "panels": [{
-      "title": "",
+      "height": "",
       "span": 0,
+      "title": "",
       "colorBackground": false,
       "type": "",
       "datasource": "",

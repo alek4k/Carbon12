@@ -120,8 +120,6 @@ class Influx extends DBConnection {
      */
     storeValue(measurement, value) {
         const query = `${measurement} value=${value}`;
-        console.info(query);
-        let result;
         $.ajax({
             async: false,
             url: `${this.host}:${this.port}/write?db=${this.database}`,
@@ -136,7 +134,6 @@ class Influx extends DBConnection {
                 console.log(`Error: ${exception}`);
             },
         });
-        return result;
     }
 }
 

@@ -30,10 +30,17 @@ class GrafanaApiQuery {
         });
     }
 
-    postDashboard(defaultDashboard) {
+    getDashboard(name) {
+        return this.backendSrv.get('api/dashboards/db/' + name);
+    }
+
+    getDashboards(folderId) {
+        return this.backendSrv.get('api/search?folderIds=' + folderId);
+    }
+
+    postDashboard(dashboard) {
         return this.backendSrv.post('api/dashboards/import', {
-            // creo e salvo la dashboard
-            dashboard: defaultDashboard,
+            dashboard,
             folderId: 0,
             overwrite: true,
         });

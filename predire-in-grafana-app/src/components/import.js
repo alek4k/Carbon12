@@ -42,6 +42,8 @@ export default class importCtrl {
         this.view = '';
         this.influx = null;
         this.grafana = new GrafanaApiQuery(this.backendSrv);
+        this.newRow = true;
+        this.dashboard = {};
         this.predictor = {};
 
         // prelevo le data sources disponibili
@@ -155,9 +157,9 @@ export default class importCtrl {
         }
     }
 
-    setDashboard() {
+    setDashboard(lastColumn, lastRow) {
         for (let i = 0; i < this.availableDataEntry.length; ++i) {
-            defaultDashboard.rows[0].panels[0].targets.push({
+            this.dashboard.rows[lastRow].panels[lastColumn].targets.push({
                 refId: this.availableDataEntry[i],
                 measurement: this.sources[i],
                 policy: 'default',
@@ -178,7 +180,7 @@ export default class importCtrl {
                     params: [],
                 }]],
             });
-            defaultDashboard.rows[0].panels[0].groupBy.push({
+            this.dashboard.rows[lastRow].panels[lastColumn].groupBy.push({
                 type: 'time',
                 params: [
                     '$__interval',
@@ -194,14 +196,15 @@ export default class importCtrl {
 
     // imposto la visualizzazione selezionata dall'utente
     setView() {
+        defaultDashboard.rows[0].height = '300px';
         if (this.view === 'Grafico') {
-            defaultDashboard.rows[0].height = '350px';
-            defaultDashboard.rows[0].panels[0].span = 12;
+            defaultDashboard.rows[0].panels[0].height = '300px';
+            defaultDashboard.rows[0].panels[0].span = 6;
             defaultDashboard.rows[0].panels[0].type = 'graph';
             defaultDashboard.rows[0].panels[0].title = 'Grafico di Predizione';
         } else {
-            defaultDashboard.rows[0].height = '350px';
-            defaultDashboard.rows[0].panels[0].span = 4;
+            defaultDashboard.rows[0].panels[0].height = '150px';
+            defaultDashboard.rows[0].panels[0].span = 2;
             defaultDashboard.rows[0].panels[0].type = 'singlestat';
             defaultDashboard.rows[0].panels[0].title = 'Indicatore di Predizione';
             defaultDashboard.rows[0].panels[0].colorBackground = 'true';
@@ -229,18 +232,55 @@ export default class importCtrl {
             }
         }
         if (!this.error) {
-            this.setDashboard();
-            this.setView();
-            this.setValues();
             this.grafana
-                .postDashboard(defaultDashboard)
-                .then((db) => {
-                    // reindirizzo alla pagina della dashboard appena creata
-                    this.$location.url(db.importedUrl);
-                    // ricarico la nuova pagina per aggiornare la lista delle data sources disponibili
-                    window.location.href = db.importedUrl;
+                .getDashboards('0')
+                .then((dbList) => {
+                    let found = false;
+                    for (let i = 0; i < dbList.length && !found; ++i) {
+                        if (dbList[i].title === 'Predire in Grafana') {
+                            found = true;
+                        }
+                    }
+                    if (found) {
+                        this.grafana
+                            .getDashboard('predire-in-grafana')
+                            .then((db) => {
+                                let lastRow = 0;
+                                let lastColumn = 0;
+                                lastRow = db.dashboard.rows.length;
+                                if (this.newRow || !lastRow) {
+                                    db.dashboard.rows
+                                        .push(defaultDashboard.rows[0]);
+                                } else {
+                                    --lastRow;
+                                    lastColumn = db.dashboard.rows[lastRow].panels.length;
+                                    db.dashboard.rows[lastRow].panels
+                                        .push(defaultDashboard.rows[0].panels[0]);
+                                }
+                                this.dashboard = db.dashboard;
+                                this.setDashboard(lastColumn, lastRow);
+                                this.setView();
+                                this.savePanel();
+                            });
+                    } else {
+                        this.dashboard = defaultDashboard;
+                        this.setDashboard(0, 0);
+                        this.setView();
+                        this.savePanel();
+                    }
                 });
         }
+    }
+
+    savePanel() {
+        this.grafana
+            .postDashboard(this.dashboard)
+            .then((db) => {
+                // reindirizzo alla pagina della dashboard appena creata
+                this.$location.url(db.importedUrl);
+                // ricarico la nuova pagina per aggiornare la lista delle data sources disponibili
+                window.location.href = db.importedUrl;
+            });
     }
 }
 

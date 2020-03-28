@@ -2,11 +2,11 @@
     "header": {
         "title": "Carbon12 Predire in Grafana",
         "plugin_version": "0.0.0",
-        "train_version": "0.0.0"
+        "train_version": "1.4.0"
     },
     "data_entry": {
-        "source0": "A",
-        "source1": "B"
+        "source0": "C",
+        "source1": "D"
     },
     "model": "SVM",
     "file_version": 0,

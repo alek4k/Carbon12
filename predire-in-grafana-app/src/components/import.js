@@ -247,17 +247,21 @@ export default class importCtrl {
                             .then((db) => {
                                 let lastRow = 0;
                                 let lastColumn = 0;
-                                lastRow = db.dashboard.rows.length;
-                                if (this.newRow || !lastRow) {
-                                    db.dashboard.rows
-                                        .push(defaultDashboard.rows[0]);
+                                if (db.dashboard.rows !== undefined) {
+                                    lastRow = db.dashboard.rows.length;
+                                    if (this.newRow || !lastRow) {
+                                        db.dashboard.rows
+                                            .push(defaultDashboard.rows[0]);
+                                    } else {
+                                        --lastRow;
+                                        lastColumn = db.dashboard.rows[lastRow].panels.length;
+                                        db.dashboard.rows[lastRow].panels
+                                            .push(defaultDashboard.rows[0].panels[0]);
+                                    }
+                                    this.dashboard = db.dashboard;
                                 } else {
-                                    --lastRow;
-                                    lastColumn = db.dashboard.rows[lastRow].panels.length;
-                                    db.dashboard.rows[lastRow].panels
-                                        .push(defaultDashboard.rows[0].panels[0]);
+                                    this.dashboard = defaultDashboard;
                                 }
-                                this.dashboard = db.dashboard;
                                 this.setDashboard(lastColumn, lastRow);
                                 this.setView();
                                 this.savePanel();

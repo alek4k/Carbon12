@@ -3,11 +3,11 @@
   "tags": ["Carbon12"],
   "style": "dark",
   "timezone": "browser",
-  "editable": true,
+  "editable": false,
   "rows": [{
     "height": "",
     "collapse": false,
-    "editable": true,
+    "editable": false,
     "panels": [{
       "height": "",
       "span": 0,

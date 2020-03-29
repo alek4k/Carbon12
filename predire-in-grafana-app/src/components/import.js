@@ -157,9 +157,9 @@ export default class importCtrl {
         }
     }
 
-    setDashboard(lastColumn, lastRow) {
+    setPanel(lastRow, lastPanel) {
         for (let i = 0; i < this.availableDataEntry.length; ++i) {
-            this.dashboard.rows[lastRow].panels[lastColumn].targets.push({
+            this.dashboard.rows[lastRow].panels[lastPanel].targets.push({
                 refId: this.availableDataEntry[i],
                 measurement: this.sources[i],
                 policy: 'default',
@@ -180,7 +180,7 @@ export default class importCtrl {
                     params: [],
                 }]],
             });
-            this.dashboard.rows[lastRow].panels[lastColumn].groupBy.push({
+            this.dashboard.rows[lastRow].panels[lastPanel].groupBy.push({
                 type: 'time',
                 params: [
                     '$__interval',
@@ -195,19 +195,19 @@ export default class importCtrl {
     }
 
     // imposto la visualizzazione selezionata dall'utente
-    setView() {
-        defaultDashboard.rows[0].height = '300px';
+    setView(lastRow, lastPanel) {
+        this.dashboard.rows[lastRow].height = '300px';
         if (this.view === 'Grafico') {
-            defaultDashboard.rows[0].panels[0].height = '300px';
-            defaultDashboard.rows[0].panels[0].span = 6;
-            defaultDashboard.rows[0].panels[0].type = 'graph';
-            defaultDashboard.rows[0].panels[0].title = 'Grafico di Predizione';
+            this.dashboard.rows[lastRow].panels[lastPanel].height = '300px';
+            this.dashboard.rows[lastRow].panels[lastPanel].span = 6;
+            this.dashboard.rows[lastRow].panels[lastPanel].type = 'graph';
+            this.dashboard.rows[lastRow].panels[lastPanel].title = 'Grafico di Predizione';
         } else {
-            defaultDashboard.rows[0].panels[0].height = '150px';
-            defaultDashboard.rows[0].panels[0].span = 2;
-            defaultDashboard.rows[0].panels[0].type = 'singlestat';
-            defaultDashboard.rows[0].panels[0].title = 'Indicatore di Predizione';
-            defaultDashboard.rows[0].panels[0].colorBackground = 'true';
+            this.dashboard.rows[lastRow].panels[lastPanel].height = '150px';
+            this.dashboard.rows[lastRow].panels[lastPanel].span = 2;
+            this.dashboard.rows[lastRow].panels[lastPanel].type = 'singlestat';
+            this.dashboard.rows[lastRow].panels[lastPanel].title = 'Indicatore di Predizione';
+            this.dashboard.rows[lastRow].panels[lastPanel].colorBackground = 'true';
         }
     }
 
@@ -245,38 +245,35 @@ export default class importCtrl {
                         this.grafana
                             .getDashboard('predire-in-grafana')
                             .then((db) => {
-                                let lastRow = 0;
-                                let lastColumn = 0;
-                                if (db.dashboard.rows !== undefined) {
-                                    lastRow = db.dashboard.rows.length;
-                                    if (this.newRow || !lastRow) {
-                                        db.dashboard.rows
-                                            .push(defaultDashboard.rows[0]);
-                                    } else {
-                                        --lastRow;
-                                        lastColumn = db.dashboard.rows[lastRow].panels.length;
-                                        db.dashboard.rows[lastRow].panels
-                                            .push(defaultDashboard.rows[0].panels[0]);
-                                    }
-                                    this.dashboard = db.dashboard;
+                                let lastRow = db.dashboard.rows.length;
+                                let lastPanel = 0;
+                                if (this.newRow) {
+                                    db.dashboard.rows.push(
+                                        defaultDashboard.rows[0]
+                                    );
                                 } else {
-                                    this.dashboard = defaultDashboard;
+                                    --lastRow;
+                                    lastPanel = db.dashboard.rows[lastRow].panels.length;
+                                    db.dashboard.rows[lastRow].panels.push(
+                                        defaultDashboard.rows[0].panels[0]
+                                    );
                                 }
-                                this.setDashboard(lastColumn, lastRow);
-                                this.setView();
-                                this.savePanel();
+                                this.dashboard = db.dashboard;
+                                this.setPanel(lastRow, lastPanel);
+                                this.setView(lastRow, lastPanel);
+                                this.saveDashboard();
                             });
                     } else {
                         this.dashboard = defaultDashboard;
-                        this.setDashboard(0, 0);
-                        this.setView();
-                        this.savePanel();
+                        this.setPanel(0, 0);
+                        this.setView(0, 0);
+                        this.saveDashboard();
                     }
                 });
         }
     }
 
-    savePanel() {
+    saveDashboard() {
         this.grafana
             .postDashboard(this.dashboard)
             .then((db) => {

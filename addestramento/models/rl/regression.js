@@ -182,8 +182,6 @@ module.exports = class Regression {
     }
   
     addRowAndColumn(product,options){
-      console.log(product)
-      console.log(options)
       for(var c = 0; c < options.lhsColumn.length; c++)
         for(var r = 0; r < options.rhsRow.length; r++)
           product[c][r] += options.lhsColumn[c] * options.rhsRow[r]

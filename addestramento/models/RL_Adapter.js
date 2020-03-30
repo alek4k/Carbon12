@@ -9,24 +9,24 @@
  * Changelog: creazione classe
  */
 
-const Model = require('./model')
+const Model = require('./model');
 const Regression = require('./rl/regression');
 
-class RL_Adapter extends Model {
-    constructor(options){
+class RlAdapter extends Model {
+    constructor(options) {
         super();
         this.regression = new Regression(options);
     }
 
-    fromJSON(json){
+    fromJSON(json) {
         this.regression.fromJSON(json);
     }
 
-    train(data, expected){
+    train(data, expected) {
         this.regression.train(data, expected);
         console.log('train');
         return this.regression.toJSON();
     }
 }
 
-module.exports = RL_Adapter;
+module.exports = RlAdapter;

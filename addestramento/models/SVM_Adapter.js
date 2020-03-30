@@ -9,27 +9,27 @@
  * Changelog: creazione classe
  */
 
-const Model = require('./model')
+const Model = require('./model');
 const SVM = require('./svm/svm');
 
-class SVM_Adapter extends Model {
-    constructor(){
-      super();
-      this.svm = new SVM();      
+class SvmAdapter extends Model {
+    constructor() {
+        super();
+        this.svm = new SVM();
     }
-  
-    fromJSON(json){
+
+    fromJSON(json) {
         this.svm.fromJSON(json);
     }
-  
-    train(data, expected){
+
+    train(data, expected) {
         const options = {
-            kernel: "linear",
-            karpathy: true //piu efficiente!!
-          };
+            kernel: 'linear',
+            karpathy: true,
+        };
         this.svm.train(data, expected, options);
         return this.svm.toJSON();
     }
 }
-  
-module.exports = SVM_Adapter;
+
+module.exports = SvmAdapter;

@@ -5,8 +5,8 @@
         "train_version": "0.0.0"
     },
     "data_entry": {
-        "source0": "win_mem.mean",
-        "source1": "win_cpu.mean"
+        "source0": "A",
+        "source1": "B"
     },
     "model": "SVM",
     "file_version": 0,

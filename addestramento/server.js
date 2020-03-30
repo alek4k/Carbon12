@@ -18,8 +18,8 @@ const nconf = require('nconf');
 const RPredittore = require('./fileManager/r_predittore');
 const WPredittore = require('./fileManager/w_predittore');
 const CSVr = require('./fileManager/csv_reader.js');
-const SVM = require('./models/svm/svm');
-// const RL = require('./models/rl/regression');
+const SVM_Adapter = require('./models/SVM_Adapter');
+const RL_Adapter = require('./models/RL_Adapter');
 
 let model = 'SVM';
 let sources;
@@ -45,15 +45,6 @@ module.exports = class Server {
         nconf.defaults({ PORT: 8080, TRAIN_VERSION: '0.0.0', PLUGIN_VERSION: '0.0.0' });
     }
 
-    /* @todo
-        * aggiungere gestione addestramento
-        */
-    train(data, expected) {
-        // train
-        this.data = data;
-        this.expected = expected;
-    }
-
     validityCsv(csvReader) {
         if (csvReader.checkStructure() === false) {
             console.log('Error: csv non valido');
@@ -65,7 +56,7 @@ module.exports = class Server {
 
     validityJson(managePredittore, dataSourceCsv) {
         if (managePredittore.validity()) {
-            if (managePredittore.getFileVersion() > 0) {
+            if (managePredittore.getFileVersion() >= 0) {
                 FILE_VERSION = managePredittore.getFileVersion() + 1;
             }
 
@@ -98,27 +89,25 @@ module.exports = class Server {
         return '';
     }
 
-    addestramento(data, labels, n) {
-        /* @todo
-            * chiamata a trainSVM o trainRL
-            */
-        const options = {
-            kernel: 'linear',
-            karpathy: true,
-        };
+    train(data, labels, predittore) {
+        let modelAdapter;
+        switch(model) {
+            case 'SVM': 
+                modelAdapter = new SVM_Adapter();
+                break;
+            case 'RL': 
+                const n = data[0].length +1;
+                const param = { numX: n, numY: 1 };
+                modelAdapter = new RL_Adapter(param);
+                break;
+            default:
+                modelAdapter = null;
 
-        if (model === 'SVM') {
-            // chiamata function addestramento SVM
-            let svm = new SVM();
-            console.log('support');
-            svm.train(data, labels, options);
-            return svm.toJSON();
         }
-        // chiamata function addestramento RL
-        // let rl = new RL();
-        console.log('regression');
-        // return rl.train(data, labels, n);
-        return null;
+        if(predittore){
+            modelAdapter.fromJSON(predittore);
+        }
+        return modelAdapter.train(data,labels);
     }
 
     savePredittore(csvReader, strPredittore, nome) {
@@ -164,31 +153,29 @@ module.exports = class Server {
                 res.writeHead(301, { Location: '/' });
                 return res.end();
             }
-            const dataSourceCsv = csvReader.getDataSource();
 
             // dati addestramento
             const data = csvReader.autoGetData();
             const labels = csvReader.autoGetLabel();
-            const sourceNumberRL = csvReader.countSource() + 2;
             // elenco sorgenti
-            sources = csvReader.getDataSource().toString();
+            sources = csvReader.getDataSource();
 
+            let config = '';
             if (configPresence) {
                 const managePredittore = new RPredittore(JSON.parse(
                     fs.readFileSync(pathConfigFile).toString(),
                 ));
-                const config = managePredittore.getConfiguration();
-                // config va passata alla creazione della SVM
+                config = managePredittore.getConfiguration();
 
-                error = this.validityJson(managePredittore, dataSourceCsv);
+                error = this.validityJson(managePredittore, sources);
                 if (error.length > 0) {
                     res.writeHead(301, { Location: '/' });
                     return res.end();
                 }
             }
 
-            const strPredittore = this.addestramento(data, labels, sourceNumberRL);
-
+            const strPredittore = this.train(data, labels, config);
+            //const strPredittore = '';
             console.log('addestramento terminato');
 
             this.savePredittore(csvReader, strPredittore, nomePredittore);
@@ -222,7 +209,6 @@ module.exports = class Server {
                 result.push(csvReader.autoGetLabel());
                 result.push(csvReader.getDataSource());
             }
-            console.log(result);
             return null;
         });
 

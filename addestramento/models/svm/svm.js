@@ -223,7 +223,6 @@ SVM.prototype = {
             }
             this.store();
         }
-        console.log('here' + this.w + this.b);
     },
 
     karpathySMO() {

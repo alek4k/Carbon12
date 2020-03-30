@@ -8,7 +8,25 @@
         "source0": "A",
         "source1": "B"
     },
-    "model": "SVM",
-    "file_version": 0,
-    "notes": "fds"
+    "model": "RL",
+    "file_version": 1,
+    "notes": "n",
+    "configuration": {
+        "_parametroN": "numero di dati inseriti",
+        "N": 60,
+        "_parametroD": "numero di sorgenti analizzate",
+        "D": 2,
+        "_parametroAlpha": "coefficienti della retta risultante",
+        "alpha": [
+            [
+                0.06083906443105867
+            ],
+            [
+                0.0016306232579022192
+            ],
+            [
+                0.0019240572486522735
+            ]
+        ]
+    }
 }

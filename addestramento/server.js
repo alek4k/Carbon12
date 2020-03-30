@@ -18,8 +18,8 @@ const nconf = require('nconf');
 const RPredittore = require('./fileManager/r_predittore');
 const WPredittore = require('./fileManager/w_predittore');
 const CSVr = require('./fileManager/csv_reader.js');
-const SVM_Adapter = require('./models/SVM_Adapter');
-const RL_Adapter = require('./models/RL_Adapter');
+const SvmAdapter = require('./models/SVM_Adapter');
+const RlAdapter = require('./models/RL_Adapter');
 
 let model = 'SVM';
 let sources;
@@ -91,23 +91,24 @@ module.exports = class Server {
 
     train(data, labels, predittore) {
         let modelAdapter;
-        switch(model) {
-            case 'SVM': 
-                modelAdapter = new SVM_Adapter();
-                break;
-            case 'RL': 
-                const n = data[0].length +1;
-                const param = { numX: n, numY: 1 };
-                modelAdapter = new RL_Adapter(param);
-                break;
-            default:
-                modelAdapter = null;
-
+        switch (model) {
+        case 'SVM': {
+            modelAdapter = new SvmAdapter();
+            break;
         }
-        if(predittore){
+        case 'RL': {
+            const n = data[0].length + 1;
+            const param = { numX: n, numY: 1 };
+            modelAdapter = new RlAdapter(param);
+            break;
+        }
+        default:
+            modelAdapter = null;
+        }
+        if (predittore) {
             modelAdapter.fromJSON(predittore);
         }
-        return modelAdapter.train(data,labels);
+        return modelAdapter.train(data, labels);
     }
 
     savePredittore(csvReader, strPredittore, nome) {
@@ -175,7 +176,6 @@ module.exports = class Server {
             }
 
             const strPredittore = this.train(data, labels, config);
-            //const strPredittore = '';
             console.log('addestramento terminato');
 
             this.savePredittore(csvReader, strPredittore, nomePredittore);

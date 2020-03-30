@@ -11,7 +11,7 @@
 
 import StrategyModel from '../strategyModel';
 
-class Regression extends StrategyModel {
+export default class Regression extends StrategyModel {
     add(xs, ys) { this.addObservation({ x: [1].concat(xs), y: [ys] }); }
 
     calculate() { return this.calculateCoefficients(); }
@@ -186,5 +186,3 @@ class Regression extends StrategyModel {
         for (let c = 0; c < options.lhsColumn.length; c++) for (let r = 0; r < options.rhsRow.length; r++) product[c][r] += options.lhsColumn[c] * options.rhsRow[r];
     }
 }
-
-module.exports = Regression;

@@ -12,7 +12,7 @@ import StrategyModel from './strategyModel';
 import SVM from './svm/svm';
 import Regression from './rl/regression';
 
-class FactoryModel {
+export default class FactoryModel {
     constructor() {
         this.strategyModel = null;
     }
@@ -28,5 +28,3 @@ class FactoryModel {
         }
     }
 }
-
-module.exports = FactoryModel;

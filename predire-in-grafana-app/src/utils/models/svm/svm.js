@@ -9,8 +9,6 @@
  * Changelog: modifiche effettuate
  */
 
-import StrategyModel from '../strategyModel';
-
 const utils = require('could-be-utils');
 const kernels = require('./kernels.js');
 

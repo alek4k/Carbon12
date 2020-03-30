@@ -14,7 +14,7 @@
 import * as $ from 'jquery';
 import DBConnection from './db_connection';
 
-class Influx extends DBConnection {
+export default class Influx extends DBConnection {
     /**
      *  Ritora il risultato di una query
      * @param {query} String rappresenta la query per il database
@@ -94,7 +94,7 @@ class Influx extends DBConnection {
      * @returns {Array} Array contenente i nomi delle datasources monitorate
      */
     getInstances() {
-        const query = `q=show tag values on "${this.database}" with key = "instance"`;
+        const query = `q=show series on "${this.database}"`;
         let result;
         $.ajax({
             async: false,
@@ -136,5 +136,3 @@ class Influx extends DBConnection {
         });
     }
 }
-
-module.exports = Influx;

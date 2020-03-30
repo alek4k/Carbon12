@@ -13,7 +13,7 @@
 import defaultDashboard from '../dashboards/default.json';
 
 const GrafanaApiQuery = require('../utils/grafana_query.js');
-const Influx = require('../utils/influx.js');
+import Influx from '../utils/influx.js';
 const SVM = require('../utils/models/svm/svm.js');
 const FilePredictor = require('../utils/r_predittore.js');
 
@@ -59,7 +59,9 @@ export default class importCtrl {
     // carico il file del predittore
     onUpload(json) {
         // controllo che il JSON inserito abbia la struttura desiderata
+        console.log(true);
         const fPredictor = new FilePredictor(json);
+        console.log("Fpredictor costruito");
         if (fPredictor.validity()) {
             this.predictor = fPredictor.getConfiguration();
             this.error = '';
@@ -134,9 +136,11 @@ export default class importCtrl {
     connections() {
         // creo la connessione con il database
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
-
         const sources = this.influx.getSources().results[0].series;
+        console.log(sources);
         const instances = this.influx.getInstances().results[0].series;
+        console.log(instances);
+        console.log("Crash qui");
         for (let i = 0, j = 0; i < sources.length; ++i) {
             // itero sul totale delle sorgenti
             this.availableSources.push(sources[i].name);
@@ -155,6 +159,7 @@ export default class importCtrl {
             }
             // se una sorgente non ha istanze rimane availableInstances[x] = [];
         }
+        console.log("Crash qui");
     }
 
     setPanel(lastRow, lastPanel) {

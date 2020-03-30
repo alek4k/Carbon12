@@ -105,18 +105,60 @@ export default class importCtrl {
                             const endOfHost = dataSource[i].url.lastIndexOf(':');
                             this.host = dataSource[i].url.substring(0, endOfHost);
                             this.port = dataSource[i].url.substring(endOfHost + 1);
-                            this.connections();
+                            this.getInfluxData();
                         }
                     }
                 });
             } else {
                 // ho configurato una nuova datasource
-                this.connections();
+                this.getInfluxData();
             }
             this.step = 3;
         } else {
             this.error = 'È necessario selezionare una sorgente dati';
         }
+    }
+
+    getInfluxData() {
+        if (!this.connection())
+            console.log("Errore connessione influx.");//TODO:se la connessione fallisce genera un errore
+        this.currentSources = this.getSources();
+        this.tagkeys = [];
+        this.fieldkeys = [];
+        for (let i = 0; i < this.currentSources.length; i++) {
+            this.tagkeys[this.currentSources[i]] = this.getTagKeys(this.currentSources[i]);
+            this.fieldkeys[this.currentSources[i]] = this.getFieldKeysName(this.currentSources[i]);
+        }
+    }
+
+    //ritorna un array contenente la lista delle sorgenti
+    getSources() {
+        const s = this.influx.getMeasurements();
+        console.log("Sorgenti:")
+        console.log(s);
+        return s;
+    }
+    
+    //ritorna un array contenente la lista delle varianti della sorgente source
+    getTagKeys(source) {
+        const t = this.influx.getTagKeys(source);
+        return t;
+    }
+
+    Update()
+    {
+        this.test = "funziona";
+    }
+
+    //ritorna un array contenente la lista di nomi dei dati monitorati nella sorgente source
+    getFieldKeysName(source) {
+        const f = this.influx.getFieldKeys(source);
+        let res = [];
+        //salvo solo i nomi e non il tipo
+        for (let i = 0; i < f.length; i++) {
+            res[i]=f[i];
+        }
+        return res;
     }
 
     // aggiungo la configurazione della data source alla lista delle data sources
@@ -133,9 +175,11 @@ export default class importCtrl {
         }
     }
 
-    connections() {
+    connection() {
         // creo la connessione con il database
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
+        return true;//TODO: controllare che l'esecuzione sia andata a buon fine
+
         const sources = this.influx.getSources().results[0].series;
         console.log(sources);
         const instances = this.influx.getInstances().results[0].series;

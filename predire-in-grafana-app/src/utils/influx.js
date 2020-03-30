@@ -30,7 +30,7 @@ export default class Influx extends DBConnection {
             data: query,
             processData: false,
             success: (data) => {
-                result = data.results[0].series[0].values;
+                result = data;
             },
             error: (test, status, exception) => {
                 console.log(`Error: ${exception}`);
@@ -69,47 +69,30 @@ export default class Influx extends DBConnection {
      *  Ritorna le datasources monitorate
      * @returns {Array} Array contenente i nomi delle datasources monitorate
      */
-    getSources() {
-        const query = `q=show field keys on ${this.database}`;
-        let result;
-        $.ajax({
-            async: false,
-            url: `${this.host}:${this.port}/query?`,
-            type: 'GET',
-            contentType: 'application/octet-stream',
-            data: query,
-            processData: false,
-            success: (data) => {
-                result = data;
-            },
-            error: (test, status, exception) => {
-                console.log(`Error: ${exception}`);
-            },
-        });
+    getMeasurements() {
+        const q = "q=show measurements";
+        let result = this.query(q).results[0].series[0].values;
         return result;
     }
 
     /**
-     *  Ritorna i parametri disponibili per le datasources
-     * @returns {Array} Array contenente i nomi delle datasources monitorate
+     *  Ritorna i tag keys(cioè le istanze) per la datasource selezionata
+     * @returns {Array} Array contenente i nomi delle instanze di datasource
      */
-    getInstances() {
-        const query = `q=show series on "${this.database}"`;
-        let result;
-        $.ajax({
-            async: false,
-            url: `${this.host}:${this.port}/query?`,
-            type: 'GET',
-            contentType: 'application/octet-stream',
-            data: query,
-            processData: false,
-            success: (data) => {
-                result = data;
-            },
-            error: (test, status, exception) => {
-                console.log(`Error: ${exception}`);
-            },
-        });
+    getTagKeys(datasource) {
+        const q = `q=show tag keys from ${datasource}`;
+        let result = this.query(q).results[0].series[0].values;
+        return result;
+    }
+
+
+    /**
+     *  Ritorna nome e tipo dei dati monitorati di datasource
+     * @returns {Array} Array contenente nome e tipo
+     */
+    getFieldKeys(datasource) {
+        const q = `q=show field keys from ${datasource}`;
+        let result = this.query(q).results[0].series[0].values;
         return result;
     }
 

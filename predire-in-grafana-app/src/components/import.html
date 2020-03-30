@@ -144,14 +144,9 @@
                     <div class="gf-form-select-wrapper grafana-options-table">
                       <select class="gf-form-input"
                         ng-model="ctrl.sources[$index]"
-                        ng-options="s for s in ctrl.availableSources"
+                        ng-options="s for s in ctrl.currentSources"
                         ng-change="
-                          ctrl.instances[$index] = ctrl.availableInstances[
-                            ctrl.availableSources.indexOf(ctrl.sources[$index])
-                          ][0];
-                          ctrl.params[$index] = ctrl.availableParams[
-                            ctrl.availableSources.indexOf(ctrl.sources[$index])
-                          ][0]"/>
+                          ctrl.Update()"/>
                     </div>
                   </div>
                   <div ng-if="!ctrl.sources[$index] || ctrl.instances[$index]" class="gf-form">
@@ -159,9 +154,7 @@
                     <div class="gf-form-select-wrapper grafana-options-table">
                       <select class="gf-form-input"
                         ng-model="ctrl.instances[$index]"
-                        ng-options="i for i in ctrl.availableInstances[
-                          ctrl.availableSources.indexOf(ctrl.sources[$index])
-                        ]"/>
+                        ng-options="i for i in [ctrl.test]"/>
                     </div>
                   </div>
                   <div class="gf-form">
@@ -169,9 +162,7 @@
                     <div class="gf-form-select-wrapper grafana-options-table">
                       <select class="gf-form-input"
                         ng-model="ctrl.params[$index]"
-                        ng-options="p for p in ctrl.availableParams[
-                          ctrl.availableSources.indexOf(ctrl.sources[$index])
-                        ]"/>
+                        ng-options="i for i in [ctrl.test]"/>
                     </div>
                   </div>
               </div>

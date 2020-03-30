@@ -72,7 +72,22 @@ module.exports = class csvReader {
                 if (columns.includes(key)) {
                     // per ogni riga del csv, prendo i valori nelle colonne che sono specificate in columns
                     // in validRow alla fine del ciclo sarà presente la riga corrente con solo le colonne valide
-                    validRow[c++] = row[key];
+                    let count = 0;
+                    let ji = 0;
+                    for (ji; ji < row[key].length; ji++) {
+                        if (row[key].charAt(ji) === '.') {
+                            count++;
+                        }
+                    }
+                    if (count > 1) {
+                        let st = row[key];
+                        for (let dot = 1; dot <= count; dot++) {
+                            st = st.replace('.', '');
+                        }
+                        validRow[c++] = st;
+                    } else {
+                        validRow[c++] = row[key];
+                    }
                 }
             }
             res[i++] = validRow;
@@ -101,7 +116,8 @@ module.exports = class csvReader {
                 if (res[i][j] === 'null') {
                     res[i][j] = 0;
                 } else {
-                    res[i][j] = parseFloat(res[i][j]);
+                    res[i][j] = parseFloat(res[i][j]) / 10000000000;
+                    // res[i][j] = parseFloat(res[i][j]);
                 }
             }
         }

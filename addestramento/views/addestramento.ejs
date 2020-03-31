@@ -43,20 +43,97 @@
 </div>
 
 <script>
+    let result;
     $(document).ready(function(){
         $(document).on('change', '#trainFile', function(){
-            var name = document.getElementById("trainFile").files[0].name;
-            var form_data = new FormData();
-            var ext = name.split('.').pop().toLowerCase();
+            let name = document.getElementById("trainFile").files[0].name;
+            let form_data = new FormData();
+            let ext = name.split('.').pop().toLowerCase();
             if(jQuery.inArray(ext, ['csv']) !== -1)
             {
                 form_data.append('trainFile', document.getElementById('trainFile').files[0]);
 
-                let genericChart = function (data, label, xAxesName, yAxesName) {
-                    let buildData = [];
-                    for (var i = 0; i < data.length; i++) {
-                        buildData.push({x: data[i][0], y: data[i][1]});
+                $.ajax({
+                    url:"/loadCsv",
+                    method:"POST",
+                    data: form_data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: drawChart
+                });
+                
+            }
+        });
+        $(document).on('change', 'input:radio[name="assex"]', function(){
+            let assex = $(this).val();
+            let assey = $('input:radio[name="assey"]:checked').val();
+            configChart(result, assex, assey);
+        });
+        $(document).on('change', 'input:radio[name="assey"]', function(){
+            let assex = $('input:radio[name="assex"]:checked').val();
+            let assey = $(this).val();
+            configChart(result, assex, assey);
+        });
+    });
+
+    let drawChart = function(response) {
+                    result = JSON.parse(response);
+                    let sorgenti = result[2];
+                    let myDiv = document.getElementById("mychart"); 
+                    let myParagrah = document.createElement('p');
+                    myParagrah.appendChild(document.createTextNode('Visualizza la disposizione dei tuoi dati'));
+                    myDiv.appendChild(myParagrah);
+                    let asseX = document.createElement('p');
+                    asseX.appendChild(document.createTextNode('Seleziona la sorgente da visualizzare sull\'asse x'));
+                    myDiv.appendChild(asseX);
+                    for(let i = 0; i<sorgenti.length; i++){
+                        let radio = document.createElement('input'); 
+                        radio.type = "radio"; 
+                        radio.name = 'assex'; 
+                        radio.value = i; 
+                        radio.id = sorgenti[i]+'X'; 
+                        
+                        let label = document.createElement('label'); 
+                        label.htmlFor = sorgenti[i]; 
+                        label.classList.add('radioLabel');
+                        label.appendChild(document.createTextNode(sorgenti[i])); 
+
+                        myDiv.appendChild(radio); 
+                        myDiv.appendChild(label); 
                     }
+                    let asseY = document.createElement('p');
+                    asseY.appendChild(document.createTextNode('Seleziona la sorgente da visualizzare sull\'asse y'));
+                    myDiv.appendChild(asseY);
+                    for(let i = 0; i<sorgenti.length; i++){
+                        let radio = document.createElement('input'); 
+                        radio.type = "radio"; 
+                        radio.name = 'assey'; 
+                        radio.value = i; 
+                        radio.id = sorgenti[i]+'Y'; 
+                        
+                        let label = document.createElement('label'); 
+                        label.htmlFor = sorgenti[i]; 
+                        label.classList.add('radioLabel');
+                        label.appendChild(document.createTextNode(sorgenti[i])); 
+
+                        myDiv.appendChild(radio); 
+                        myDiv.appendChild(label); 
+                    }
+                    let xSource = document.getElementById(sorgenti[0]+'X');
+                    let ySource = document.getElementById(sorgenti[1]+'Y');
+                    xSource.checked = true;
+                    ySource.checked = true;
+                    configChart(result, 0, 1);
+                }
+    let genericChart = function (data, label, x, y) {
+                    const xAxesName = result[2][x];
+                    const yAxesName = result[2][y];
+                    let buildData = [];
+                    for (let i = 0; i < data.length; i++) {
+                        buildData.push({x: data[i][x], y: data[i][y]});
+                    }
+                    console.log(buildData);
                     let config = [];
                     config.push('scatter');
                     let dataSet = {
@@ -90,16 +167,20 @@
                     return config;
                 }
 
-                let SVM_Chart = function (data, label, xAxesName, yAxesName) {
+                let SVM_Chart = function (data, label, x, y) {
                     let greenData = [];
                     let redData = [];
-                    for (var i = 0; i < data.length; i++) {
+                    const xAxesName = result[2][x];
+                    const yAxesName = result[2][y];
+                    for (let i = 0; i < data.length; i++) {
                         if(label[i]===1)
-                            greenData.push({x: data[i][0], y: data[i][1]});
+                            greenData.push({x: data[i][x], y: data[i][y]});
                         else                                 
-                            redData.push({x: data[i][0], y: data[i][1]});
+                            redData.push({x: data[i][x], y: data[i][y]});
                             
                     }
+                    console.log(greenData);
+                    console.log(redData);
                     let config = [];
                     config.push('scatter');
                     let dataSet = {
@@ -137,14 +218,16 @@
                     return config;
 
                 }
-                let RL_Chart = function (data, label, xAxesName, yAxesName) {
+                let RL_Chart = function (data, label, x, y) {
                     let pointData = [];
-                    for (var i = 0; i < data.length; i++) {
-                        pointData.push({x: data[i][0], y: data[i][1]});
+                    const xAxesName = result[2][x];
+                    const yAxesName = result[2][y];
+                    for (let i = 0; i < data.length; i++) {
+                        pointData.push({x: data[i][x], y: data[i][y]});
                     }
                     let lineData = []; 
-                    lineData.push({x: data[0][0], y: label[0]});
-                    lineData.push({x: data[data.length-1][0], y: label[data.length-1]});
+                    lineData.push({x: data[0][x], y: label[0]});
+                    lineData.push({x: data[data.length-1][x], y: label[data.length-1]});
                     
                     let config = [];
                     config.push('line');
@@ -202,29 +285,28 @@
                     return config;
                 }
 
-                let drawChart = function(response){
-                    const result = JSON.parse(response);
+                let configChart = function(result, x, y){
                     const data = result[0];
                     const label = result[1];
-                    const xAxesName = result[2][0];
-                    const yAxesName = result[2][1];
+                    const xAxesName = result[2][x];
+                    const yAxesName = result[2][y];
                     const title = 'correlazione ' + xAxesName + '-' + yAxesName;
 
                     const isNull = (currentValue) => currentValue === 0;
                     let nomodel = label.every(isNull);
                     let chartConfiguration = [];
                     if(nomodel){
-                        chartConfiguration = genericChart(data, label, xAxesName, yAxesName);
+                        chartConfiguration = genericChart(data, label, x, y);
                         
                     }
                     else{
                         const isClass = (currentValue) => currentValue === -1 || currentValue === 1;
                         let SVM = label.every(isClass);
                         if(SVM){
-                            chartConfiguration = SVM_Chart(data, label, xAxesName, yAxesName);
+                            chartConfiguration = SVM_Chart(data, label, x, y);
                         }
                         else
-                            chartConfiguration = RL_Chart(data, label, xAxesName, yAxesName);
+                            chartConfiguration = RL_Chart(data, label, x, y);
                     }    
                     const ctx = document.getElementById('chart').getContext('2d');
                     const scatterChart = new Chart(ctx, {
@@ -239,21 +321,6 @@
                         }
                     });
                 }
-            
-
-                $.ajax({
-                    url:"/loadCsv",
-                    method:"POST",
-                    data: form_data,
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: drawChart
-                });
-                
-            }
-        });
-    });
    
 </script>
 

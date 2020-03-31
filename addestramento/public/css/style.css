@@ -114,3 +114,12 @@ ul {
   margin: 0 25%;
   height: 20%;
 }
+
+.radioLabel {
+  display: inline;
+  margin-right: 1em;
+}
+
+#myChart>p {
+  font-size: 1em;
+}

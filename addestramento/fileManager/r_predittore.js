@@ -37,11 +37,19 @@ class RPredittore {
      * @return {boolean}
      */
     checkVersion(pluginV, trainV) {
-        const confPv = pluginV.replace('.', '');
-        const confTv = trainV.replace('.', '');
-        const pV = this.getPluginVersion().replace(',', '');
-        const tV = this.getTrainVersion().replace(',', '');
-        return parseInt(pV) >= parseInt(confPv) && parseInt(tV) >= parseInt(confTv);
+        let cpV = pluginV;
+        let ctV = trainV;
+        for (let i = 0; i < 2; i++) {
+            cpV = cpV.replace('.', '');
+            ctV = ctV.replace('.', '');
+        }
+        let pV = this.getPluginVersion();
+        let tV = this.getTrainVersion();
+        for (let i = 0; i < 2; i++) {
+            pV = pV.replace('.', '');
+            tV = tV.replace('.', '');
+        }
+        return parseInt(pV) <= parseInt(cpV) && parseInt(tV) <= parseInt(ctV);
     }
 
     /**

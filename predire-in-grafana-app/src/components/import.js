@@ -11,9 +11,9 @@
 
 // importo il template della dashboard per la creazione del pannello
 import defaultDashboard from '../dashboards/default.json';
+import Influx from '../utils/influx.js'; 
 
 const GrafanaApiQuery = require('../utils/grafana_query.js');
-const Influx = require('../utils/influx.js');
 const SVM = require('../utils/models/svm/svm.js');
 const FilePredictor = require('../utils/r_predittore.js');
 

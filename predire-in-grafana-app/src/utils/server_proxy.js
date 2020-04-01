@@ -12,7 +12,7 @@
 import DBConnection from './db_connection';
 import Influx from './influx';
 
-class ServerProxy extends DBConnection {
+export default class ServerProxy extends DBConnection {
     constructor(host, port, database) {
         super(host, port, database);
         this.connection = null;
@@ -53,5 +53,3 @@ class ServerProxy extends DBConnection {
         throw new Error('Connection error');
     }
 }
-
-module.exports = ServerProxy;

@@ -14,7 +14,7 @@
 import * as $ from 'jquery';
 import DBConnection from './db_connection';
 
-class Influx extends DBConnection {
+export default class Influx extends DBConnection {
     /**
      *  Ritora il risultato di una query
      * @param {query} String rappresenta la query per il database
@@ -136,5 +136,3 @@ class Influx extends DBConnection {
         });
     }
 }
-
-module.exports = Influx;

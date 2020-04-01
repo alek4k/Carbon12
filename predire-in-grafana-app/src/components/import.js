@@ -279,8 +279,9 @@ export default class importCtrl {
             .then((db) => {
                 // reindirizzo alla pagina della dashboard appena creata
                 this.$location.url(db.importedUrl);
+                console.log(db.importedUrl);
                 // ricarico la nuova pagina per aggiornare la lista delle data sources disponibili
-                window.location.href = db.importedUrl;
+                //window.location.href = db.importedUrl;
             });
     }
 }

@@ -12,11 +12,10 @@ const http = path.resolve(__dirname, 'node_modules/stream-http/index.js');
 module.exports = {
   target: 'node',
   context: resolve('src'),
-  entry: {
-    './module': './module.js',
-    'components/config': './components/config.js',
-    'components/config': './components/import.js',
-  },
+entry: {
+  './module': './module.js',
+  'components/config': './components/config.js',
+},
   output: {
     filename: "[name].js",
     path: resolve('dist'),

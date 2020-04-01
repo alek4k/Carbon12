@@ -11,8 +11,10 @@
 
 import PredireInGrafanaAppConfigCtrl from './components/config';
 import importCtrl from './components/import';
+import predictCtrl from './components/predict';
 
 export {
     PredireInGrafanaAppConfigCtrl as ConfigCtrl,
+    predictCtrl,
     importCtrl,
 };

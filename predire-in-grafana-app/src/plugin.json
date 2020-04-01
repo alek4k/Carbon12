@@ -32,6 +32,14 @@
       "role": "Editor",
       "addToNav": true,
       "defaultNav": true
+    },
+    {
+      "type": "page",
+      "name": "Predizione",
+      "component": "predictCtrl",
+      "role": "Editor",
+      "addToNav": true,
+      "defaultNav": true
     }
   ],
 

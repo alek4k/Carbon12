@@ -6,7 +6,7 @@
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
- * Changelog: eliminata lettura tempo
+ * Changelog: sistemata lettura dati
  */
 
 const fs = require('fs');
@@ -52,16 +52,18 @@ module.exports = class csvReader {
         return false;
     }
 
-
     /**
      *
-     * @param {Array} columns Lista di colonne da ritornare.
-     * @returns {Array} Ritorna la matrice contenente ogni riga di ogni colonna selezionata.
+     * @return dati per il grafico
      */
-    getData(columns) {
-        if (columns == null) {
-            return null;
-        }
+    getDataGraph() {
+        // seleziona tutte le colonne, eccetto quella delle data entry(Series), delle Labels e quella vuota che mette grafana
+        const dataColumns = [];
+        this.columns.forEach((element) => {
+            if ((!(element === 'Labels')) && (!(element === 'Time'))) {
+                dataColumns.push(element);
+            }
+        });
 
         const res = [];
         let i = 0;
@@ -69,7 +71,7 @@ module.exports = class csvReader {
             const validRow = [];
             let c = 0;
             for (const key in row) {
-                if (columns.includes(key)) {
+                if (dataColumns.includes(key)) {
                     // per ogni riga del csv, prendo i valori nelle colonne che sono specificate in columns
                     // in validRow alla fine del ciclo sarà presente la riga corrente con solo le colonne valide
                     let count = 0;
@@ -88,6 +90,44 @@ module.exports = class csvReader {
                     } else {
                         validRow[c++] = row[key];
                     }
+                }
+            }
+            res[i++] = validRow;
+        });
+        // converte i valori ottenuti nel giusto formato
+        for (let k = 0; k < res.length; k++) {
+            // converte i valori in float
+            for (let j = 0; j < res[k].length; j++) {
+                if (res[k][j] === 'null') {
+                    res[k][j] = 0;
+                } else {
+                    res[k][j] = parseFloat(res[k][j]);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     *
+     * @param {Array} columns Lista di colonne da ritornare.
+     * @returns {Array} Ritorna la matrice contenente ogni riga di ogni colonna selezionata.
+     */
+    getData(columns) {
+        if (columns == null) {
+            return null;
+        }
+
+        const res = [];
+        let i = 0;
+        this.records.forEach((row) => {
+            const validRow = [];
+            let c = 0;
+            for (const key in row) {
+                if (columns.includes(key)) {
+                    validRow[c++] = row[key];
+                    // per ogni riga del csv, prendo i valori nelle colonne che sono specificate in columns
+                    // in validRow alla fine del ciclo sarà presente la riga corrente con solo le colonne valide
                 }
             }
             res[i++] = validRow;
@@ -116,8 +156,7 @@ module.exports = class csvReader {
                 if (res[i][j] === 'null') {
                     res[i][j] = 0;
                 } else {
-                    res[i][j] = parseFloat(res[i][j]) / 10000000000;
-                    // res[i][j] = parseFloat(res[i][j]);
+                    res[i][j] = parseFloat(res[i][j]);
                 }
             }
         }

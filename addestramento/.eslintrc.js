@@ -15,7 +15,7 @@ module.exports = {
         // lunghezza massima delle righe
         "max-len": ["warn", 100, {"comments": 150}],
         // spazi per indentazione
-        indent: ["error", 4],
+        indent: ["error", 4, { "SwitchCase": 1 }],
         // permesso di utilizzare operatore ++ e --
         "no-plusplus": "off",
         // permesso di utilizzare la stampa su console
@@ -29,7 +29,7 @@ module.exports = {
         radix: "off",
         // i metodi delle classi possono non utilizzare 'this'
         "class-methods-use-this": "off",
-        // permesso di utilizzare _ 
+        // permesso di utilizzare _
         "no-underscore-dangle" : "off"
     }
 };

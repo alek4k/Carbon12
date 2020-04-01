@@ -13,6 +13,51 @@ test("It should response the GET method", () => {
         .expect(200);
 });
 
+test("Test for config addestramento", () =>{
+    server.config();
+
+    return request(server.app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200);
+});
+
+test("Test for config fileupload", () =>{
+    
+    server.config();
+
+    return request(server.app)
+        .post("/fileupload")
+        .expect("Content-Type", /json/)
+        .expect(200);
+});
+
+test("Test for config downloadPredittore", () =>{
+    server.config();
+
+    return request(server.app)
+        .get("/downloadPredittore")
+        .expect("Content-Type", /html/)
+        .expect(200);
+});
+
+test("Test for config downloadFile", () =>{
+    server.config();
+
+    return request(server.app)
+        .post("/downloadFile")
+        .expect("Content-Type", /html/)
+        .expect(200);
+});
+
+test("Test for config loadCsv", () =>{
+    server.config();
+
+    return request(server.app)
+        .post("/loadCsv")
+        .expect(200);
+});
+
 test("test addestramento", () => {
    let data = [[0, 3635074964649240],
        [0.02222222222222222, 3635087719298240],

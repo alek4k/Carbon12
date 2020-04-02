@@ -22,7 +22,7 @@ test("Test for config addestramento", () =>{
         .expect(200);
 });
 
-test("Test for config fileupload", () =>{
+/*test("Test for config fileupload", () =>{
     
     server.config();
 
@@ -30,7 +30,7 @@ test("Test for config fileupload", () =>{
         .post("/fileupload")
         .expect("Content-Type", /json/)
         .expect(200);
-});
+});*/
 
 test("Test for config downloadPredittore", () =>{
     server.config();
@@ -41,14 +41,14 @@ test("Test for config downloadPredittore", () =>{
         .expect(200);
 });
 
-test("Test for config downloadFile", () =>{
+/*test("Test for config downloadFile", () =>{
     server.config();
 
     return request(server.app)
         .post("/downloadFile")
         .expect("Content-Type", /html/)
         .expect(200);
-});
+});*/
 
 test("Test for config loadCsv", () =>{
     server.config();
@@ -84,8 +84,8 @@ test("test addestramento", () => {
     [ '_parametroW' ],
     [ 'w' ]
    ]
-
-   let json_data = server.train(data, labels);
+   let config='';
+   let json_data = server.train(data, labels, config);
    let result = [];
    for(var i in json_data)
     result.push([i]);

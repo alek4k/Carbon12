@@ -71,7 +71,7 @@
         il grafico visualizzerà la distribuzione dei dati e la retta di regressione risultante. 
         </p>
     </div>  
-    <canvas id="chart" width="100" height="100"></canvas>
+   <!----<canvas id="chart" width="100" height="100"></canvas>-->
 </div>
 
 <script>
@@ -92,17 +92,24 @@
                     contentType: false,
                     cache: false,
                     processData: false,
-                    success: function(response){
-                        result = JSON.parse(response)
-                        console.log(result)
-                        if(result === []){
-                            if(result[2].length < 2)
-                                alert('Il file deve avere almeno due sorgenti di dati');
-                            else 
-                                drawChart(result);
+                    success:function(response){
+                        if(document.getElementById('configChart')){
+                            $('#configChart').remove();
                         }
-                        else{
+                        if(document.getElementById('chart')){
+                            $('#chart').remove();
+                        }
+                        if(response === 'null'){
+                            $("#trainFile").replaceWith($("#trainFile").val('').clone(true));
                             alert('struttura csv non valida');
+                        }
+                        result = JSON.parse(response);
+                        if(result[2].length <2){
+                                alert('Il file deve avere almeno due sorgenti di dati');
+                                $("#trainFile").replaceWith($("#trainFile").val('').clone(true));
+                            }
+                        else{
+                            drawChart(result);
                         }
                     }
                 });
@@ -122,9 +129,6 @@
 
     let drawChart = function(result) {          
         let sorgenti = result[2];
-        if(document.getElementById('configChart')){
-            $('#configChart').remove();
-        }
         let myDiv = document.createElement('div'); 
         myDiv.id = 'configChart';
         let div = document.getElementById('mychart');
@@ -350,6 +354,12 @@
             else
                 chartConfiguration = RL_Chart(data, label, x, y);
         }
+        let myDiv = document.getElementById('mychart'); 
+        let chart = document.createElement('canvas');
+        chart.id = 'chart';
+        chart.width = '100';
+        chart.height = '100';
+        myDiv.appendChild(chart);
         const ctx = document.getElementById('chart').getContext('2d');
         const scatterChart = new Chart(ctx, {
             type: chartConfiguration[0],

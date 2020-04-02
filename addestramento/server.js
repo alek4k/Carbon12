@@ -205,11 +205,13 @@ module.exports = class Server {
     getChartData(request, response) {
         const form = new formidable.IncomingForm();
         form.multiples = false;
-        const result = [];
+        //const result = [];
+        let result = null;
         form.on('file', (fields, file) => {
             const pathTrainFile = file.path;
             const csvReader = new CSVr(pathTrainFile, null);
             if (csvReader.checkStructure()) {
+                result = [];
                 result.push(csvReader.getDataGraph());
                 result.push(csvReader.autoGetLabel());
                 result.push(csvReader.getDataSource());

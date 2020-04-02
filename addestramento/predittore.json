@@ -8,25 +8,21 @@
         "source0": "A",
         "source1": "B"
     },
-    "model": "RL",
-    "file_version": 1,
-    "notes": "n",
+    "model": "SVM",
+    "file_version": 0,
+    "notes": "kjh",
     "configuration": {
         "_parametroN": "numero di dati inseriti",
         "N": 60,
         "_parametroD": "numero di sorgenti analizzate",
         "D": 2,
-        "_parametroAlpha": "coefficienti della retta risultante",
-        "alpha": [
-            [
-                0.06083906443105867
-            ],
-            [
-                0.0016306232579022192
-            ],
-            [
-                0.0019240572486522735
-            ]
+        "_parametroB": "bias: coefficiente additivo del calcolo della SVM",
+        "b": -2125.223748475313,
+        "kernelType": "linear",
+        "_parametroW": "weights: coefficienti moltiplicativi del calcolo della SVM",
+        "w": [
+            -0.00033460306985944044,
+            -0.011316509768221295
         ]
     }
 }

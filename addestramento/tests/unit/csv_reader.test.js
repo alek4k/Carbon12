@@ -3,11 +3,16 @@ const CSVr = require('../../fileManager/csv_reader.js');
 const csvReader = new CSVr('./tests/files/dati_test.csv', null);
 
 
-test("It should response that file.csv was written correctly", () => {
+test("It should response that function getData of file.csv work correctly if columns=0", () => {
     expect(csvReader.getDataSource()).toEqual(['A', 'B']);
 });
 
-test("It should response that file.csv was written correctly", () => {
+test('It should response that function getData of file.csv work correctly', () => {
+    let col= ['Labels'];
+    expect(csvReader.getData(col)).toEqual([["-1"],["-1"],["1"],["-1"],["1"],["1"],["1"],["-1"],["-1"],["-1"]]);
+});
+
+test("It should response that file.csv data were read correctly", () => {
     let data = [
         [0, 36350749646.49240],
         [0.02222222222222222, 36350877192.98240],
@@ -27,6 +32,14 @@ test("It should response that file.csv was written correctly", () => {
     //data.forEach(x=> expect(ret).toContain(x));
 });
 
-test("It should response that file.csv was written correctly", () => {
+test("It should response that file.csv has the expected label", () => {
     expect(csvReader.autoGetLabel()).toEqual([-1,-1,1,-1,1,1,1,-1,-1,-1]);
+});
+
+test('It should response that file.csv has the expected source', () => {
+    expect(csvReader.getDataSource()).toEqual(['A', 'B']);
+});
+
+test('It should response that file.csv has the expected count of source', () => {
+    expect(csvReader.countSource()).toEqual(2);
 });

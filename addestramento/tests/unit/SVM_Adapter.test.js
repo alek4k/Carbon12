@@ -17,17 +17,23 @@ test("It should return JSON file with SVM configuration", () => {
     ];
    let labels = [1, 1, 1, 1, 1, -1, -1, -1, -1, -1];
 
-   const k = {};
-   k._parametroN = "numero di dati inseriti";
-   k.N = 10;
-   k._parametroD = "numero di sorgenti analizzate";
-   k.D = 2;
-   k._parametroB = "bias: coefficiente additivo del calcolo della SVM";
-   k.b = -0.000054784000000113187;
-   k.kernelType = "linear";
-   k._parametroW = "weights: coefficienti moltiplicativi del calcolo della SVM";
-   k.w = [0.9992256544000001,
-    +     0.3354737567999997];
+   const k = [
+    [ '_parametroN' ],
+    [ 'N' ],
+    [ '_parametroD' ],
+    [ 'D' ],
+    [ '_parametroB' ],
+    [ 'b' ],
+    [ 'kernelType' ],
+    [ '_parametroW' ],
+    [ 'w' ]
+   ]
 
-   expect(svmAdapter.train(data, labels)).toEqual(k);
+   let json_data = svmAdapter.train(data, labels);
+   let result = [];
+   for(var i in json_data)
+    result.push([i]);
+   expect(result).toEqual(k);
 });
+
+// https://jestjs.io/docs/en/expect#expectarraycontainingarray

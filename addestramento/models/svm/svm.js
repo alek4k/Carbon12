@@ -21,7 +21,6 @@ const makeSigmoidKernel = kernels.makeSigmoidKernel;
 let svm_id = 1;
 const SVM = function () {
     this.svm_id = svm_id++;
-    console.log(svm_id)
 };
 
 SVM.prototype = {

@@ -50,6 +50,11 @@ module.exports = class Server {
             console.log('Error: csv non valido');
             return 'Struttura csv non valida';
         }
+        const labels = csvReader.autoGetLabel();
+        if (labels.every((value) => value === 0)) {
+            console.log('Error: csv - valori attesi mancanti');
+            return 'Valori attesi nel campo Labels del file csv mancanti';
+        }
         console.log('csv valido');
         return '';
     }
@@ -92,18 +97,18 @@ module.exports = class Server {
     train(data, labels, predittore) {
         let modelAdapter;
         switch (model) {
-        case 'SVM': {
-            modelAdapter = new SvmAdapter();
-            break;
-        }
-        case 'RL': {
-            const n = data[0].length + 1;
-            const param = { numX: n, numY: 1 };
-            modelAdapter = new RlAdapter(param);
-            break;
-        }
-        default:
-            modelAdapter = null;
+            case 'SVM': {
+                modelAdapter = new SvmAdapter();
+                break;
+            }
+            case 'RL': {
+                const n = data[0].length + 1;
+                const param = { numX: n, numY: 1 };
+                modelAdapter = new RlAdapter(param);
+                break;
+            }
+            default:
+                modelAdapter = null;
         }
         if (predittore) {
             modelAdapter.fromJSON(predittore);
@@ -205,7 +210,7 @@ module.exports = class Server {
             const pathTrainFile = file.path;
             const csvReader = new CSVr(pathTrainFile, null);
             if (csvReader.checkStructure()) {
-                result.push(csvReader.autoGetData());
+                result.push(csvReader.getDataGraph());
                 result.push(csvReader.autoGetLabel());
                 result.push(csvReader.getDataSource());
             }

@@ -26,9 +26,17 @@ Per il corretto funzionamento del programma di addestramento il file dovrà:
   * *Labels* è la previsione attesa 
     * l'intestazione della colonna **deve** essere rispettata 
 
+3. i dati devono essere nel formato **numero con separatore di migliaia**
 In figura viene presentato un esempio del file di addestramento.
 
 ![file_csv](https://github.com/alek4k/Carbon12/blob/addestramento/addestramento/img_README/formatoFileCSV.png)
+
+#### Opzioni
+Il programma visualizzerà un grafico con la disposizione dei dati inseriti. 
+In caso ci siano più di due sorgenti, sarà possibile selezionare quali visualizzare. 
+Se non si conosce ancora quale modello è più adatto per l'allenamento, lasciando tutta la colonna Labels con valore `0`, il programma visualizzerà la disposizione dei dati permettendo di comprendere quale sia il modello più adatto. 
+Se invece si intende utilizzare il modello SVM e i dati sono già stati classificati con le etichette -1, 1, il grafico riporterà la distribuzione dei dati con la classificazione inserita: i dati con etichetta 1 saranno visualizzati in verde, i dati con etichetta -1 saranno visualizzati in rosso. 
+Infine, nel caso della RL in cui le etichette avranno valori continui diversi dai soli 1 e -1, il grafico visualizzerà la distribuzione dei dati e la retta di regressione risultante. 
 
 ### Struttura del predittore.json
 Il file predittore.json avrà una struttura predefinita, tramite la quale sarà possibile la lettura dei risultati nel plug-in di Grafana e il corretto funzionamento delle funzioni di predizione.
@@ -62,15 +70,3 @@ In figura viene presentato un esempio del file di addestramento.
 7. Scaricare il nuovo `predittore.json` tramite il pulsante *Download predittore*;
 8. Se si vuole addestrare altro premere *Ritorna all'homepage*, oppure proseguire con il plug-in.
 
---- 
-
-#### Componenti 
-| Nome                 | Matricola |
-| :--------------------|:---------:| 
-| Giacomo Callegari    | 1122658   | 
-| Manuel De Franceschi | 1162299   |
-| Nicolò Fassina       | 1166190   |
-| Francesco Gobbo      | 1120713   | 
-| Andrea Longo         | 1174957   |
-| Alessandro Lovo      | 1142682   |
-| Veronica Pederiva    | 1161493   |

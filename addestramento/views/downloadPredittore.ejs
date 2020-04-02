@@ -1,18 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+    <title>Pagina di download</title>
     <meta charset="utf-8">
-    <meta author="Carbon12">
-    <title>Pagina di addestramento</title>
+    <meta name="author" content="Carbon12">
+    <meta name="title" content="Download Predittore - Predire in Grafana" />
+    <meta name="description" content="Pagina di download del predittore"/>
     <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
 </head>
 <body>
 <img src="/images/C.png" alt=""/>
 <h1>Predire in Grafana</h1>
 <h2>Pagina di download</h2>
 <p>Il file con il predittore addestrato è pronto. Procedere con il download.</p>
+<div id="infoDownload">
+    <i class="fa fa-info-circle icon" aria-hidden="true"></i>
+    <p class="adv">Il file comparirà nella cartella Download del tuo computer. 
+        Questo dovrà essere caricato nel plug-in per iniziare la previsione dei tuoi dati su Grafana.
+    </p>
+</div>
 <div id="downloadPredittore">
-    <ul><strong>Parametri di allenamento:</strong>
+    <b>Parametri di allenamento:</b>
+    <ul>
         <li>Modello utilizzato: <%= model %></li>
         <li>Sorgenti analizzate: <%= sources %></li>
     </ul>

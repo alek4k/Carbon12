@@ -101,7 +101,7 @@ module.exports = class csvReader {
                 if (res[k][j] === 'null') {
                     res[k][j] = 0;
                 } else {
-                    res[k][j] = parseFloat(res[k][j]);
+                    res[k][j] = parseFloat(res[k][j]) / 1000000;
                 }
             }
         }

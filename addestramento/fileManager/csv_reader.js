@@ -46,10 +46,7 @@ module.exports = class csvReader {
      */
     checkStructure() {
         const columnsLength = this.columns.length - 1;
-        if (this.columns[0] === 'Time' && this.columns[columnsLength] === 'Labels') {
-            return true;
-        }
-        return false;
+        return this.columns[0] === 'Time' && this.columns[columnsLength] === 'Labels';
     }
 
     /**

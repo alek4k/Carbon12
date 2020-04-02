@@ -10,19 +10,19 @@
     },
     "model": "SVM",
     "file_version": 0,
-    "notes": "a",
+    "notes": "kjh",
     "configuration": {
         "_parametroN": "numero di dati inseriti",
         "N": 89,
         "_parametroD": "numero di sorgenti analizzate",
         "D": 2,
         "_parametroB": "bias: coefficiente additivo del calcolo della SVM",
-        "b": 1.1922737295051333,
+        "b": -2125.223748475313,
         "kernelType": "linear",
         "_parametroW": "weights: coefficienti moltiplicativi del calcolo della SVM",
         "w": [
-            -0.03215054671003559,
-            0.027362865641830325
+            -0.00033460306985944044,
+            -0.011316509768221295
         ]
     }
 }

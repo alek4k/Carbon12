@@ -1,5 +1,4 @@
 /addestramento/.vscode/*
 /.idea/
 /addestramento/.idea/
-/predire-in-grafana-app/
-/addestramento/node_modules/
+addestramento/node_modules/

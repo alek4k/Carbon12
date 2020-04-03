@@ -9,22 +9,26 @@
  * Changelog: modifiche effettuate
  */
 
-import InfinitySwag from '../utils/infinitySwag';
+import { InfinitySwag } from '../utils/infinitySwag';
+import Influx from '../utils/influx.js';
 
 export default class predictCtrl {
   /** @ngInject */
-  constructor($location) {
+  constructor($location, backendSrv) {
     this.$location = $location;
+    this.backendSrv = backendSrv;
   }
 
   startPrediction() {
-    this.pred = setInterval(() => {
-      console.log("loop()")
-    }, 1000);
+    if(InfinitySwag.db == null) {
+      InfinitySwag.setBackendSrv(this.backendSrv);
+      InfinitySwag.setInflux(new Influx('http://localhost', 8086, 'telegraf'));
+    }
+    InfinitySwag.startPrediction();
   }
 
   stopPrediction() {
-    clearInterval(this.pred);
+    InfinitySwag.stopPrediction();
   }
 }
 

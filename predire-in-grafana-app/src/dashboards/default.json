@@ -1,84 +1,104 @@
 {
-  "title": "Predire in Grafana",
-  "tags": ["Carbon12"],
-  "style": "dark",
-  "timezone": "browser",
-  "editable": false,
-  "rows": [{
-    "height": "",
-    "collapse": false,
-    "editable": false,
-    "panels": [{
-      "height": "",
-      "span": 0,
-      "title": "",
-      "colorBackground": false,
-      "type": "",
-      "datasource": "",
-      "x-axis": true,
-      "y-axis": true,
-      "scale": 1,
-      "y_formats": [
-        "short",
-        "short"
-      ],
-      "grid": {
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "panels": [{
+    "aliasColors": {},
+    "annotate": {
+      "enable": false
+    },
+    "bars": false,
+    "colorBackground": false,
+    "dashLength": 10,
+    "dashes": false,
+    "datasource": "",
+    "fill": 1,
+    "fillGradient": 0,
+    "grid": {
+      "max": null,
+      "min": null
+    },
+    "gridPos": {
+      "h": 0,
+      "w": 0
+    },
+    "groupBy": [],
+    "hiddenSeries": false,
+    "id": 1,
+    "interactive": true,
+    "legend": {
+      "avg": false,
+      "current": false,
+      "max": false,
+      "min": false,
+      "show": true,
+      "total": false,
+      "values": false
+    },
+    "legend_counts": true,
+    "lines": true,
+    "linewidth": 2,
+    "nullPointMode": "connected",
+    "percentage": false,
+    "pointradius": 5,
+    "points": false,
+    "renderer": "flot",
+    "resolution": 100,
+    "scale": 1,
+    "spaceLength": 10,
+    "spyable": true,
+    "stack": false,
+    "steppedLine": false,
+    "targets": [],
+    "timeFrom": null,
+    "timeShift": null,
+    "timezone": "browser",
+    "title": "",
+    "tooltip": {
+      "query_as_alias": true,
+      "shared": true,
+      "sort": 0,
+      "value_type": "cumulative"
+    },
+    "type": "",
+    "xaxis": {
+      "buckets": null,
+      "mode": "time",
+      "name": null,
+      "show": true
+    },
+    "yaxes": [{
+        "format": "short",
         "max": null,
         "min": null,
-        "leftMax": null,
-        "rightMax": null,
-        "leftMin": null,
-        "rightMin": null,
-        "threshold1": null,
-        "threshold2": null,
-        "threshold1Color": "rgba(216, 200, 27, 0.27)",
-        "threshold2Color": "rgba(234, 112, 112, 0.22)"
+        "show": true
       },
-      "resolution": 100,
-      "lines": true,
-      "fill": 1,
-      "linewidth": 2,
-      "dashes": false,
-      "dashLength": 10,
-      "spaceLength": 10,
-      "points": false,
-      "pointradius": 5,
-      "bars": false,
-      "stack": true,
-      "spyable": true,
-      "options": false,
-      "legend": {
-        "show": true,
-        "values": false,
-        "min": false,
-        "max": false,
-        "current": false,
-        "total": false,
-        "avg": false
-      },
-      "interactive": true,
-      "legend_counts": true,
-      "timezone": "browser",
-      "percentage": false,
-      "nullPointMode": "connected",
-      "steppedLine": false,
-      "tooltip": {
-        "value_type": "cumulative",
-        "query_as_alias": true
-      },
-      "targets": [],
-      "groupBy": [],
-      "renderer": "flot",
-      "annotate": {
-        "enable": false
+      {
+        "format": "short",
+        "max": null,
+        "min": null,
+        "show": true
       }
-    }]
+    ],
+    "yaxis": {
+      "align": false,
+      "alignLevel": null
+    }
   }],
-  "nav": [{
-    "type": "timepicker",
+  "refresh": false,
+  "schemaVersion": 21,
+  "style": "dark",
+  "tags": [
+    "Carbon12"
+  ],
+  "time": {
+    "from": "now-15m",
+    "to": "now+15m"
+  },
+  "timepicker": {
     "collapse": false,
     "enable": true,
-    "status": "Stable",
+    "now": true,
     "refresh_intervals": [
       "5s",
       "10s",
@@ -91,10 +111,10 @@
       "2h",
       "1d"
     ],
-    "now": true
-  }],
-  "time": {
-    "from": "now-15m",
-    "to": "now+15m"
-  }
+    "status": "Stable",
+    "type": "timepicker"
+  },
+  "timezone": "browser",
+  "title": "Predire in Grafana",
+  "uid": "carbon12"
 }

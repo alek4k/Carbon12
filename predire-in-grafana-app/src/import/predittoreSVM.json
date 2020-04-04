@@ -10,7 +10,7 @@
     },
     "model": "SVM",
     "file_version": 0,
-    "notes": "notte",
+    "notes": "note",
     "configuration": {
         "_parametroN": "numero di dati inseriti",
         "N": 89,

@@ -5,10 +5,7 @@ import Influx from './influx.js';
 class InfinitySwag {
   constructor() {
     this.backendSrv = null;
-    this.refreshTime = 1000;
     this.db = null;
-    
-    
   }
 
   setBackendSrv(backendSrv) {
@@ -21,44 +18,41 @@ class InfinitySwag {
     this.grafana
       .getDashboards('0')
       .then((dbList) => {
-          let found = false;
-          for (let i = 0; i < dbList.length && !found; ++i) {
-              if (dbList[i].title === 'Predire in Grafana') {
-                  found = true;
-              }
-          }
-          if (found) {
-              this.grafana
-                  .getDashboard('predire-in-grafana')
-                  .then((dashboard) => {
-                    console.log(dashboard);
-                  });
-          }
-        });
-  }
-
-  setRefreshTime(time) {
-    this.refreshTime = time;
+        let found = false;
+        for (let i = 0; i < dbList.length && !found; ++i) {
+            if (dbList[i].uid === 'carbon12') {
+                found = true;
+            }
+        }
+        if (found) {
+            this.grafana
+              .getDashboard('predire-in-grafana')
+              .then((dashboard) => {
+                console.log(dashboard);
+              });
+        }
+      });
   }
 
   setInflux(){
     this.db = new Influx(
       window.localStorage.getItem('host'), 
       window.localStorage.getItem('port'),
-      window.localStorage.getItem('database'),);
+      window.localStorage.getItem('database')
+    );
   }
 
   dbWrite(info){
     this.db.storeValue('predizioni', info);
   }
 
-  startPrediction() {
+  startPrediction(refreshTime) {
     this.getDashboard();
     this.prediction = setInterval(() => {
       let temp= this.getPredictor();
       this.dbWrite(temp);
       console.log(temp)
-    }, this.refreshTime);
+    }, refreshTime);
   }
 
   stopPrediction() {

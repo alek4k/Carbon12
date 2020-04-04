@@ -5,16 +5,29 @@
 
   <div class="row">
     <div class="col-md-10">
-      <p>In questa pagina puoi gestire la predizione della dashboard <a href="/d/PUM3lC9Wk/predire-in-grafana" style="color: #ffe524;">Predire in Grafana</a></p>
-      <div class="gf-form-inline">
-        <div class="gf-form">
-          <button class="btn btn-success" ng-click="ctrl.startPrediction()">Start</button>
-        </div>
-        <div class="gf-form">
-          <button class="btn btn-danger" ng-click="ctrl.stopPrediction()">Stop</button>
-        </div>
-      </div>
+      <p ng-if="ctrl.dashboardExists">In questa pagina puoi gestire la predizione della dashboard <a href="/d/carbon12/predire-in-grafana" style="color: #ffe524;">Predire in Grafana</a></p>
+      <p ng-if="!ctrl.dashboardExists">In questa pagina puoi gestire la predizione della dashboard Predire in Grafana</p>
     </div>
   </div>
-  <br>
+
+  <div class="gf-form-inline">
+    <div class="gf-form">
+      <label class="gf-form-label width-7">Predici ogni:</label>
+      <input type="text" class="gf-form-input width-6" pattern="^(([1-9]+)?([0.9]*.[0-9]+)?)$"
+        ng-model="ctrl.time"/>
+    </div>
+    <div class="gf-form-select-wrapper">
+      <select class="gf-form-input"
+        ng-model="ctrl.timeUnit" ng-options="t for t in ['secondi','minuti','ore']"/>
+    </div>
+    <div ng-if="!ctrl.started" class="gf-form">
+      <button class="btn btn-success"
+        ng-click="ctrl.startPrediction()">Start</button>
+    </div>
+    <div ng-if="ctrl.started" class="gf-form">
+      <button class="btn btn-danger"
+        ng-click="ctrl.stopPrediction()">Stop</button>
+    </div>
+  </div>
+
 </div>

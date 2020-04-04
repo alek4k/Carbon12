@@ -8,7 +8,7 @@
         "source0": "win_mem.mean",
         "source1": "win_cpu.mean"
     },
-    "model": "SVM",
+    "model": "RL",
     "file_version": 0,
     "notes": "note",
     "configuration": {

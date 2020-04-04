@@ -16,6 +16,7 @@ import Influx from '../utils/influx.js';
 const GrafanaApiQuery = require('../utils/grafana_query.js');
 const SVM = require('../utils/models/svm/svm.js');
 const FilePredictor = require('../utils/r_predittore.js');
+import {appEvents} from 'grafana/app/core/core';
 
 export default class importCtrl {
     /** @ngInject */
@@ -44,15 +45,6 @@ export default class importCtrl {
         this.grafana = new GrafanaApiQuery(this.backendSrv);
         this.dashboard = {};
         this.predictor = {};
-
-        // prelevo le data sources disponibili
-        this.grafana.getDataSources()
-            .then((dataSources) => {
-                // dataSoources ha la struttura di un json
-                dataSources.forEach((dataSource) => {
-                    this.availableDataSources.push(dataSource.name);
-                });
-            });
     }
 
     // carico il file del predittore
@@ -67,7 +59,15 @@ export default class importCtrl {
             this.view = (this.model === 'SVM') ? 'Indicatore' : 'Grafico';
             // creo l'array con le sorgenti di addestramento
             this.availableDataEntry = fPredictor.getDataEntry();
-            this.step = 2;
+            // prelevo le data sources disponibili
+            this.grafana.getDataSources()
+                .then((dataSources) => {
+                    // dataSoources ha la struttura di un json
+                    dataSources.forEach((dataSource) => {
+                        this.availableDataSources.push(dataSource.name);
+                    });
+                    this.step = 2;
+                });
         } else {
             this.error = 'Il JSON inserito non è un predittore';
         }
@@ -274,7 +274,7 @@ export default class importCtrl {
                 .then((dbList) => {
                     let found = false;
                     for (let i = 0; i < dbList.length && !found; ++i) {
-                        if (dbList[i].title === 'Predire in Grafana') {
+                        if (dbList[i].uid === 'carbon12') {
                             found = true;
                         }
                     }
@@ -298,6 +298,7 @@ export default class importCtrl {
     }
 
     saveDashboard() {
+        appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
             .postDashboard(this.dashboard)
             .then((db) => {

@@ -5,8 +5,8 @@
 
   <div class="row">
     <div class="col-md-10">
-      <p ng-if="ctrl.dashboardExists">In questa pagina puoi gestire la predizione della dashboard <a href="/d/carbon12/predire-in-grafana" style="color: #ffe524;">Predire in Grafana</a></p>
-      <p ng-if="!ctrl.dashboardExists">In questa pagina puoi gestire la predizione della dashboard Predire in Grafana</p>
+      <p ng-if="ctrl.dashboardExists">In questa pagina puoi gestire la predizione della dashboard <a href="/d/carbon12/predire-in-grafana" style="color: #ffe524;">Predire in Grafana</a>.</p>
+      <p ng-if="!ctrl.dashboardExists">In questa pagina puoi gestire la predizione della dashboard Predire in Grafana.</p>
     </div>
   </div>
 
@@ -18,7 +18,7 @@
     </div>
     <div class="gf-form-select-wrapper">
       <select class="gf-form-input"
-        ng-model="ctrl.timeUnit" ng-options="t for t in ['secondi','minuti','ore']"/>
+        ng-model="ctrl.timeUnit" ng-options="t for t in ['secondi','minuti']"/>
     </div>
     <div ng-if="!ctrl.started" class="gf-form">
       <button class="btn btn-success"

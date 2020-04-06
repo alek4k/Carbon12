@@ -205,7 +205,6 @@ module.exports = class Server {
     getChartData(request, response) {
         const form = new formidable.IncomingForm();
         form.multiples = false;
-        //const result = [];
         let result = null;
         form.on('file', (fields, file) => {
             const pathTrainFile = file.path;

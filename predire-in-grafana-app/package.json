@@ -19,6 +19,7 @@
     "could-be-utils": "^0.2.4",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-header": "^3.0.0",
-    "eslint-plugin-import": "^2.20.2"
+    "eslint-plugin-import": "^2.20.2",
+    "nconf": "^0.10.0"
   }
 }

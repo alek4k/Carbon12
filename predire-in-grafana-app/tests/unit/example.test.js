@@ -10,7 +10,7 @@
  */
 
 import ImportCtrl from '../../src/components/import';
-import GrafanaApiQuery, { getDashboardF } from '../../src/utils/grafana_query';
+import GrafanaApiQuery, { mockGetDataSources } from '../../src/utils/grafana_query';
 
 jest.mock('../../src/utils/grafana_query.js');
 
@@ -20,7 +20,6 @@ beforeEach(() => {
 });
 
 it('We can check if the consumer called the class constructor', () => {
-    console.log('test...');
     const temp = new ImportCtrl('', '');
 
     expect(GrafanaApiQuery).toHaveBeenCalledTimes(1);

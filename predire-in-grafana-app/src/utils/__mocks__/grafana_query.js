@@ -9,34 +9,35 @@
  * Changelog: modifiche effettuate
  */
 
-export const getDashboardF = jest.fn((name) => {
-    return Promise.resolve([{
-      name: 'CPU',
-      url: 'http://localhost:8086',
-      database: 'telegraf',
+export const mockGetDataSources = jest.fn(() => new Promise(((resolve, reject) => {
+    resolve([{
+        name: 'CPU',
+        url: 'http://localhost:8086',
+        database: 'telegraf',
     },
     {
-      name: 'RAM',
-      url: 'http://localhost:8086',
-      database: 'telegraf',
+        name: 'RAM',
+        url: 'http://localhost:8086',
+        database: 'telegraf',
     },
     {
-      name: 'DISK',
-      url: 'http://localhost:8086',
-      database: 'telegraf',
+        name: 'DISK',
+        url: 'http://localhost:8086',
+        database: 'telegraf',
     },
     ]);
-  }
-);
+})));
 
 export const postDataSourceF = jest.fn((name) => (console.log(name)));
 
-const GrafanaApiQueryMock = jest.fn().mockImplementation(() => {
-  return {
-    getDashboard: getDashboardF,
-    postDataSource: postDataSourceF
-  };
-});
+const GrafanaApiQueryMock = jest.fn().mockImplementation(() => ({
+    getDataSources: mockGetDataSources,
+    postDataSource: undefined,
+    getDashboard: undefined,
+    getDashboards: undefined,
+    postDashboard: undefined,
+
+}));
 
 export default GrafanaApiQueryMock;
 

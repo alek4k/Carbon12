@@ -11,21 +11,28 @@
 
 import fs from 'fs';
 import ImportCtrl from '../../src/components/import';
-import GrafanaApiQuery, { getDashboardF } from '../../src/utils/grafana_query';
+import GrafanaApiQuery, { mockGetDataSources } from '../../src/utils/grafana_query';
 
 jest.mock('../../src/utils/grafana_query.js');
 
 beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
-    getDashboardF.mockClear();
+    mockGetDataSources.mockClear();
     GrafanaApiQuery.mockClear();
 });
 
-test('Test the onUpload function.', () => {
-    console.log('test...');
+test('Test the onUpload function.', async () => {
     const importCtrl = new ImportCtrl('', '');
     const jsonTest = JSON.parse(fs.readFileSync('./tests/files/predittore_test.json').toString());
-    importCtrl.onUpload(jsonTest);
-
+    await importCtrl.onUpload(jsonTest);
     expect(importCtrl.error).toEqual('');
+});
+
+
+test('Test the setDataSource function with new datasource.', async () => {
+    const importCtrl = new ImportCtrl('', '');
+    await importCtrl.setDataSource('CPU');
+
+
+    expect(importCtrl.database).toEqual();
 });

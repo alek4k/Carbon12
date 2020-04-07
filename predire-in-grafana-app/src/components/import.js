@@ -9,6 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
+import nconf from 'nconf';
 // importo il template della dashboard per la creazione del pannello
 import defaultDashboard from '../dashboards/default.json';
 import Influx from '../utils/influx';
@@ -106,7 +107,7 @@ export default class importCtrl {
                 });
             } else {
                 // ho configurato una nuova datasource
-                this.connections();
+                //this.connections();
             }
         } else {
             this.error = 'È necessario selezionare una sorgente dati';
@@ -305,6 +306,24 @@ export default class importCtrl {
                 // ricarico la nuova pagina per aggiornare la lista delle data sources disponibili
                 window.location.href = db.importedUrl;
             });
+    }
+
+    static validityJson(predictor) {
+        if (predictor.validity()) {
+            // controllo versioni
+            if (predictor.checkVersion(
+                nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'),
+            ) === false) {
+                console.log('Error: wrong versions');
+                return false;
+            }
+        } else {
+            console.log('Error: json non valido');
+            return false;
+        }
+
+        console.log('json valido');
+        return true;
     }
 }
 

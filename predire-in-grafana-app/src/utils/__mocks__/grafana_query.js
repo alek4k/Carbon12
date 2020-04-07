@@ -10,23 +10,23 @@
  */
 
 export const getDashboardF = jest.fn((name) => {
-  return Promise.resolve([{
-    name: 'CPU',
-    url: 'http://localhost:8086',
-    database: 'telegraf',
-  },
-  {
-    name: 'RAM',
-    url: 'http://localhost:8086',
-    database: 'telegraf',
-  },
-  {
-    name: 'DISK',
-    url: 'http://localhost:8086',
-    database: 'telegraf',
-  },
-  ]);
-}
+    return Promise.resolve([{
+      name: 'CPU',
+      url: 'http://localhost:8086',
+      database: 'telegraf',
+    },
+    {
+      name: 'RAM',
+      url: 'http://localhost:8086',
+      database: 'telegraf',
+    },
+    {
+      name: 'DISK',
+      url: 'http://localhost:8086',
+      database: 'telegraf',
+    },
+    ]);
+  }
 );
 
 export const postDataSourceF = jest.fn((name) => (console.log(name)));

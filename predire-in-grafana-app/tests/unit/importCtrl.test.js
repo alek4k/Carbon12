@@ -9,6 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
+import fs from 'fs';
 import ImportCtrl from '../../src/components/import';
 import GrafanaApiQuery, { getDashboardF } from '../../src/utils/grafana_query';
 
@@ -16,12 +17,15 @@ jest.mock('../../src/utils/grafana_query.js');
 
 beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
+    getDashboardF.mockClear();
     GrafanaApiQuery.mockClear();
 });
 
-it('We can check if the consumer called the class constructor', () => {
+test('Test the onUpload function.', () => {
     console.log('test...');
-    const temp = new ImportCtrl('', '');
+    const importCtrl = new ImportCtrl('', '');
+    const jsonTest = JSON.parse(fs.readFileSync('./tests/files/predittore_test.json').toString());
+    importCtrl.onUpload(jsonTest);
 
-    expect(GrafanaApiQuery).toHaveBeenCalledTimes(1);
+    expect(importCtrl.error).toEqual('');
 });

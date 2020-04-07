@@ -43,7 +43,6 @@ export default class importCtrl {
         this.grafana = new GrafanaApiQuery(this.backendSrv);
         this.dashboard = {};
         this.predictor = {};
-        this.grafana.getDashboard("test");
     }
 
     // carico il file del predittore

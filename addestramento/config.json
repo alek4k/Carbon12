@@ -1,3 +1,5 @@
 {
-    "PORT": 8080
+    "PORT": 8080,
+    "PLUGIN_VERSION": "b.3.0",
+    "TRAIN_VERSION": "b.3.0"
 }

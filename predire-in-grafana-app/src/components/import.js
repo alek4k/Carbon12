@@ -11,12 +11,10 @@
 
 // importo il template della dashboard per la creazione del pannello
 import defaultDashboard from '../dashboards/default.json';
-import Influx from '../utils/influx.js';
-
-const GrafanaApiQuery = require('../utils/grafana_query.js');
-const SVM = require('../utils/models/svm/svm.js');
-const FilePredictor = require('../utils/r_predittore.js');
-import {appEvents} from 'grafana/app/core/core';
+import Influx from '../utils/influx';
+import GrafanaApiQuery from '../utils/grafana_query';
+import FilePredictor from '../utils/r_predittore';
+// import {appEvents} from 'grafana/app/core/core';
 
 export default class importCtrl {
     /** @ngInject */
@@ -45,6 +43,7 @@ export default class importCtrl {
         this.grafana = new GrafanaApiQuery(this.backendSrv);
         this.dashboard = {};
         this.predictor = {};
+        this.grafana.getDashboard("test");
     }
 
     // carico il file del predittore
@@ -165,7 +164,7 @@ export default class importCtrl {
 
     setDashboard(dashboard) {
         this.dashboard = dashboard;
-        let lastPanel = this.dashboard.panels.length - 1;
+        const lastPanel = this.dashboard.panels.length - 1;
         this.dashboard.panels[lastPanel].targets.push({
             refId: 'Predizione',
             measurement: 'predizioni',
@@ -202,7 +201,7 @@ export default class importCtrl {
 
     setPanel(dashboard) {
         this.dashboard = dashboard;
-        let lastPanel = this.dashboard.panels.length - 1;
+        const lastPanel = this.dashboard.panels.length - 1;
         for (let i = 0; i < this.availableDataEntry.length; ++i) {
             this.dashboard.panels[lastPanel].targets.push({
                 refId: this.availableDataEntry[i],
@@ -286,11 +285,11 @@ export default class importCtrl {
                                 for (let i = 0; i < db.dashboard.panels.length; ++i) {
                                     db.dashboard.panels[i].id = i + 1;
                                 }
-                                //this.setPanel(db.dashboard);
+                                // this.setPanel(db.dashboard);
                                 this.setDashboard(db.dedashboard);
                             });
                     } else {
-                        //this.setPanel(defaultDashboard);
+                        // this.setPanel(defaultDashboard);
                         this.setDashboard(defaultDashboard);
                     }
                 });
@@ -298,7 +297,7 @@ export default class importCtrl {
     }
 
     saveDashboard() {
-        appEvents.emit('alert-success', ['Pannello creato', '']);
+        // appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
             .postDashboard(this.dashboard)
             .then((db) => {

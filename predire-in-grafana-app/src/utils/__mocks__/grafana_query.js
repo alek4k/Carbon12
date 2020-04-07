@@ -2,13 +2,45 @@
  * File name: grafana_query.js
  * Date: 2020-03-18
  *
- * @file Script principale del programma di addestramento
+ * @file Mock
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
  * Changelog: modifiche effettuate
  */
 
+export const getDashboardF = jest.fn((name) => {
+  return Promise.resolve([{
+    name: 'CPU',
+    url: 'http://localhost:8086',
+    database: 'telegraf',
+  },
+  {
+    name: 'RAM',
+    url: 'http://localhost:8086',
+    database: 'telegraf',
+  },
+  {
+    name: 'DISK',
+    url: 'http://localhost:8086',
+    database: 'telegraf',
+  },
+  ]);
+}
+);
+
+export const postDataSourceF = jest.fn((name) => (console.log(name)));
+
+const GrafanaApiQueryMock = jest.fn().mockImplementation(() => {
+  return {
+    getDashboard: getDashboardF,
+    postDataSource: postDataSourceF
+  };
+});
+
+export default GrafanaApiQueryMock;
+
+/*
 class GrafanaApiQuery {
 
     getDataSources() {
@@ -60,3 +92,4 @@ class GrafanaApiQuery {
 }
 
 module.exports = GrafanaApiQuery;
+*/

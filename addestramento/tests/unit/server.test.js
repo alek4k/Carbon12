@@ -1,105 +1,122 @@
-const request = require("supertest");
+/**
+ * File name: app.js
+ * Date: 2020-03-18
+ *
+ * @file Script principale del programma di addestramento
+ * @author Carbon12 <carbon.dodici@gmail.com>
+ * @version X.Y.Z
+ *
+ * Changelog: modifiche effettuate
+ */
+
+const request = require('supertest');
+const fs = require('fs');
 const Server = require('../../server');
 const CSVr = require('../../fileManager/csv_reader.js');
-const fs = require('fs');
 
 const server = new Server();
 
-test("It should response the GET method", () => {
+test('It should response the GET method', () => {
     server.startServer();
 
     return request(server.app)
-        .get("/")
+        .get('/')
         .expect(200);
 });
 
-test("Test for config addestramento", () =>{
+test('Test for config addestramento', () => {
     server.config();
 
     return request(server.app)
-        .get("/")
-        .expect("Content-Type", /html/)
+        .get('/')
+        .expect('Content-Type', /html/)
         .expect(200);
 });
 
-/*test("Test for config fileupload", () =>{
-    
+/*
+test("Test for config fileupload", () =>{
     server.config();
 
     return request(server.app)
         .post("/fileupload")
         .expect("Content-Type", /json/)
         .expect(200);
-});*/
+});
+*/
 
-test("Test for config downloadPredittore", () =>{
+test('Test for config downloadPredittore', () => {
     server.config();
 
     return request(server.app)
-        .get("/downloadPredittore")
-        .expect("Content-Type", /html/)
+        .get('/downloadPredittore')
+        .expect('Content-Type', /html/)
         .expect(200);
 });
 
-/*test("Test for config downloadFile", () =>{
+/*
+test("Test for config downloadFile", () =>{
     server.config();
 
     return request(server.app)
         .post("/downloadFile")
         .expect("Content-Type", /html/)
         .expect(200);
-});*/
+});
+*/
 
-test("Test for config loadCsv", () =>{
+test('Test for config loadCsv', () =>{
     server.config();
 
     return request(server.app)
-        .post("/loadCsv")
+        .post('/loadCsv')
         .expect(200);
 });
 
-test("test addestramento", () => {
-    let data = [
+test('test addestramento', () => {
+    const data = [
         [1, 0],
-        [2, 3], 
+        [2, 3],
         [5, 4],
-        [2, 7], 
+        [2, 7],
         [0, 3],
         [-1, 0],
         [-3, -4],
         [-2, -2],
         [-1, -1],
-        [-5, -2]
+        [-5, -2],
     ];
-   let labels = [1, 1, 1, 1, 1, -1, -1, -1, -1, -1];
+    const labels = [1, 1, 1, 1, 1, -1, -1, -1, -1, -1];
 
-   const k = [
-    [ '_parametroN' ],
-    [ 'N' ],
-    [ '_parametroD' ],
-    [ 'D' ],
-    [ '_parametroB' ],
-    [ 'b' ],
-    [ 'kernelType' ],
-    [ '_parametroW' ],
-    [ 'w' ]
-   ]
-   let config='';
-   let json_data = server.train(data, labels, config);
-   let result = [];
-   for(var i in json_data)
-    result.push([i]);
-   expect(result).toEqual(k);
+    const k = [
+        ['_parametroN'],
+        ['N'],
+        ['_parametroD'],
+        ['D'],
+        ['_parametroB'],
+        ['b'],
+        ['kernelType'],
+        ['_parametroW'],
+        ['w'],
+    ];
+    const config = '';
+    const jsondata = server.train(data, labels, config);
+    const result = [];
+    for (const i in jsondata) {
+        if ({}.hasOwnProperty.call(jsondata, i)) {
+            result.push([i]);
+        }
+    }
+    expect(result).toEqual(k);
 });
 
-test("salvataggio json", () => {
-    let nome = "greg.json";
-    let strPredittore = '';
+test('salvataggio json', () => {
+    const nome = 'greg.json';
+    const strPredittore = '';
     const csvReader = new CSVr('./tests/files/dati_test.csv', null);
 
     server.savePredittore(csvReader, strPredittore, nome);
 
-    var stats = fs.statSync('./greg.json');
+    const stats = fs.statSync('./greg.json');
 
     expect(stats).toBeTruthy();
 });

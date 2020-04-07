@@ -3,6 +3,9 @@ module.exports = {
     "plugins": [
         "header"
     ],
+    "env":{
+        "jest": true
+    },
     "rules": {
         // header da utilizzare in tutti gli script
         "header/header": [2, "block", [

@@ -1,4 +1,3 @@
 /models/svm/svm.js
 /models/svm/kernels.js
-/models/rl/regression.js
-/tests/*
+/models/rl/regression.js*

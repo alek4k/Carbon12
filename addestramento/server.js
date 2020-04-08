@@ -171,13 +171,14 @@ module.exports = class Server {
                 const managePredittore = new RPredittore(JSON.parse(
                     fs.readFileSync(pathConfigFile).toString(),
                 ));
-                config = managePredittore.getConfiguration();
 
                 error = this.validityJson(managePredittore, sources);
                 if (error.length > 0) {
                     res.writeHead(301, { Location: '/' });
                     return res.end();
                 }
+
+                config = managePredittore.getConfiguration();
             }
 
             const strPredittore = this.train(data, labels, config);

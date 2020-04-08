@@ -1,8 +1,8 @@
 /**
- * File name: app.js
+ * File name: uploadForm.test.js
  * Date: 2020-03-18
  *
- * @file Script principale del programma di addestramento
+ * @file Test metodo uploadForm()
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *

@@ -1,8 +1,8 @@
 /**
- * File name: app.js
+ * File name: efficenty.test.js
  * Date: 2020-03-18
  *
- * @file Script principale del programma di addestramento
+ * @file Test di efficienza
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *

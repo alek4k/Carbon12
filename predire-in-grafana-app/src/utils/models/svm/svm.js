@@ -465,7 +465,7 @@ SVM.prototype = {
     },
 
     predictClass(inst) {
-        return  1;//this.marginOne(inst) >= 0 ? 1 : -1;
+        return this.marginOne(inst) >= 0 ? 1 : -1;
     },
 
     predict(inst) {

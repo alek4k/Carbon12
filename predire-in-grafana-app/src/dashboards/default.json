@@ -31,7 +31,7 @@
       "current": false,
       "max": false,
       "min": false,
-      "show": true,
+      "show": false,
       "total": false,
       "values": false
     },
@@ -47,6 +47,7 @@
     "scale": 1,
     "spaceLength": 10,
     "spyable": true,
+    "show": "Current",  
     "stack": false,
     "steppedLine": false,
     "targets": [],
@@ -85,12 +86,15 @@
       "alignLevel": null
     }
   }],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 21,
   "style": "dark",
   "tags": [
     "Carbon12"
   ],
+  "templating": {
+    "list": []
+  },
   "time": {
     "from": "now-15m",
     "to": "now+15m"

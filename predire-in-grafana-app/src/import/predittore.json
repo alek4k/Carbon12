@@ -5,21 +5,24 @@
         "train_version": "0.0.0"
     },
     "data_entry": {
-        "source0": "A",
-        "source1": "B"
+        "source0": "win_cpu.mean",
+        "source1": "win_mem.mean"
     },
     "model": "SVM",
-    "file_version": "0",
+    "file_version": 0,
+    "notes": "addestramento cpu ram",
     "configuration": {
-        "N": 60,
-        "D": 3,
-        "b": -23741043761479680,
+        "_parametroN": "numero di dati inseriti",
+        "N": 968,
+        "_parametroD": "numero di sorgenti analizzate",
+        "D": 2,
+        "_parametroB": "bias: coefficiente additivo del calcolo della SVM",
+        "b": -0.8502394371254383,
         "kernelType": "linear",
+        "_parametroW": "weights: coefficienti moltiplicativi del calcolo della SVM",
         "w": [
-            -0.000244140625,
-            573.0467777777778,
-            42.693999999999996
+            -0.13177072315124327,
+            -0.0004899064474557235
         ]
-    },
-    "notes": "Nota di prova"
+    }
 }

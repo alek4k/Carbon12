@@ -10,13 +10,12 @@
  */
 
 // importo il template della dashboard per la creazione del pannello
+import { appEvents } from 'grafana/app/core/core';
 import defaultDashboard from '../dashboards/default.json';
 import Influx from '../utils/influx.js';
 
 const GrafanaApiQuery = require('../utils/grafana_query.js');
-const SVM = require('../utils/models/svm/svm.js');
 const FilePredictor = require('../utils/r_predittore.js');
-import {appEvents} from 'grafana/app/core/core';
 
 export default class importCtrl {
     /** @ngInject */
@@ -156,19 +155,32 @@ export default class importCtrl {
         this.step = 3;
     }
 
-    setPredictors() {
-        window.localStorage.setItem('predittore', JSON.stringify(this.predictor));
-        window.localStorage.setItem('host', this.host);
-        window.localStorage.setItem('port', parseInt(this.port, 10));
-        window.localStorage.setItem('database', this.database);
+    setPredictor(panelID) {
+        const builder = {
+            predittore: this.predictor,
+            host: this.host,
+            port: this.port,
+            database: this.database,
+            sources: this.sources,
+            instances: this.instances,
+            params: this.params
+        }
+        this.dashboard.templating.list.push(
+            {
+                hide: 2,
+                name: panelID.toString(),
+                query: builder,
+                type: "textbox"
+            }
+        );
     }
 
     setDashboard(dashboard) {
         this.dashboard = dashboard;
-        let lastPanel = this.dashboard.panels.length - 1;
+        const lastPanel = this.dashboard.panels.length - 1;
         this.dashboard.panels[lastPanel].targets.push({
-            refId: 'Predizione',
-            measurement: 'predizioni',
+            refId: 'Predizione' + this.dashboard.panels[lastPanel].id,
+            measurement: 'predizione' + this.dashboard.panels[lastPanel].id,
             policy: 'default',
             resultFormat: 'time_series',
             orderByTime: 'ASC',
@@ -182,7 +194,7 @@ export default class importCtrl {
                 }, {
                     type: 'mean',
                     params: [],
-                }]
+                }],
             ],
         });
         this.dashboard.panels[lastPanel].groupBy.push({
@@ -200,9 +212,10 @@ export default class importCtrl {
         this.saveDashboard();
     }
 
+    /*
     setPanel(dashboard) {
         this.dashboard = dashboard;
-        let lastPanel = this.dashboard.panels.length - 1;
+        const lastPanel = this.dashboard.panels.length - 1;
         for (let i = 0; i < this.availableDataEntry.length; ++i) {
             this.dashboard.panels[lastPanel].targets.push({
                 refId: this.availableDataEntry[i],
@@ -224,7 +237,7 @@ export default class importCtrl {
                     }, {
                         type: 'mean',
                         params: [],
-                    }]
+                    }],
                 ],
             });
             this.dashboard.panels[lastPanel].groupBy.push({
@@ -242,6 +255,7 @@ export default class importCtrl {
         this.setView(lastPanel);
         this.saveDashboard();
     }
+    */
 
     // imposto la visualizzazione selezionata dall'utente
     setView(lastPanel) {
@@ -254,6 +268,7 @@ export default class importCtrl {
             this.dashboard.panels[lastPanel].gridPos.h = 4;
             this.dashboard.panels[lastPanel].gridPos.w = 4;
             this.dashboard.panels[lastPanel].type = 'singlestat';
+            this.dashboard.panels[lastPanel].thresholds = '0, 0.5';
             this.dashboard.panels[lastPanel].title = 'Indicatore di Predizione';
             this.dashboard.panels[lastPanel].colorBackground = 'true';
         }
@@ -264,8 +279,8 @@ export default class importCtrl {
         this.error = '';
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
             if (this.sources[i] === undefined) {
-                this.error = 'La sorgente di ' +
-                    this.availableDataEntry[i] + ' non è stata selezionata';
+                this.error = 'La sorgente di '
+                    + this.availableDataEntry[i] + ' non è stata selezionata';
             }
         }
         if (!this.error) {
@@ -282,16 +297,22 @@ export default class importCtrl {
                         this.grafana
                             .getDashboard('predire-in-grafana')
                             .then((db) => {
+                                let nextID = 1;
+                                db.dashboard.panels.forEach((panel) => {
+                                    if (nextID <= panel.id) {
+                                        nextID = panel.id + 1;
+                                    }
+                                });
                                 db.dashboard.panels.push(defaultDashboard.panels[0]);
-                                for (let i = 0; i < db.dashboard.panels.length; ++i) {
-                                    db.dashboard.panels[i].id = i + 1;
-                                }
-                                //this.setPanel(db.dashboard);
-                                this.setDashboard(db.dedashboard);
+                                db.dashboard.panels[db.dashboard.panels.length - 1].id = nextID;
+                                // this.setPanel(db.dashboard);
+                                this.setDashboard(db.dashboard);
+                                this.setPredictor(nextID);
                             });
                     } else {
-                        //this.setPanel(defaultDashboard);
+                        // this.setPanel(defaultDashboard);
                         this.setDashboard(defaultDashboard);
+                        this.setPredictor(1);
                     }
                 });
         }
@@ -303,9 +324,9 @@ export default class importCtrl {
             .postDashboard(this.dashboard)
             .then((db) => {
                 // reindirizzo alla pagina della dashboard appena creata
-                this.$location.url(db.importedUrl);
+                this.$location.url('plugins/predire-in-grafana-app/page/predizione');
                 // ricarico la nuova pagina per aggiornare la lista delle data sources disponibili
-                window.location.href = db.importedUrl;
+                window.location.href = 'plugins/predire-in-grafana-app/page/predizione';
             });
     }
 }

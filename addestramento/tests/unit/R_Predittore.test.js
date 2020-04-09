@@ -1,5 +1,5 @@
 /**
- * File name: json.test.js
+ * File name: R_Predittore.test.js
  * Date: 2020-03-18
  *
  * @file Test metodi della classe R_Predittore
@@ -16,35 +16,35 @@ const managePredittore = new RPredittore(JSON.parse(
     fs.readFileSync('./tests/files/predittore_test.json').toString(),
 ));
 
-test('It should response that file.json has the title expected', () => {
+test('It should response that file.json has the expected title', () => {
     expect(managePredittore.getTitle()).toEqual('Carbon12 Predire in Grafana');
 });
 
-test('It should response that file.json has the Plugin version expected', () => {
+test('It should response that file.json has the Plugin expected version', () => {
     expect(managePredittore.getPluginVersion()).toEqual('0.0.0');
 });
 
-test('It should response that file.json has the Train version expected', () => {
+test('It should response that file.json has the Train expected version', () => {
     expect(managePredittore.getTrainVersion()).toEqual('0.0.0');
 });
 
-test('It should response that file.json has the sources expected', () => {
+test('It should response that file.json has the expected sources', () => {
     expect(managePredittore.getDataEntry()).toEqual(['A', 'B']);
 });
 
-test('It should response that file.json has the model expected', () => {
+test('It should response that file.json has the expected model', () => {
     expect(managePredittore.getModel()).toEqual('SVM');
 });
 
-test('It should response that file.json has the File version expected', () => {
+test('It should response that file.json has the File expected version', () => {
     expect(managePredittore.getFileVersion()).toBe(0);
 });
 
-test('It should response that file.json has the notes expected', () => {
+test('It should response that file.json has the expected notes', () => {
     expect(managePredittore.getNotes()).toEqual('test');
 });
 
-test('It should response that file.json has the configuration expected', () => {
+test('It should response that file.json has the expected configuration', () => {
     const k = {};
     k.N = 60;
     k.D = 3;

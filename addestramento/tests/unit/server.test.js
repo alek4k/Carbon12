@@ -64,7 +64,7 @@ test("Test for config downloadFile", () =>{
 });
 */
 
-test('Test for config loadCsv', () =>{
+test('Test for config loadCsv', () => {
     server.config();
 
     return request(server.app)

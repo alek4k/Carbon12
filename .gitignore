@@ -1,4 +1,6 @@
 /addestramento/.vscode/*
 /.idea/
 /addestramento/.idea/
-addestramento/node_modules/
+/addestramento/node_modules/
+/addestramento/tests/
+/addestramento/coverage/

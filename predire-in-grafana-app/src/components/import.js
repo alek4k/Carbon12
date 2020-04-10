@@ -74,16 +74,6 @@ export default class importCtrl {
         }
     }
 
-    // carico testo del predittore
-    loadText() {
-        try {
-            // controllo prima con parse() se il JSON è valido, poi chiamo il metodo onUpload()
-            this.onUpload(JSON.parse(this.jsonText));
-        } catch (err) {
-            this.error = err.message;
-        }
-    }
-
     // imposto la data source selezionata dall'utente
     setDataSource(ds) {
         if (ds) {
@@ -260,8 +250,11 @@ export default class importCtrl {
                         this.grafana
                             .getDashboard('predire-in-grafana')
                             .then((db) => {
+                                const newID = db.dashboard.version + 1;
+                                db.dashboard.panels.push(defaultDashboard.panels[0]);
+                                db.dashboard.panels[db.dashboard.panels.length - 1].id = newID;
                                 this.setPanel(db.dashboard);
-                                this.storePanelSetting(db.dashboard.version + 1);
+                                this.storePanelSetting(newID);
                             });
                     } else {
                         this.influx.deletePredictions();
@@ -278,7 +271,7 @@ export default class importCtrl {
         this.grafana
             .postDashboard(this.dashboard)
             .then((db) => {
-                // reindirizzo alla pagina che gestisce la a predizione
+                // reindirizzo alla pagina che gestisce la predizione
                 this.$location.url('plugins/predire-in-grafana-app/page/predizione');
                 window.location.href = 'plugins/predire-in-grafana-app/page/predizione';
             });

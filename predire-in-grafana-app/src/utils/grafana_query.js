@@ -15,7 +15,7 @@ class GrafanaApiQuery {
     }
 
     getDataSources() {
-        return this.backendSrv.get('/api/datasources');
+        return this.backendSrv.get('api/datasources');
     }
 
     postDataSource(name, database, host, port) {

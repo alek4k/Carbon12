@@ -9,7 +9,6 @@
  * Changelog: modifiche effettuate
  */
 
-import nconf from 'nconf';
 // importo il template della dashboard per la creazione del pannello
 import defaultDashboard from '../dashboards/default.json';
 import Influx from '../utils/influx';
@@ -21,7 +20,6 @@ export default class importCtrl {
     /** @ngInject */
     constructor($location, backendSrv) {
         this.$location = $location;
-        this.backendSrv = backendSrv;
         this.step = 1;
         this.error = '';
         this.availableDataSources = [];
@@ -41,7 +39,7 @@ export default class importCtrl {
         this.params = [];
         this.view = '';
         this.influx = null;
-        this.grafana = new GrafanaApiQuery(this.backendSrv);
+        this.grafana = new GrafanaApiQuery(backendSrv);
         this.dashboard = {};
         this.predictor = {};
     }
@@ -59,26 +57,16 @@ export default class importCtrl {
             // creo l'array con le sorgenti di addestramento
             this.availableDataEntry = fPredictor.getDataEntry();
             // prelevo le data sources disponibili
-            this.grafana.getDataSources()
-                .then((dataSources) => {
-                    // dataSoources ha la struttura di un json
-                    dataSources.forEach((dataSource) => {
-                        this.availableDataSources.push(dataSource.name);
-                    });
-                    this.step = 2;
+            const meme = this.grafana.getDataSources();
+            meme.then((dataSources) => {
+                // dataSoources ha la struttura di un json
+                dataSources.forEach((dataSource) => {
+                    this.availableDataSources.push(dataSource.name);
                 });
+                this.step = 2;
+            });
         } else {
             this.error = 'Il JSON inserito non è un predittore';
-        }
-    }
-
-    // carico testo del predittore
-    loadText() {
-        try {
-            // controllo prima con parse() se il JSON è valido, poi chiamo il metodo onUpload()
-            this.onUpload(JSON.parse(this.jsonText));
-        } catch (err) {
-            this.error = err.message;
         }
     }
 
@@ -306,24 +294,6 @@ export default class importCtrl {
                 // ricarico la nuova pagina per aggiornare la lista delle data sources disponibili
                 window.location.href = db.importedUrl;
             });
-    }
-
-    static validityJson(predictor) {
-        if (predictor.validity()) {
-            // controllo versioni
-            if (predictor.checkVersion(
-                nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'),
-            ) === false) {
-                console.log('Error: wrong versions');
-                return false;
-            }
-        } else {
-            console.log('Error: json non valido');
-            return false;
-        }
-
-        console.log('json valido');
-        return true;
     }
 }
 

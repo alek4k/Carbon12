@@ -11,18 +11,17 @@
 
 import fs from 'fs';
 import ImportCtrl from '../../src/components/import';
-import GrafanaApiQuery, { mockGetDataSources } from '../../src/utils/grafana_query';
-
-jest.mock('../../src/utils/grafana_query.js');
+import BackendSrv, { getMock, postMock } from '../../__mocks__/backendSrv';
 
 beforeEach(() => {
-    // Clear all instances and calls to constructor and all methods:
-    mockGetDataSources.mockClear();
-    GrafanaApiQuery.mockClear();
+    // Clear all instances
+    getMock.mockClear();
+    postMock.mockClear();
+    BackendSrv.mockClear();
 });
 
 test('Test the onUpload function.', async () => {
-    const importCtrl = new ImportCtrl('', '');
+    const importCtrl = new ImportCtrl('', new BackendSrv());
     const jsonTest = JSON.parse(fs.readFileSync('./tests/files/predittore_test.json').toString());
     await importCtrl.onUpload(jsonTest);
     expect(importCtrl.error).toEqual('');
@@ -31,8 +30,8 @@ test('Test the onUpload function.', async () => {
 
 test('Test the setDataSource function with new datasource.', async () => {
     const importCtrl = new ImportCtrl('', '');
-    await importCtrl.setDataSource('CPU');
+    //await importCtrl.setDataSource('CPU');
 
 
-    expect(importCtrl.database).toEqual();
+    //expect(importCtrl.database).toEqual();
 });

@@ -2,7 +2,6 @@
 /.idea/
 /addestramento/.idea/
 /addestramento/node_modules/
-/addestramento/tests/
 /addestramento/coverage/
 
 addestramento/package-lock.json

@@ -135,8 +135,6 @@ export default class importCtrl {
         // creo la connessione con il database
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
 
-        this.influx.deleteMeasurement('predizione1');
-
         const sources = this.influx.getSources();
         const instances = this.influx.getInstances();
         for (let i = 0, j = 0; i < sources.length; ++i) {
@@ -262,18 +260,11 @@ export default class importCtrl {
                         this.grafana
                             .getDashboard('predire-in-grafana')
                             .then((db) => {
-                                let nextID = 1;
-                                db.dashboard.panels.forEach((panel) => {
-                                    if (nextID <= panel.id) {
-                                        nextID = panel.id + 1;
-                                    }
-                                });
-                                db.dashboard.panels.push(defaultDashboard.panels[0]);
-                                db.dashboard.panels[db.dashboard.panels.length - 1].id = nextID;
                                 this.setPanel(db.dashboard);
-                                this.storePanelSetting(nextID);
+                                this.storePanelSetting(db.dashboard.version + 1);
                             });
                     } else {
+                        this.influx.deletePredictions();
                         this.setPanel(defaultDashboard);
                         this.storePanelSetting(1);
                     }

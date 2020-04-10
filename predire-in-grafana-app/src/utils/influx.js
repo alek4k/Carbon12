@@ -83,10 +83,12 @@ export default class Influx extends DBConnection {
             processData: false,
             success: (data) => {
                 const sources = data.results[0].series;
-                
+                this.predictions = 0;
                 sources.forEach((source) => {
                     if (!source.name.startsWith('predizione')) {
                         result.push(source);
+                    } else {
+                        ++this.predictions;
                     }
                 });
             },
@@ -160,5 +162,11 @@ export default class Influx extends DBConnection {
                 console.log(`Error: ${exception}`);
             },
         });
+    }
+
+    deletePredictions() {
+        for (let i = 1; i <= this.predictions; ++i) {
+            this.deleteMeasurement('predizione' + i);
+        }
     }
 }

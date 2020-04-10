@@ -1,80 +1,92 @@
+/**
+ * File name: infinitySwag.js
+ * Date: 2020-03-18
+ *
+ * @file Script principale del programma di addestramento
+ * @author Carbon12 <carbon.dodici@gmail.com>
+ * @version X.Y.Z
+ *
+ * Changelog: modifiche effettuate
+ */
+
+import Influx from './influx.js';
+
 const SVM = require('./models/svm/svm');
 const GrafanaApiQuery = require('./grafana_query.js');
-import Influx from './influx.js'; 
 
 class InfinitySwag {
-  constructor() {
-    this.backendSrv = null;
-    this.db = null;
-  }
+    constructor() {
+        this.backendSrv = null;
+        this.db = [];
+    }
 
-  setBackendSrv(backendSrv) {
-    this.backendSrv = backendSrv;
-    this.grafana = new GrafanaApiQuery(this.backendSrv);
-    this.setInflux();
-  }
+    setBackendSrv(backendSrv) {
+        this.backendSrv = backendSrv;
+        this.setConfig();
+    }
 
-  getDashboard() {
-    this.grafana
-      .getDashboards('0')
-      .then((dbList) => {
-        let found = false;
-        for (let i = 0; i < dbList.length && !found; ++i) {
-            if (dbList[i].uid === 'carbon12') {
-                found = true;
+    setConfig() {
+        this.grafana = new GrafanaApiQuery(this.backendSrv);
+        this.grafana
+            .getDashboard('predire-in-grafana')
+            .then((dash) => {
+                this.variables = dash.dashboard.templating.list;
+                this.setInflux();
+            });
+    }
+
+    setInflux() {
+        this.variables.forEach((variable) => {
+            this.db.push(
+                new Influx(
+                    variable.query.host,
+                    parseInt(variable.query.port, 10),
+                    variable.query.database,
+                ),
+            );
+        });
+    }
+
+    dbWrite(info, index) {
+        this.db[index].storeValue('predizione' + this.variables[index].name, info);
+    }
+
+    startPrediction(refreshTime) {
+        console.log('START');
+        this.prediction = setInterval(() => {
+            const results = this.getPrediction();
+            for (let i = 0; i < results.length; ++i) {
+                this.dbWrite(results[i], i);
             }
-        }
-        if (found) {
-            this.grafana
-              .getDashboard('predire-in-grafana')
-              .then((dashboard) => {
-                console.log(dashboard);
-              });
-        }
-      });
-  }
+        }, refreshTime);
+    }
 
-  setInflux(){
-    this.db = new Influx(
-      window.localStorage.getItem('host'), 
-      window.localStorage.getItem('port'),
-      window.localStorage.getItem('database')
-    );
-  }
+    stopPrediction() {
+        console.log('STOP');
+        clearInterval(this.prediction);
+    }
 
-  dbWrite(info){
-    this.db.storeValue('predizioni', info);
-  }
-
-  startPrediction(refreshTime) {
-    this.getDashboard();
-    this.prediction = setInterval(() => {
-      let temp= this.getPredictor();
-      this.dbWrite(temp);
-      console.log(temp)
-    }, refreshTime);
-  }
-
-  stopPrediction() {
-    console.log("QUI");
-    clearInterval(this.prediction);
-  }
-
-  getPredictor() {
-    const svm = new SVM();
-    let x = JSON.parse(window.localStorage.getItem('predittore'));
-    svm.fromJSON(x);
-        const point = [
-            this.db.getLastValue('win_cpu', 'Percent_DPC_Time'),
-            this.db.getLastValue('win_cpu', 'Percent_DPC_Time'),
-        ];
-        return svm.predictClass(point);
-  }
-
-  predictionSVM(point) {
-    return svm.predict(point);
-  }
+    getPrediction() {
+        const svm = new SVM();
+        const results = [];
+        this.variables.forEach((variable) => {
+            const predictor = variable.query.predittore;
+            svm.fromJSON(predictor);
+            const point = [];
+            for (let i = 0; i < variable.query.sources.length; ++i) {
+                point.push(
+                    this.db[results.length].getLastValue(
+                        variable.query.sources[i],
+                        variable.query.instances[i],
+                        variable.query.params[i],
+                    ),
+                );
+            }
+            results.push(svm.predictClass(point));
+        });
+        return results;
+    }
 }
 
-let o = new InfinitySwag();
+const o = new InfinitySwag();
 export { o as InfinitySwag };

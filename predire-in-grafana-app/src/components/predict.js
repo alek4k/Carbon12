@@ -12,7 +12,6 @@
 import { appEvents } from 'grafana/app/core/core';
 import { InfinitySwag } from '../utils/infinitySwag';
 import GrafanaApiQuery from '../utils/grafana_query.js';
-import Influx from '../utils/influx.js';
 
 export default class predictCtrl {
     /** @ngInject */
@@ -37,7 +36,7 @@ export default class predictCtrl {
 
     verifyDashboard() {
         this.grafana
-            .getDashboards('0')
+            .getFolder('0')
             .then((dbList) => {
                 let found = false;
                 for (let i = 0; i < dbList.length && !found; ++i) {
@@ -59,16 +58,16 @@ export default class predictCtrl {
     timeToMilliseconds() {
         if (this.time) {
             try {
-                parseInt(this.time, 10);
+                parseFloat(this.time);
             } catch (err) {
-                return 0;
+                return 0.0;
             }
             if (this.timeUnit === 'secondi') {
-                return parseInt(this.time, 10) * 1000;
+                return parseFloat(this.time) * 1000;
             }
-            return parseInt(this.time, 10) * 60000;
+            return parseFloat(this.time) * 60000;
         }
-        return 0;
+        return 0.0;
     }
 
     startPrediction() {
@@ -77,14 +76,13 @@ export default class predictCtrl {
             appEvents.emit('alert-error', ['Dashboard non trovata', '']);
         } else if (this.dashboardEmpty) {
             appEvents.emit('alert-error', ['Dashboard vuota', '']);
-        } else if (refreshTime <= 0) {
+        } else if (refreshTime <= 0.0) {
             appEvents.emit('alert-error', ['Frequenza di predizione non supportata', '']);
         } else {
             this.started = true;
             window.localStorage.setItem('started', 'yes');
-            if (InfinitySwag.db === null) {
+            if (InfinitySwag.backendSrv === null) {
                 InfinitySwag.setBackendSrv(this.backendSrv);
-                InfinitySwag.setInflux(new Influx('http://localhost', 8086, 'telegraf'));
             }
             appEvents.emit('alert-success', ['Predizione avviata', '']);
             InfinitySwag.startPrediction(refreshTime);
@@ -96,6 +94,10 @@ export default class predictCtrl {
         window.localStorage.setItem('started', 'no');
         appEvents.emit('alert-success', ['Predizione terminata', '']);
         InfinitySwag.stopPrediction();
+    }
+
+    redirect() {
+        this.$location.url('/d/carbon12/predire-in-grafana');
     }
 }
 

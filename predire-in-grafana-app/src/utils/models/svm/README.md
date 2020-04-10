@@ -18,7 +18,7 @@ const SVM = modules.SVM;
 ### Import single module
 
 ```javascript
-const SVM = require("../utils/models/svm/svm.js");
+const SVM = require("./path/to/svm.js");
 ```
 
 ### Variables
@@ -48,7 +48,6 @@ let options = {
 
 ```javascript
 let svm = new SVM();
-svm.onUpload(json);
 ```
 
 ### Training
@@ -60,11 +59,9 @@ svm.train(data, labels, options);
 #### Prediction
 
 ```javascript
-let time = query('SELECT time, Percent_DPC_Time FROM win_cpu LIMIT 1');
-let time1 = query('SELECT time, Current_Disk_Queue_Length FROM win_disk LIMIT 1');
-let point = [time[1], time1[1]];
-//svm.predict(point); // 0 <= value <= 1
-let result = svm.predictClass(point); // value = 1 || value = -1
+let point = [2, 4];
+svm.predict(point); // 0 <= value <= 1
+svm.predictClass(point); // value = 1 || value = -1
 ```
 
 ### Options

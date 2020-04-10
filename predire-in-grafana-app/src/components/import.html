@@ -39,7 +39,6 @@
         <select class="gf-form-input" ng-model="ctrl.dataSource" ng-options="ds for ds in ctrl.availableDataSources" />
       </div>
     </div>
-
     <div class="gf-form-button-row">
       <button type="button" class="btn btn-primary" ng-click="ctrl.setDataSource(ctrl.dataSource)">Conferma</button>
       <span ng-if="ctrl.error.includes('selezionare')" class="text-error p-l-1">
@@ -123,8 +122,8 @@
                   <label class="gf-form-label width-6">Sorgente:</label>
                   <div class="gf-form-select-wrapper grafana-options-table">
                     <select class="gf-form-input" ng-model="ctrl.sources[$index]"
-                      ng-options="s for s in ctrl.availableSources" ng-change="
-                          ctrl.instances[$index] = ctrl.availableInstances[
+                      ng-options="s for s in ctrl.availableSources"
+                      ng-change="ctrl.instances[$index] = ctrl.availableInstances[
                             ctrl.availableSources.indexOf(ctrl.sources[$index])
                           ][0];
                           ctrl.params[$index] = ctrl.availableParams[
@@ -135,7 +134,8 @@
                 <div ng-if="!ctrl.sources[$index] || ctrl.instances[$index]" class="gf-form">
                   <label class="gf-form-label width-6">Istanza:</label>
                   <div class="gf-form-select-wrapper grafana-options-table">
-                    <select class="gf-form-input" ng-model="ctrl.instances[$index]" ng-options="i for i in ctrl.availableInstances[
+                    <select class="gf-form-input" ng-model="ctrl.instances[$index]"
+                    ng-options="i for i in ctrl.availableInstances[
                           ctrl.availableSources.indexOf(ctrl.sources[$index])
                         ]" />
                   </div>
@@ -143,7 +143,8 @@
                 <div class="gf-form">
                   <label class="gf-form-label width-6">Parametro:</label>
                   <div class="gf-form-select-wrapper grafana-options-table">
-                    <select class="gf-form-input" ng-model="ctrl.params[$index]" ng-options="p for p in ctrl.availableParams[
+                    <select class="gf-form-input" ng-model="ctrl.params[$index]"
+                      ng-options="p for p in ctrl.availableParams[
                           ctrl.availableSources.indexOf(ctrl.sources[$index])
                         ]" />
                   </div>
@@ -168,11 +169,20 @@
 
     <br />
 
-    <div class="gf-form">
-      <button class="btn btn-success" ng-click="ctrl.createPanel()">Crea Pannello</button>
-      <span ng-if="ctrl.error" class="text-error p-l-1">
-        <i class="fa fa-warning"></i>
-        {{ctrl.error}}
-      </span>
+    <div class="gf-form-inline">
+      <div class="gf-form">
+        <label class="gf-form-label width-8">Nome pannello:</label>
+        <input ng-if="ctrl.view === 'Grafico'" type="text" class="gf-form-input width-14"
+          placeholder="Grafico di Predizione" ng-model="ctrl.panelName">
+        <input ng-if="ctrl.view === 'Indicatore'" type="text" class="gf-form-input width-14"
+          placeholder="Indicatore di Predizione" ng-model="ctrl.panelName">
+      </div>
+      <div class="gf-form">
+        <button class="btn btn-success" ng-click="ctrl.createPanel()">Crea Pannello</button>
+        <span ng-if="ctrl.error" class="text-error p-l-1">
+          <i class="fa fa-warning"></i>
+          {{ctrl.error}}
+        </span>
+      </div>
     </div>
   </div>

@@ -10,24 +10,30 @@
     </div>
   </div>
 
-  <div class="gf-form-inline">
-    <div class="gf-form">
-      <label class="gf-form-label width-7">Predici ogni:</label>
-      <input type="text" class="gf-form-input width-6" pattern="^(([1-9]+)?([0.9]*.[0-9]+)?)$"
-        ng-model="ctrl.time"/>
-    </div>
-    <div class="gf-form-select-wrapper">
-      <select class="gf-form-input"
-        ng-model="ctrl.timeUnit" ng-options="t for t in ['secondi','minuti']"/>
-    </div>
-    <div ng-if="!ctrl.started" class="gf-form">
-      <button class="btn btn-success"
-        ng-click="ctrl.startPrediction()">Start</button>
-    </div>
-    <div ng-if="ctrl.started" class="gf-form">
-      <button class="btn btn-danger"
-        ng-click="ctrl.stopPrediction()">Stop</button>
+  <div class="gf-form-group">
+    <div class="gf-form-inline">
+      <div class="gf-form">
+        <label class="gf-form-label width-7">Predici ogni:</label>
+        <input type="text" class="gf-form-input width-6" pattern="^(([1-9]+)?([0.9]*.[0-9]+)?)$"
+          ng-model="ctrl.time"/>
+      </div>
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input"
+          ng-model="ctrl.timeUnit" ng-options="t for t in ['secondi','minuti']"/>
+      </div>
+      <div ng-if="!ctrl.started" class="gf-form">
+        <button class="btn btn-primary"
+          ng-click="ctrl.startPrediction()">Start</button>
+      </div>
+      <div ng-if="ctrl.started" class="gf-form">
+        <button class="btn btn-danger"
+          ng-click="ctrl.stopPrediction()">Stop</button>
+      </div>
     </div>
   </div>
 
+  <div ng-if="ctrl.dashboardExists" class="gf-form">
+    <button class="btn btn-primary"
+      ng-click="ctrl.redirect()">Vai alla Dashboard</button>
+  </div>
 </div>

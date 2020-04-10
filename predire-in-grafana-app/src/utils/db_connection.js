@@ -23,6 +23,7 @@ class DBConnection {
         this.host = host;
         this.port = port;
         this.database = database;
+        this.predictions = 0;
     }
 }
 

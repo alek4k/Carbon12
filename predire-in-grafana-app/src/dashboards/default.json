@@ -8,6 +8,11 @@
       "enable": false
     },
     "bars": false,
+    "colors": [
+      "#d44a3a",
+      "rgba(237, 129, 40, 0.89)",
+      "#299c46"
+    ],
     "colorBackground": false,
     "dashLength": 10,
     "dashes": false,
@@ -61,6 +66,19 @@
       "value_type": "cumulative"
     },
     "type": "",
+    "valueMaps": [
+      {
+        "op": "=",
+        "text": "Good &#128077;",
+        "value": "1"
+      },
+      {
+        "op": "=",
+        "text": "Bad &#128078;",
+        "value": "-1"
+      }
+    ],
+    "valueName": "current",  
     "xaxis": {
       "buckets": null,
       "mode": "time",
@@ -85,12 +103,15 @@
       "alignLevel": null
     }
   }],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 21,
   "style": "dark",
   "tags": [
     "Carbon12"
   ],
+  "templating": {
+    "list": []
+  },
   "time": {
     "from": "now-15m",
     "to": "now+15m"

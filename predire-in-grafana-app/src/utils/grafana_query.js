@@ -34,7 +34,7 @@ class GrafanaApiQuery {
         return this.backendSrv.get('api/dashboards/db/' + name);
     }
 
-    getDashboards(folderId) {
+    getFolder(folderId) {
         return this.backendSrv.get('api/search?folderIds=' + folderId);
     }
 

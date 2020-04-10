@@ -45,8 +45,10 @@ export default class Influx extends DBConnection {
      * @param {param} String rappresenta il parametro
      * @returns {Number} Number che contiene l'ultimo valore memorizzato
      */
-    getLastValue(source, param) {
-        const query = `q=select ${param} from ${source} order by time desc limit 1`;
+    getLastValue(source, instance, param) {
+        const query = instance
+            ? `q=select ${param} from ${source} where instance='${instance}' order by time desc limit 1`
+            : `q=select ${param} from ${source} order by time desc limit 1`;
         let result;
         $.ajax({
             async: false,
@@ -71,7 +73,7 @@ export default class Influx extends DBConnection {
      */
     getSources() {
         const query = `q=show field keys on ${this.database}`;
-        let result;
+        const result = [];
         $.ajax({
             async: false,
             url: `${this.host}:${this.port}/query?`,
@@ -80,7 +82,15 @@ export default class Influx extends DBConnection {
             data: query,
             processData: false,
             success: (data) => {
-                result = data;
+                const sources = data.results[0].series;
+                this.predictions = 0;
+                sources.forEach((source) => {
+                    if (!source.name.startsWith('predizione')) {
+                        result.push(source);
+                    } else {
+                        ++this.predictions;
+                    }
+                });
             },
             error: (test, status, exception) => {
                 console.log(`Error: ${exception}`);
@@ -104,7 +114,7 @@ export default class Influx extends DBConnection {
             data: query,
             processData: false,
             success: (data) => {
-                result = data;
+                result = data.results[0].series;
             },
             error: (test, status, exception) => {
                 console.log(`Error: ${exception}`);
@@ -134,5 +144,29 @@ export default class Influx extends DBConnection {
                 console.log(`Error: ${exception}`);
             },
         });
+    }
+
+    deleteMeasurement(measurement) {
+        const query = `q=drop measurement ${measurement}`;
+        $.ajax({
+            async: false,
+            url: `${this.host}:${this.port}/query?db=${this.database}`,
+            type: 'GET',
+            contentType: 'application/octet-stream',
+            data: query,
+            processData: false,
+            success: () => {
+                console.log('Measurement was dropped.');
+            },
+            error: (test, status, exception) => {
+                console.log(`Error: ${exception}`);
+            },
+        });
+    }
+
+    deletePredictions() {
+        for (let i = 1; i <= this.predictions; ++i) {
+            this.deleteMeasurement('predizione' + i);
+        }
     }
 }

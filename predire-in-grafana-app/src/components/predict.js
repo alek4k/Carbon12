@@ -12,7 +12,6 @@
 import { appEvents } from 'grafana/app/core/core';
 import { InfinitySwag } from '../utils/infinitySwag';
 import GrafanaApiQuery from '../utils/grafana_query.js';
-import Influx from '../utils/influx.js';
 
 export default class predictCtrl {
     /** @ngInject */
@@ -37,7 +36,7 @@ export default class predictCtrl {
 
     verifyDashboard() {
         this.grafana
-            .getDashboards('0')
+            .getFolder('0')
             .then((dbList) => {
                 let found = false;
                 for (let i = 0; i < dbList.length && !found; ++i) {
@@ -82,7 +81,7 @@ export default class predictCtrl {
         } else {
             this.started = true;
             window.localStorage.setItem('started', 'yes');
-            if (InfinitySwag.db === null) {
+            if (InfinitySwag.backendSrv === null) {
                 InfinitySwag.setBackendSrv(this.backendSrv);
             }
             appEvents.emit('alert-success', ['Predizione avviata', '']);
@@ -95,6 +94,10 @@ export default class predictCtrl {
         window.localStorage.setItem('started', 'no');
         appEvents.emit('alert-success', ['Predizione terminata', '']);
         InfinitySwag.stopPrediction();
+    }
+
+    redirect() {
+        this.$location.url('/d/carbon12/predire-in-grafana');
     }
 }
 

@@ -17,41 +17,47 @@ const GrafanaApiQuery = require('./grafana_query.js');
 class InfinitySwag {
     constructor() {
         this.backendSrv = null;
-        this.db = null;
+        this.db = [];
     }
 
     setBackendSrv(backendSrv) {
         this.backendSrv = backendSrv;
-        this.grafana = new GrafanaApiQuery(this.backendSrv);
         this.setConfig();
     }
 
     setConfig() {
+        this.grafana = new GrafanaApiQuery(this.backendSrv);
         this.grafana
             .getDashboard('predire-in-grafana')
             .then((dash) => {
-                this.list = dash.dashboard.templating.list;
+                this.variables = dash.dashboard.templating.list;
                 this.setInflux();
             });
     }
 
     setInflux() {
-        this.db = new Influx(
-            this.list[0].query.host,
-            parseInt(this.list[0].query.port, 10),
-            this.list[0].query.database
-        );
+        this.variables.forEach((variable) => {
+            this.db.push(
+                new Influx(
+                    variable.query.host,
+                    parseInt(variable.query.port, 10),
+                    variable.query.database,
+                ),
+            );
+        });
     }
 
-    dbWrite(info) {
-        this.db.storeValue('predizione' + this.list[0].name, info);
+    dbWrite(info, index) {
+        this.db[index].storeValue('predizione' + this.variables[index].name, info);
     }
 
     startPrediction(refreshTime) {
         console.log('START');
         this.prediction = setInterval(() => {
-            const result = this.getPrediction();
-            this.dbWrite(result);
+            const results = this.getPrediction();
+            for (let i = 0; i < results.length; ++i) {
+                this.dbWrite(results[i], i);
+            }
         }, refreshTime);
     }
 
@@ -62,19 +68,23 @@ class InfinitySwag {
 
     getPrediction() {
         const svm = new SVM();
-        const predictor = this.list[0].query.predittore;
-        svm.fromJSON(predictor);
-        let point = [
-            this.db.getLastValue(this.list[0].query.sources[0], this.list[0].query.params[0]),
-            this.db.getLastValue(this.list[0].query.sources[1], this.list[0].query.params[1])
-        ];
-    
-
-        return svm.predict(point);
-    }
-
-    predictionSVM(point) {
-        return svm.predict(point);
+        const results = [];
+        this.variables.forEach((variable) => {
+            const predictor = variable.query.predittore;
+            svm.fromJSON(predictor);
+            const point = [];
+            for (let i = 0; i < variable.query.sources.length; ++i) {
+                point.push(
+                    this.db[results.length].getLastValue(
+                        variable.query.sources[i],
+                        variable.query.instances[i],
+                        variable.query.params[i],
+                    ),
+                );
+            }
+            results.push(svm.predictClass(point));
+        });
+        return results;
     }
 }
 

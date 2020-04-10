@@ -8,6 +8,11 @@
       "enable": false
     },
     "bars": false,
+    "colors": [
+      "#d44a3a",
+      "rgba(237, 129, 40, 0.89)",
+      "#299c46"
+    ],
     "colorBackground": false,
     "dashLength": 10,
     "dashes": false,
@@ -31,7 +36,7 @@
       "current": false,
       "max": false,
       "min": false,
-      "show": false,
+      "show": true,
       "total": false,
       "values": false
     },
@@ -47,7 +52,6 @@
     "scale": 1,
     "spaceLength": 10,
     "spyable": true,
-    "show": "Current",  
     "stack": false,
     "steppedLine": false,
     "targets": [],
@@ -62,6 +66,19 @@
       "value_type": "cumulative"
     },
     "type": "",
+    "valueMaps": [
+      {
+        "op": "=",
+        "text": "Good &#128077;",
+        "value": "1"
+      },
+      {
+        "op": "=",
+        "text": "Bad &#128078;",
+        "value": "-1"
+      }
+    ],
+    "valueName": "current",  
     "xaxis": {
       "buckets": null,
       "mode": "time",

@@ -1,7 +1,7 @@
 ### Importare la libreria
 
 ```javascript
-const Regression = require('./regression.js');
+const Regression = require('./path/regression.js');
 ```
 
 ### Variabili per l'addestramento

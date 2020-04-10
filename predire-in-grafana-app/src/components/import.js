@@ -9,11 +9,12 @@
  * Changelog: modifiche effettuate
  */
 
-// importo il template della dashboard per la creazione del pannello
 import { appEvents } from 'grafana/app/core/core';
-import defaultDashboard from '../dashboards/default.json';
-import Influx from '../utils/influx.js';
 
+// importo il template della dashboard per la creazione del pannello
+import defaultDashboard from '../dashboards/default.json';
+
+import Influx from '../utils/influx.js';
 const GrafanaApiQuery = require('../utils/grafana_query.js');
 const FilePredictor = require('../utils/r_predittore.js');
 
@@ -44,6 +45,7 @@ export default class importCtrl {
         this.grafana = new GrafanaApiQuery(this.backendSrv);
         this.dashboard = {};
         this.predictor = {};
+        this.panelName = '';
     }
 
     // carico il file del predittore
@@ -128,12 +130,15 @@ export default class importCtrl {
         }
     }
 
+    // imposto la connessione con il database
     connections() {
         // creo la connessione con il database
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
 
-        const sources = this.influx.getSources().results[0].series;
-        const instances = this.influx.getInstances().results[0].series;
+        this.influx.deleteMeasurement('predizione1');
+
+        const sources = this.influx.getSources();
+        const instances = this.influx.getInstances();
         for (let i = 0, j = 0; i < sources.length; ++i) {
             // itero sul totale delle sorgenti
             this.availableSources.push(sources[i].name);
@@ -155,8 +160,9 @@ export default class importCtrl {
         this.step = 3;
     }
 
-    setPredictor(panelID) {
-        const builder = {
+    // salvo il predittore e le selezioni dell'utente
+    storePanelSetting(panelID) {
+        const setting = {
             predittore: this.predictor,
             host: this.host,
             port: this.port,
@@ -167,15 +173,16 @@ export default class importCtrl {
         }
         this.dashboard.templating.list.push(
             {
-                hide: 2,
+                hide: 2,    // nascosto
                 name: panelID.toString(),
-                query: builder,
+                query: setting,
                 type: "textbox"
             }
         );
     }
 
-    setDashboard(dashboard) {
+    // setto il pannello secondo le scelte dell'utente
+    setPanel(dashboard) {
         this.dashboard = dashboard;
         const lastPanel = this.dashboard.panels.length - 1;
         this.dashboard.panels[lastPanel].targets.push({
@@ -192,7 +199,7 @@ export default class importCtrl {
                         'value',
                     ],
                 }, {
-                    type: 'mean',
+                    type: 'last',
                     params: [],
                 }],
             ],
@@ -212,64 +219,22 @@ export default class importCtrl {
         this.saveDashboard();
     }
 
-    /*
-    setPanel(dashboard) {
-        this.dashboard = dashboard;
-        const lastPanel = this.dashboard.panels.length - 1;
-        for (let i = 0; i < this.availableDataEntry.length; ++i) {
-            this.dashboard.panels[lastPanel].targets.push({
-                refId: this.availableDataEntry[i],
-                measurement: this.sources[i],
-                policy: 'default',
-                resultFormat: 'time_series',
-                orderByTime: 'ASC',
-                tags: [{
-                    key: 'instance',
-                    operator: '=',
-                    value: this.instances[i] ? this.instances[i] : '',
-                }],
-                select: [
-                    [{
-                        type: 'field',
-                        params: [
-                            this.params[i],
-                        ],
-                    }, {
-                        type: 'mean',
-                        params: [],
-                    }],
-                ],
-            });
-            this.dashboard.panels[lastPanel].groupBy.push({
-                type: 'time',
-                params: [
-                    '$__interval',
-                ],
-            }, {
-                type: 'fill',
-                params: [
-                    'null',
-                ],
-            });
-        }
-        this.setView(lastPanel);
-        this.saveDashboard();
-    }
-    */
-
     // imposto la visualizzazione selezionata dall'utente
     setView(lastPanel) {
+        const panelID = this.dashboard.panels[lastPanel].id;
         if (this.view === 'Grafico') {
             this.dashboard.panels[lastPanel].gridPos.h = 8;
             this.dashboard.panels[lastPanel].gridPos.w = 12;
             this.dashboard.panels[lastPanel].type = 'graph';
-            this.dashboard.panels[lastPanel].title = 'Grafico di Predizione';
+            this.dashboard.panels[lastPanel].title = this.panelName ? 
+                this.panelName : 'Grafico di Predizione ' + panelID;
         } else {
             this.dashboard.panels[lastPanel].gridPos.h = 4;
             this.dashboard.panels[lastPanel].gridPos.w = 4;
             this.dashboard.panels[lastPanel].type = 'singlestat';
             this.dashboard.panels[lastPanel].thresholds = '0, 0.5';
-            this.dashboard.panels[lastPanel].title = 'Indicatore di Predizione';
+            this.dashboard.panels[lastPanel].title = this.panelName ?
+                this.panelName : 'Indicatore di Predizione ' + panelID;
             this.dashboard.panels[lastPanel].colorBackground = 'true';
         }
     }
@@ -285,7 +250,7 @@ export default class importCtrl {
         }
         if (!this.error) {
             this.grafana
-                .getDashboards('0')
+                .getFolder('0')
                 .then((dbList) => {
                     let found = false;
                     for (let i = 0; i < dbList.length && !found; ++i) {
@@ -305,27 +270,25 @@ export default class importCtrl {
                                 });
                                 db.dashboard.panels.push(defaultDashboard.panels[0]);
                                 db.dashboard.panels[db.dashboard.panels.length - 1].id = nextID;
-                                // this.setPanel(db.dashboard);
-                                this.setDashboard(db.dashboard);
-                                this.setPredictor(nextID);
+                                this.setPanel(db.dashboard);
+                                this.storePanelSetting(nextID);
                             });
                     } else {
-                        // this.setPanel(defaultDashboard);
-                        this.setDashboard(defaultDashboard);
-                        this.setPredictor(1);
+                        this.setPanel(defaultDashboard);
+                        this.storePanelSetting(1);
                     }
                 });
         }
     }
 
+    // salvo la dashboard
     saveDashboard() {
         appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
             .postDashboard(this.dashboard)
             .then((db) => {
-                // reindirizzo alla pagina della dashboard appena creata
+                // reindirizzo alla pagina che gestisce la a predizione
                 this.$location.url('plugins/predire-in-grafana-app/page/predizione');
-                // ricarico la nuova pagina per aggiornare la lista delle data sources disponibili
                 window.location.href = 'plugins/predire-in-grafana-app/page/predizione';
             });
     }

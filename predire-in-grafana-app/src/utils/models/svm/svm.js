@@ -106,7 +106,6 @@ SVM.prototype = {
     train(data, labels) {
         this.data = data;
         this.labels = labels;
-
         // parameters
         // options = options || {};
         this.options = this.options || {};
@@ -507,6 +506,7 @@ SVM.prototype = {
             }
             w[j] = s;
         }
+        
         return { w, b: this.b };
     },
 

@@ -11,7 +11,7 @@
 
 export const getMock = jest.fn((url) => {
     if (url === 'api/datasources') {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             resolve([{
                 name: 'CPU',
                 url: 'http://localhost:8086',
@@ -28,6 +28,7 @@ export const getMock = jest.fn((url) => {
                 database: 'telegraf',
             },
             ]);
+            reject();
         });
     }
     console.log('Unhandled get in backendSrvMock:');

@@ -9,7 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-import { appEvents } from 'grafana/app/core/core';
+// import { appEvents } from 'grafana/app/core/core';
 
 // importo il template della dashboard per la creazione del pannello
 import defaultDashboard from '../dashboards/default.json';
@@ -262,7 +262,7 @@ export default class importCtrl {
 
     // salvo la dashboard
     saveDashboard() {
-        appEvents.emit('alert-success', ['Pannello creato', '']);
+        // appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
             .postDashboard(this.dashboard)
             .then((db) => {

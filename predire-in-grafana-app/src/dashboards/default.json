@@ -1,73 +1,21 @@
 {
-  "editable": true,
-  "gnetId": null,
-  "graphTooltip": 0,
   "panels": [{
-    "aliasColors": {},
-    "annotate": {
-      "enable": false
-    },
-    "bars": false,
     "colors": [
       "#d44a3a",
       "rgba(237, 129, 40, 0.89)",
       "#299c46"
     ],
     "colorBackground": false,
-    "dashLength": 10,
-    "dashes": false,
     "datasource": "",
-    "fill": 1,
-    "fillGradient": 0,
-    "grid": {
-      "max": null,
-      "min": null
-    },
     "gridPos": {
       "h": 0,
       "w": 0
     },
     "groupBy": [],
-    "hiddenSeries": false,
     "id": 1,
-    "interactive": true,
-    "legend": {
-      "avg": false,
-      "current": false,
-      "max": false,
-      "min": false,
-      "show": true,
-      "total": false,
-      "values": false
-    },
-    "legend_counts": true,
-    "lines": true,
-    "linewidth": 2,
-    "nullPointMode": "connected",
-    "percentage": false,
-    "pointradius": 5,
-    "points": false,
-    "renderer": "flot",
-    "resolution": 100,
-    "scale": 1,
-    "spaceLength": 10,
-    "spyable": true,
-    "stack": false,
-    "steppedLine": false,
     "targets": [],
-    "timeFrom": null,
-    "timeShift": null,
-    "timezone": "browser",
-    "title": "",
-    "tooltip": {
-      "query_as_alias": true,
-      "shared": true,
-      "sort": 0,
-      "value_type": "cumulative"
-    },
     "type": "",
-    "valueMaps": [
-      {
+    "valueMaps": [{
         "op": "=",
         "text": "Good &#128077;",
         "value": "1"
@@ -78,34 +26,9 @@
         "value": "-1"
       }
     ],
-    "valueName": "current",  
-    "xaxis": {
-      "buckets": null,
-      "mode": "time",
-      "name": null,
-      "show": true
-    },
-    "yaxes": [{
-        "format": "short",
-        "max": null,
-        "min": null,
-        "show": true
-      },
-      {
-        "format": "short",
-        "max": null,
-        "min": null,
-        "show": true
-      }
-    ],
-    "yaxis": {
-      "align": false,
-      "alignLevel": null
-    }
+    "valueName": "current"
   }],
   "refresh": "5s",
-  "schemaVersion": 21,
-  "style": "dark",
   "tags": [
     "Carbon12"
   ],
@@ -117,9 +40,6 @@
     "to": "now+15m"
   },
   "timepicker": {
-    "collapse": false,
-    "enable": true,
-    "now": true,
     "refresh_intervals": [
       "5s",
       "10s",
@@ -131,11 +51,8 @@
       "1h",
       "2h",
       "1d"
-    ],
-    "status": "Stable",
-    "type": "timepicker"
+    ]
   },
-  "timezone": "browser",
   "title": "Predire in Grafana",
   "uid": "carbon12"
 }

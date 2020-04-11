@@ -14,13 +14,6 @@
       <label class="btn btn-primary" for="dashupload">Carica file JSON</label>
       <dash-upload class="hide" on-upload="ctrl.onUpload(dash)" />
     </form>
-
-    <br />
-
-    <div ng-if="ctrl.error" class="text-error p-l-1">
-      <i class="fa fa-warning"></i>
-      {{ctrl.error}}
-    </div>
   </div>
 
   <div ng-if="ctrl.step === 2" class="gf-form-group">

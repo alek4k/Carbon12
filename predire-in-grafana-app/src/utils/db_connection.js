@@ -11,19 +11,19 @@
 
 class DBConnection {
     constructor(host, port, database) {
-        if (host === undefined
-            || port === undefined
-            || database === undefined
-            || host === ''
-            || port === undefined
-            || host === '') {
+        if (host === undefined ||
+            port === undefined ||
+            database === undefined ||
+            host === '' ||
+            port === undefined ||
+            host === '') {
             throw new Error('Incorrect values');
         }
 
         this.host = host;
         this.port = port;
         this.database = database;
-        this.predictions = 0;
+        this.predictions = [];
     }
 }
 

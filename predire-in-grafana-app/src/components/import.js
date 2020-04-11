@@ -52,7 +52,6 @@ export default class importCtrl {
         const fPredictor = new FilePredictor(json);
         if (fPredictor.validity()) {
             this.predictor = fPredictor.getConfiguration();
-            this.error = '';
             this.notes = fPredictor.getNotes();
             this.model = fPredictor.getModel();
             this.view = (this.model === 'SVM') ? 'Indicatore' : 'Grafico';
@@ -69,6 +68,7 @@ export default class importCtrl {
                 });
         } else {
             this.error = 'Il JSON inserito non è un predittore';
+            // appEvents.emit('alert-error', ['Predittore non valido', '']);
         }
     }
 
@@ -162,16 +162,14 @@ export default class importCtrl {
             database: this.database,
             sources: this.sources,
             instances: this.instances,
-            params: this.params,
-        };
-        this.dashboard.templating.list.push(
-            {
-                hide: 2, // nascosto
-                name: panelID.toString(),
-                query: setting,
-                type: 'textbox',
-            },
-        );
+            params: this.params
+        }
+        this.dashboard.templating.list.push({
+            hide: 2, // nascosto
+            name: panelID.toString(),
+            query: setting,
+            type: "textbox"
+        });
     }
 
     // setto il pannello secondo le scelte dell'utente
@@ -220,7 +218,8 @@ export default class importCtrl {
             this.dashboard.panels[lastPanel].gridPos.w = 12;
             this.dashboard.panels[lastPanel].type = 'graph';
             this.dashboard.panels[lastPanel].title = this.panelName
-                ? this.panelName : 'Grafico di Predizione ' + panelID;
+                ? this.panelName : 'Grafico di Predizione ' + panelID;       
+            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di: ${this.sources}`;
         } else {
             this.dashboard.panels[lastPanel].gridPos.h = 4;
             this.dashboard.panels[lastPanel].gridPos.w = 4;
@@ -228,6 +227,7 @@ export default class importCtrl {
             this.dashboard.panels[lastPanel].thresholds = '0, 0.5';
             this.dashboard.panels[lastPanel].title = this.panelName
                 ? this.panelName : 'Indicatore di Predizione ' + panelID;
+            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di ${this.sources}`;
             this.dashboard.panels[lastPanel].colorBackground = 'true';
         }
     }
@@ -237,8 +237,8 @@ export default class importCtrl {
         this.error = '';
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
             if (this.sources[i] === undefined) {
-                this.error = 'La sorgente di '
-                    + this.availableDataEntry[i] + ' non è stata selezionata';
+                this.error = 'La sorgente di ' +
+                    this.availableDataEntry[i] + ' non è stata selezionata';
             }
         }
         if (!this.error) {
@@ -255,9 +255,11 @@ export default class importCtrl {
                         this.grafana
                             .getDashboard('predire-in-grafana')
                             .then((db) => {
-
+                                const newID = db.dashboard.version + 1;
+                                db.dashboard.panels.push(defaultDashboard.panels[0]);
+                                db.dashboard.panels[db.dashboard.panels.length - 1].id = newID;
                                 this.setPanel(db.dashboard);
-                                this.storePanelSetting(db.dashboard.version + 1);
+                                this.storePanelSetting(newID);
                             });
                     } else {
                         this.influx.deletePredictions();
@@ -273,8 +275,8 @@ export default class importCtrl {
         // appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
             .postDashboard(this.dashboard)
-            .then(() => {
-                // reindirizzo alla pagina che gestisce la a predizione
+            .then((db) => {
+                // reindirizzo alla pagina che gestisce la predizione
                 this.$location.url('plugins/predire-in-grafana-app/page/predizione');
                 window.location.href = 'plugins/predire-in-grafana-app/page/predizione';
             });

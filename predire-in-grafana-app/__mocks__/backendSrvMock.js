@@ -9,25 +9,38 @@
  * Changelog: modifiche effettuate
  */
 
+const datasources = [{
+    name: 'CPU',
+    type: 'influxdb',
+    access: 'proxy',
+    database: 'telegraf',
+    url: 'http://localhost:8086',
+    readOnly: false,
+    editable: true,
+},
+{
+    name: 'RAM',
+    type: 'influxdb',
+    access: 'proxy',
+    database: 'telegraf',
+    url: 'http://localhost:8086',
+    readOnly: false,
+    editable: true,
+},
+{
+    name: 'DISK',
+    type: 'influxdb',
+    access: 'proxy',
+    database: 'telegraf',
+    url: 'http://localhost:8086',
+    readOnly: false,
+    editable: true,
+}];
+
 export const getMock = jest.fn((url) => {
     if (url === 'api/datasources') {
         return new Promise((resolve, reject) => {
-            resolve([{
-                name: 'CPU',
-                url: 'http://localhost:8086',
-                database: 'telegraf',
-            },
-            {
-                name: 'RAM',
-                url: 'http://localhost:8086',
-                database: 'telegraf',
-            },
-            {
-                name: 'DISK',
-                url: 'http://localhost:8086',
-                database: 'telegraf',
-            },
-            ]);
+            resolve(datasources);
             reject();
         });
     }
@@ -74,6 +87,7 @@ export const postMock = jest.fn((url, data) => {
         });
     }
     if (url === 'api/datasources') {
+        datasources.push(data);
         return new Promise((resolve, reject) => {
             resolve();
             reject();

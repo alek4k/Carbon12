@@ -35,8 +35,9 @@ beforeEach(() => {
 afterEach(() => {
     const cpus = os.cpus();
 
+    let uTot = 0;
+    console.log('User CPU used:');
     for (let i = 0, len = cpus.length; i < len; i++) {
-        console.log('CPU %s:', i);
         const cpu = cpus[i];
         let total = 0;
         let type;
@@ -45,14 +46,13 @@ afterEach(() => {
                 total += cpu.times[type];
             }
         }
-
         for (type in cpu.times) {
-            if ({}.hasOwnProperty.call(cpu.times, type)) {
-                console.log('\t', type, Math.round(100 * (cpu.times[type] / total)));
+            if (type === 'user') {
+                uTot += Math.round(100 * (cpu.times[type] / total));
             }
         }
     }
-
+    console.log('\t', 'user', uTot / cpus.length);
     const used = process.memoryUsage().heapUsed / 1024 / 1024;
     console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
 });

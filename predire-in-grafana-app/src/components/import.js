@@ -59,14 +59,14 @@ export default class importCtrl {
             // creo l'array con le sorgenti di addestramento
             this.availableDataEntry = fPredictor.getDataEntry();
             // prelevo le data sources disponibili
-            const meme = this.grafana.getDataSources();
-            meme.then((dataSources) => {
-                // dataSoources ha la struttura di un json
-                dataSources.forEach((dataSource) => {
-                    this.availableDataSources.push(dataSource.name);
+            this.grafana.getDataSources()
+                .then((dataSources) => {
+                    // dataSoources ha la struttura di un json
+                    dataSources.forEach((dataSource) => {
+                        this.availableDataSources.push(dataSource.name);
+                    });
+                    this.step = 2;
                 });
-                this.step = 2;
-            });
         } else {
             this.error = 'Il JSON inserito non è un predittore';
         }

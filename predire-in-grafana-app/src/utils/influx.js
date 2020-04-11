@@ -88,7 +88,7 @@ export default class Influx extends DBConnection {
                     if (!source.name.startsWith('predizione')) {
                         result.push(source);
                     } else {
-                        this.predictions.push(source.name.substr(10), 10);
+                        this.predictions.push(source.name.substr(10));
                     }
                 });
             },

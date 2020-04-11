@@ -22,6 +22,11 @@ export default class predictCtrl {
         this.timeUnit = 'secondi';
         this.grafana = new GrafanaApiQuery(this.backendSrv);
         this.init();
+
+        // localStorage will be cleared on tab close
+        window.addEventListener('unload', function () {
+            localStorage.removeItem('started');
+        });
     }
 
     init() {

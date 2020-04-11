@@ -30,6 +30,10 @@ class SvmAdapter extends Model {
         this.svm.train(data, expected, options);
         return this.svm.toJSON();
     }
+
+    predictClass(point) {
+        return this.svm.predictClass(point);
+    }
 }
 
 module.exports = SvmAdapter;

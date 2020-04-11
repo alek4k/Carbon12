@@ -11,7 +11,7 @@
 
 import Influx from './influx.js';
 
-const SVM = require('./models/svm/svm');
+const SVM = require('./models/SVM_Adapter');
 const GrafanaApiQuery = require('./grafana_query.js');
 
 class InfinitySwag {

@@ -216,6 +216,7 @@ export default class importCtrl {
             this.dashboard.panels[lastPanel].type = 'graph';
             this.dashboard.panels[lastPanel].title = this.panelName ? 
                 this.panelName : 'Grafico di Predizione ' + panelID;
+            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di ${this.availableDataEntry}`;
         } else {
             this.dashboard.panels[lastPanel].gridPos.h = 4;
             this.dashboard.panels[lastPanel].gridPos.w = 4;
@@ -223,6 +224,7 @@ export default class importCtrl {
             this.dashboard.panels[lastPanel].thresholds = '0, 0.5';
             this.dashboard.panels[lastPanel].title = this.panelName ?
                 this.panelName : 'Indicatore di Predizione ' + panelID;
+            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di ${this.availableDataEntry}`;
             this.dashboard.panels[lastPanel].colorBackground = 'true';
         }
     }

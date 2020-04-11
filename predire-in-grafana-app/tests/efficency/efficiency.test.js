@@ -9,28 +9,91 @@
  * Changelog: modifiche effettuate
  */
 
+import os from 'os';
 import { performance } from 'perf_hooks';
 import fs from 'fs';
 import ImportCtrl from '../../src/components/import';
-import BackendSrv, { getMock, postMock } from '../../__mocks__/backendSrv';
-
+import BackendSrvMock, { getMock, postMock } from '../../__mocks__/backendSrvMock';
+import LocationMock from '../../__mocks__/locationMock';
 
 beforeEach(() => {
-    // Clear all instances
+    // Pulisco i mock
     getMock.mockClear();
     postMock.mockClear();
-    BackendSrv.mockClear();
+    BackendSrvMock.mockClear();
+
+    // Cancello i redirect per evitare errori
+    delete global.window.location;
+    global.window = Object.create(window);
+    global.window.location = {
+        port: '123',
+        protocol: 'http:',
+        hostname: 'localhost',
+    };
 });
 
-test('Efficenty tests', async () => {
-    const importCtrl = new ImportCtrl('', new BackendSrv());
+afterEach(() => {
+    const cpus = os.cpus();
+
+    for (let i = 0, len = cpus.length; i < len; i++) {
+        console.log('CPU %s:', i);
+        const cpu = cpus[i];
+        let total = 0;
+        let type;
+        for (type in cpu.times) {
+            if ({}.hasOwnProperty.call(cpu.times, type)) {
+                total += cpu.times[type];
+            }
+        }
+
+        for (type in cpu.times) {
+            if ({}.hasOwnProperty.call(cpu.times, type)) {
+                console.log('\t', type, Math.round(100 * (cpu.times[type] / total)));
+            }
+        }
+    }
+
+    const used = process.memoryUsage().heapUsed / 1024 / 1024;
+    console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+});
+
+test('Efficenty tests import.js with already existing datasource', async () => {
+    const importCtrl = new ImportCtrl(new LocationMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(fs.readFileSync('./tests/files/predittore_test.json').toString());
     const t0 = performance.now();
-    await importCtrl.onUpload(jsonTest);
 
+    await importCtrl.onUpload(jsonTest);
     // controllo come se l'utente segliesse una data source già presente
     importCtrl.dataSource = importCtrl.availableDataSources[0];
     await importCtrl.setDataSource(importCtrl.dataSource);
+    importCtrl.sources = ['CPU', 'RAM'];
+    importCtrl.instances = [];
+    importCtrl.params = [];
+    importCtrl.view = 'Indicatore';
+    importCtrl.panelName = 'PanelTest';
+    await importCtrl.createPanel();
+
+    const t1 = performance.now();
+    console.log('Call to function took ' + (t1 - t0) + ' milliseconds.');
+});
+
+test('Efficenty tests import.js with new datasource', async () => {
+    const importCtrl = new ImportCtrl(new LocationMock(), new BackendSrvMock());
+    const jsonTest = JSON.parse(fs.readFileSync('./tests/files/predittore_test.json').toString());
+    const t0 = performance.now();
+
+    await importCtrl.onUpload(jsonTest);
+    // controllo come se l'utente segliesse una data source già presente
+    importCtrl.name = 'TestDS';
+    importCtrl.database = 'telegraf';
+    importCtrl.port = '8086';
+    await importCtrl.addDataSource();
+    importCtrl.sources = ['CPU', 'RAM'];
+    importCtrl.instances = [];
+    importCtrl.params = [];
+    importCtrl.view = 'Indicatore';
+    importCtrl.panelName = 'PanelTest';
+    await importCtrl.createPanel();
 
     const t1 = performance.now();
     console.log('Call to function took ' + (t1 - t0) + ' milliseconds.');

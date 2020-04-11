@@ -124,7 +124,14 @@ export default class importCtrl {
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
 
         const sources = this.influx.getSources();
-        const instances = this.influx.getInstances();
+        // const instances = this.influx.getInstances();
+        const instances = [
+            {
+                name: 'cpu',
+                columns: ['fieldKey', 'fieldType'],
+                values: [[Array], [Array]],
+            },
+        ];
         for (let i = 0, j = 0; i < sources.length; ++i) {
             // itero sul totale delle sorgenti
             this.availableSources.push(sources[i].name);
@@ -212,15 +219,15 @@ export default class importCtrl {
             this.dashboard.panels[lastPanel].gridPos.h = 8;
             this.dashboard.panels[lastPanel].gridPos.w = 12;
             this.dashboard.panels[lastPanel].type = 'graph';
-            this.dashboard.panels[lastPanel].title = this.panelName ? 
-                this.panelName : 'Grafico di Predizione ' + panelID;
+            this.dashboard.panels[lastPanel].title = this.panelName
+                ? this.panelName : 'Grafico di Predizione ' + panelID;
         } else {
             this.dashboard.panels[lastPanel].gridPos.h = 4;
             this.dashboard.panels[lastPanel].gridPos.w = 4;
             this.dashboard.panels[lastPanel].type = 'singlestat';
             this.dashboard.panels[lastPanel].thresholds = '0, 0.5';
-            this.dashboard.panels[lastPanel].title = this.panelName ?
-                this.panelName : 'Indicatore di Predizione ' + panelID;
+            this.dashboard.panels[lastPanel].title = this.panelName
+                ? this.panelName : 'Indicatore di Predizione ' + panelID;
             this.dashboard.panels[lastPanel].colorBackground = 'true';
         }
     }
@@ -248,6 +255,7 @@ export default class importCtrl {
                         this.grafana
                             .getDashboard('predire-in-grafana')
                             .then((db) => {
+
                                 this.setPanel(db.dashboard);
                                 this.storePanelSetting(db.dashboard.version + 1);
                             });
@@ -265,7 +273,7 @@ export default class importCtrl {
         // appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
             .postDashboard(this.dashboard)
-            .then((db) => {
+            .then(() => {
                 // reindirizzo alla pagina che gestisce la a predizione
                 this.$location.url('plugins/predire-in-grafana-app/page/predizione');
                 window.location.href = 'plugins/predire-in-grafana-app/page/predizione';

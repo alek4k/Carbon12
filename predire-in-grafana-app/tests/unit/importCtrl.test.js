@@ -11,7 +11,7 @@
 
 import fs from 'fs';
 import ImportCtrl from '../../src/components/import';
-import BackendSrv, { getMock, postMock } from '../../__mocks__/backendSrv';
+import BackendSrv, { getMock, postMock } from '../../__mocks__/backendSrvMock';
 
 beforeEach(() => {
     // Clear all instances

@@ -23,6 +23,32 @@ p {
   clear: left;
 }
 
+.icon {
+  color: rgb(128,128,128)
+}
+
+.adv {
+  padding: 0;
+  text-align: left;
+  font-size: 0.7em;
+  display: inline;
+  color: rgb(128,128,128);
+}
+
+
+/*
+  * logo
+  */
+img {    
+  width: 10%;
+  margin: 1% 25%;
+  margin-right: 0;
+  float: left;
+}
+
+/*
+  * upload page
+  */
 form{
   margin: 0 25%;
 }
@@ -36,6 +62,10 @@ label  {
 input[type=file], select  {
   display: block;
   font-size: 1em;
+}
+
+input[type=text]{
+  width: 15em;
 }
 
 input[type=submit] {
@@ -58,16 +88,41 @@ input[type=submit]:hover {
 }
 
 fieldset {
-  background-color: #BFE9FF;
+  background-color: rgb(189, 232, 255);
 }
 
-img {
-  width: 10%;
-  margin: 1% 25%;
-  margin-right: 0;
-  float: left;
+#nomeFile {
+  font-size: 1em;
 }
 
+.error {
+  color: rgba(255, 0, 0, 0.774);
+  padding: 0%;
+}
+
+#mychart {
+  margin: 0 25%;
+  max-height: 20%;
+}
+
+#infoChart {
+  margin: auto;
+}
+
+.radioLabel {
+  display: inline;
+  margin-right: 1em;
+}
+
+.chartP {
+  padding: 0;
+  font-size: 1em;
+  text-align: left;
+}
+
+/*
+  * download page
+  */
 #home {
   padding: 1%;
   border: 3px solid #1675AA;
@@ -81,7 +136,7 @@ img {
 
 #home:hover {
   color: #FFFFFF;
-  border-color: #1675AA;
+  border-color: rgb(22, 117, 170);
   background-color: #1675AA;
   font-size: 1em;
 }
@@ -91,6 +146,7 @@ img {
   width: 50%;
   margin: auto;
   border: 1px solid;
+  padding: 1%;
 }
 
 #formDownload fieldset {
@@ -99,13 +155,13 @@ img {
 
 ul {
   font-size: 1.1em;
+  margin-top: 0;
 }
 
-#nameFile {
-  font-size: 1em;
+b {
+  padding: 2% 2% 0;
 }
 
-.error {
-  color: rgba(255, 0, 0, 0.774);
-  padding: 0%;
+#infoDownload {
+  text-align: center;
 }

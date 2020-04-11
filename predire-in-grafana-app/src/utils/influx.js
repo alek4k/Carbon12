@@ -120,7 +120,6 @@ export default class Influx extends DBConnection {
                 console.log(`Error: ${exception}`);
             },
         });
-        console.log(result);
         return result;
     }
 

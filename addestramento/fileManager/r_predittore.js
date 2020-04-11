@@ -37,7 +37,19 @@ class RPredittore {
      * @return {boolean}
      */
     checkVersion(pluginV, trainV) {
-        return this.getPluginVersion() >= pluginV && this.getTrainVersion() >= trainV;
+        let cpV = pluginV;
+        let ctV = trainV;
+        for (let i = 0; i < 2; i++) {
+            cpV = cpV.replace('.', '');
+            ctV = ctV.replace('.', '');
+        }
+        let pV = this.getPluginVersion();
+        let tV = this.getTrainVersion();
+        for (let i = 0; i < 2; i++) {
+            pV = pV.replace('.', '');
+            tV = tV.replace('.', '');
+        }
+        return parseInt(pV) <= parseInt(cpV) && parseInt(tV) <= parseInt(ctV);
     }
 
     /**
@@ -90,6 +102,7 @@ class RPredittore {
      */
     getDataEntry() {
         if (this.jsonContent.data_entry) {
+            this.sources = [];
             const dataEntry = this.jsonContent.data_entry;
             for (const source in dataEntry) {
                 if ({}.hasOwnProperty.call(dataEntry, source)) {
@@ -111,13 +124,13 @@ class RPredittore {
     }
 
     /**
-     * @return {string} versione file allenamento
+     * @return {int} versione file allenamento
      */
     getFileVersion() {
         if (this.jsonContent.file_version) {
-            return this.jsonContent.file_version;
+            return parseInt(this.jsonContent.file_version);
         }
-        return '';
+        return 0;
     }
 
     /**

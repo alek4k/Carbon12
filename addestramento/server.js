@@ -18,10 +18,10 @@ const nconf = require('nconf');
 const RPredittore = require('./fileManager/r_predittore');
 const WPredittore = require('./fileManager/w_predittore');
 const CSVr = require('./fileManager/csv_reader.js');
-// const SVM = require('./models/svm/svm');
-// const RL = require('./models/rl/regression');
+const SvmAdapter = require('./models/SVM_Adapter');
+const RlAdapter = require('./models/RL_Adapter');
 
-let model;
+let model = 'SVM';
 let sources;
 let notes;
 let nomePredittore;
@@ -45,13 +45,87 @@ module.exports = class Server {
         nconf.defaults({ PORT: 8080, TRAIN_VERSION: '0.0.0', PLUGIN_VERSION: '0.0.0' });
     }
 
-    /* @todo
-        * aggiungere gestione addestramento
-        */
-    train(data, expected) {
-        // train
-        this.data = data;
-        this.expected = expected;
+    validityCsv(csvReader) {
+        if (csvReader.checkStructure() === false) {
+            console.log('Error: csv non valido');
+            return 'Struttura csv non valida';
+        }
+        const labels = csvReader.autoGetLabel();
+        if (labels.every((value) => value === 0)) {
+            console.log('Error: csv - valori attesi mancanti');
+            return 'Valori attesi nel campo Labels del file csv mancanti';
+        }
+        console.log('csv valido');
+        return '';
+    }
+
+    validityJson(managePredittore, dataSourceCsv) {
+        if (managePredittore.validity()) {
+            if (managePredittore.getFileVersion() >= 0) {
+                FILE_VERSION = managePredittore.getFileVersion() + 1;
+            }
+
+            // controllo versioni
+            if (managePredittore.checkVersion(
+                nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'),
+            ) === false) {
+                console.log('Error: wrong versions');
+                return 'Versione file di addestramento non compatibile';
+            }
+            // controllare che le data entry coincidano con quelle nel csv
+            const dataSourceJson = managePredittore.getDataEntry();
+            if (dataSourceJson.length !== dataSourceCsv.length || dataSourceJson.every(
+                (value, index) => value === dataSourceCsv[index],
+            ) === false) {
+                console.log('Error: wrong data entry');
+                return 'Le data entry non coincidono con quelle del file di addestramento';
+            }
+            // controllare che il modello coincida con quello scelto
+            if (model !== managePredittore.getModel()) {
+                console.log('Error: wrong model');
+                return 'Il modello non coincide con quello selezionato';
+            }
+        } else {
+            console.log('Error: json non valido');
+            return 'Struttura json non valida';
+        }
+
+        console.log('json valido');
+        return '';
+    }
+
+    train(data, labels, predittore) {
+        let modelAdapter;
+        switch (model) {
+            case 'SVM': {
+                modelAdapter = new SvmAdapter();
+                break;
+            }
+            case 'RL': {
+                const n = data[0].length + 1;
+                const param = { numX: n, numY: 1 };
+                modelAdapter = new RlAdapter(param);
+                break;
+            }
+            default:
+                modelAdapter = null;
+        }
+        if (predittore) {
+            modelAdapter.fromJSON(predittore);
+        }
+        return modelAdapter.train(data, labels);
+    }
+
+    savePredittore(csvReader, strPredittore, nome) {
+        // salvataggio predittore
+        const managePredittore = new WPredittore();
+        managePredittore.setHeader(nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'));
+        managePredittore.setDataEntry(csvReader.getDataSource(), csvReader.countSource());
+        managePredittore.setModel(model);
+        managePredittore.setFileVersion(FILE_VERSION);
+        managePredittore.setNotes(notes);
+        managePredittore.setConfiguration(strPredittore);
+        fs.writeFileSync(nome, managePredittore.save());
     }
 
     uploadForm(req, res) {
@@ -80,11 +154,8 @@ module.exports = class Server {
             const pathConfigFile = files.configFile.path;
 
             const csvReader = new CSVr(pathTrainFile, null);
-            if (csvReader.checkStructure()) {
-                console.log('csv valido');
-            } else {
-                console.log('Error: csv non valido');
-                error = 'Struttura csv non valida';
+            error = this.validityCsv(csvReader);
+            if (error.length > 0) {
                 res.writeHead(301, { Location: '/' });
                 return res.end();
             }
@@ -92,78 +163,28 @@ module.exports = class Server {
             // dati addestramento
             const data = csvReader.autoGetData();
             const labels = csvReader.autoGetLabel();
-            const sourceNumberRL = csvReader.countSource() + 2;
             // elenco sorgenti
-            sources = csvReader.getDataSource().toString();
+            sources = csvReader.getDataSource();
 
+            let config = '';
             if (configPresence) {
                 const managePredittore = new RPredittore(JSON.parse(
                     fs.readFileSync(pathConfigFile).toString(),
                 ));
-                if (managePredittore.validity()) {
-                    const config = managePredittore.getConfiguration();
-                    // config va passata alla creazione della SVM
 
-                    if (managePredittore.getFileVersion() > 0) {
-                        FILE_VERSION = managePredittore.getFileVersion() + 1;
-                    }
-
-                    // controllo versioni
-                    if (managePredittore.checkVersion(
-                        nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'),
-                    ) === false) {
-                        console.log('Error: wrong versions');
-                        error = 'Versione file di addestramento non compatibile';
-                    }
-                    // controllare che le data entry coincidano con quelle nel csv
-                    const dataSourceJson = managePredittore.getDataEntry();
-                    const dataSourceCsv = csvReader.getDataSource();
-                    if (dataSourceJson.length !== dataSourceCsv.length || dataSourceJson.every(
-                        (value, index) => value === dataSourceCsv[index],
-                    ) === false) {
-                        console.log('Error: wrong data entry');
-                        error = 'Le data entry non coincidono con quelle del file di addestramento';
-                    }
-                    // controllare che il modello coincida con quello scelto
-                    if (model !== managePredittore.getModel()) {
-                        console.log('Error: wrong model');
-                        error = 'Il modello non coincide con quello selezionato';
-                    }
-                } else {
-                    console.log('Error: json non valido');
-                    error = 'Struttura json non valida';
+                error = this.validityJson(managePredittore, sources);
+                if (error.length > 0) {
+                    res.writeHead(301, { Location: '/' });
+                    return res.end();
                 }
+
+                config = managePredittore.getConfiguration();
             }
 
-            if (error !== '') {
-                res.writeHead(301, { Location: '/' });
-                return res.end();
-            }
-            console.log('json valido');
-
-            /* @todo
-            * chiamata a trainSVM o trainRL
-            */
-            if (model === 'SVM') {
-                // chiamata function addestramento SVM
-                console.log('support');
-            } else {
-                // chiamata function addestramento RL
-                console.log('regression');
-            }
-
-            const strPredittore = '';
+            const strPredittore = this.train(data, labels, config);
             console.log('addestramento terminato');
 
-            // salvataggio predittore
-            const managePredittore = new WPredittore();
-            managePredittore.setHeader(nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'));
-            managePredittore.setDataEntry(csvReader.getDataSource(), csvReader.countSource());
-            managePredittore.setModel(model);
-            managePredittore.setFileVersion(FILE_VERSION);
-            managePredittore.setNotes(notes);
-            managePredittore.setConfiguration(strPredittore);
-            fs.writeFileSync(nomePredittore, managePredittore.save());
+            this.savePredittore(csvReader, strPredittore, nomePredittore);
 
             res.writeHead(301, { Location: 'downloadPredittore' });
             return res.end();
@@ -182,6 +203,29 @@ module.exports = class Server {
         filestream.pipe(res);
     }
 
+    getChartData(request, response) {
+        const form = new formidable.IncomingForm();
+        form.multiples = false;
+        let result = null;
+        form.on('file', (fields, file) => {
+            const pathTrainFile = file.path;
+            const csvReader = new CSVr(pathTrainFile, null);
+            if (csvReader.checkStructure()) {
+                result = [];
+                result.push(csvReader.getDataGraph());
+                result.push(csvReader.autoGetLabel());
+                result.push(csvReader.getDataSource());
+            }
+            return null;
+        });
+
+        form.on('end', () => {
+            response.end(JSON.stringify(result));
+        });
+
+        form.parse(request);
+    }
+
     config() {
         this.app.use('/', this.router);
 
@@ -190,13 +234,19 @@ module.exports = class Server {
             error = '';
         });
 
-        this.router.post('/fileupload', this.uploadForm);
+        this.router.post('/fileupload', (request, response) => {
+            this.uploadForm(request, response);
+        });
 
         this.router.get('/downloadPredittore', (request, response) => {
             response.render('downloadPredittore', { model, sources });
         });
 
         this.router.post('/downloadFile', this.downloadPredittore);
+
+        this.router.post('/loadCsv', (request, response) => {
+            this.getChartData(request, response);
+        });
     }
 
     startServer() {

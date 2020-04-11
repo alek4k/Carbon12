@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-    <meta charset="utf-8">
-    <meta author="Carbon12">
     <title>Pagina di addestramento</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Carbon12">
+    <meta name="title" content="Addestramento - Predire in Grafana" />
+    <meta name="description" content="Pagina di addestramento dei modelli di machine learning"/>
     <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
 <img src="/images/C.png" alt=""/>
@@ -15,26 +20,364 @@
 <form action="fileupload" method="post" enctype="multipart/form-data">
     <fieldset>
         <% if (error == 'Struttura csv non valida') { %>
-            <p class='error'>Struttura file csv non valida: la prima colonna deve avere etichetta <b>Time</b>,
-                l'ultima etichetta <b>Labels</b></p>
+            <p class='error'>Struttura file csv non valida: 
+                <br/>la prima colonna deve avere etichetta <b>Time</b>, l'ultima etichetta <b>Labels</b>
+            </p>
         <%} else { %>
             <p class='error'><%= error %></p>
         <%}%>
         <label for="trainFile">Seleziona il file coi dati di addestramento (formato CSV):</label>
-        <input type="file"  id="trainFile" value="upload file" accept=".csv" name="trainFile" required>
+        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
+        <p class="adv">Il file deve contenere le intestazioni Time | Source 1 | ... | Source n | Labels <br/>
+            In fondo a questa pagina potrai visualizzare un grafico con la disposizione dei tuoi dati.
+        </p>
+        <input type="file"  id="trainFile" accept=".csv" name="trainFile" required>
         <label for="configFile">Seleziona il file con la configurazione del modello (formato JSON):</label>
-        <input type="file" id="configFile" value="upload file" accept=".json" name="configFile">
+        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
+        <p class="adv">Se desideri aggiornare il modello, 
+            inserisci il file JSON con la configurazione ottenuto nel precedente allenamento.
+        </p>
+        <input type="file" id="configFile" accept=".json" name="configFile">
         <label for="modelType">Seleziona il modello da addestrare:</label>
         <select name="modello" id="modelType">
             <option selected value="SVM">SVM</option>
             <option value="RL">RL</option>
         </select>
         <label for="note">Inserisci delle note per il predittore</label>
-        <textarea id="note" rows="4" cols="50" placeholder="le tue note..." name="note" required></textarea>
+        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
+        <p class="adv">Queste informazioni verranno salvate nel file di configurazione che otterrai alla fine dell'addestramento. 
+            In seguito saranno utili per ricordare con quali parametri è stato allenato il modello. 
+        </p>
+        <textarea id="note" rows="4" cols="100" placeholder="le tue note..." name="note" required></textarea>
         <label for="nomeFile">Inserisci il nome del file Predittore</label>
-        <input type="text" id="nomeFile" name="nomeFile" placeholder="predittore">
+        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
+        <p class="adv">Di default il nome del file sarà predittore. 
+            Puoi inserire un nome più significativo per il file di configurazione (max. 50char).
+        </p>
+        <input type="text" id="nomeFile" name="nomeFile" placeholder="predittore" maxlength="50">
         <input type="submit" id="submit" value="AVVIO ADDESTRAMENTO">
     </fieldset>
 </form>
+<div id="mychart">
+    <div id="infoChart">
+        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
+        <p class="adv">Verrà visualizzato un grafico con la distribuzione dei dati inseriti. </br>
+        Se non si conosce ancora quale modello è più adatto per l'allenamento, lasciando tutta la colonna Labels con valore `0`, 
+        il programma visualizzerà la disposizione dei dati permettendo di comprendere quale sia il modello più adatto. <br/>
+        Se invece si intende utilizzare il modello SVM e i dati sono già stati classificati con le etichette -1, 1, 
+        il grafico riporterà la distribuzione dei dati con la classificazione inserita: i dati con etichetta 1 saranno visualizzati in verde, 
+        i dati con etichetta -1 saranno visualizzati in rosso. <br/>
+        Infine, nel caso della RL in cui le etichette avranno valori continui diversi dai soli 1 e -1, 
+        il grafico visualizzerà la distribuzione dei dati e la retta di regressione risultante. 
+        </p>
+    </div>  
+</div>
+
+<script>
+    let result;
+    $(document).ready(function(){
+        $(document).on('change', '#trainFile', function(){
+            let name = document.getElementById("trainFile").files[0].name;
+            let form_data = new FormData();
+            let ext = name.split('.').pop().toLowerCase();
+            if(jQuery.inArray(ext, ['csv']) !== -1)
+            {
+                form_data.append('trainFile', document.getElementById('trainFile').files[0]);
+
+                $.ajax({
+                    url:"/loadCsv",
+                    method:"POST",
+                    data: form_data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success:function(response){
+                        if(document.getElementById('configChart')){
+                            $('#configChart').remove();
+                        }
+                        if(document.getElementById('chart')){
+                            $('#chart').remove();
+                        }
+                        if(response === 'null'){
+                            $("#trainFile").replaceWith($("#trainFile").val('').clone(true));
+                            alert('struttura csv non valida');
+                        }
+                        result = JSON.parse(response);
+                        if(result[2].length <2){
+                                alert('Il file deve avere almeno due sorgenti di dati');
+                                $("#trainFile").replaceWith($("#trainFile").val('').clone(true));
+                            }
+                        else{
+                            drawChart(result);
+                        }
+                    }
+                });
+            }
+        });
+        $(document).on('change', 'input:radio[name="assex"]', function(){
+            let assex = $(this).val();
+            let assey = $('input:radio[name="assey"]:checked').val();
+            configChart(result, assex, assey);
+        });
+        $(document).on('change', 'input:radio[name="assey"]', function(){
+            let assex = $('input:radio[name="assex"]:checked').val();
+            let assey = $(this).val();
+            configChart(result, assex, assey);
+        });
+    });
+
+    let drawChart = function(result) {          
+        let sorgenti = result[2];
+        let myDiv = document.createElement('div'); 
+        myDiv.id = 'configChart';
+        let div = document.getElementById('mychart');
+        let chart = document.getElementById('chart');
+        div.insertBefore(myDiv, chart);
+        let myParagrah = document.createElement('p');
+        myParagrah.appendChild(document.createTextNode('Visualizza la disposizione dei tuoi dati'));
+        myDiv.appendChild(myParagrah);
+        let asseX = document.createElement('p');
+        asseX.appendChild(document.createTextNode('Seleziona la sorgente da visualizzare sull\'asse x'));
+        asseX.classList.add('chartP');
+        myDiv.appendChild(asseX);
+        for(let i = 0; i<sorgenti.length; i++){
+            let radio = document.createElement('input'); 
+            radio.type = "radio"; 
+            radio.name = 'assex'; 
+            radio.value = i; 
+            radio.id = sorgenti[i]+'X'; 
+            
+            let label = document.createElement('label'); 
+            label.htmlFor = sorgenti[i]; 
+            label.classList.add('radioLabel');
+            label.appendChild(document.createTextNode(sorgenti[i])); 
+            
+            myDiv.appendChild(radio); 
+            myDiv.appendChild(label); 
+        }
+        let asseY = document.createElement('p');
+        asseY.appendChild(document.createTextNode('Seleziona la sorgente da visualizzare sull\'asse y'));
+        asseY.classList.add('chartP');
+        myDiv.appendChild(asseY);
+        for(let i = 0; i<sorgenti.length; i++){
+            let radio = document.createElement('input'); 
+            radio.type = "radio"; 
+            radio.name = 'assey'; 
+            radio.value = i; 
+            radio.id = sorgenti[i]+'Y'; 
+            
+            let label = document.createElement('label'); 
+            label.htmlFor = sorgenti[i]; 
+            label.classList.add('radioLabel');
+            label.appendChild(document.createTextNode(sorgenti[i])); 
+            myDiv.appendChild(radio); 
+            myDiv.appendChild(label); 
+        }
+        let xSource = document.getElementById(sorgenti[0]+'X');
+        let ySource = document.getElementById(sorgenti[1]+'Y');
+        xSource.checked = true;
+        ySource.checked = true;
+        configChart(result, 0, 1);
+    }
+    
+    let genericChart = function (data, label, x, y) {
+        const xAxesName = result[2][x];
+        const yAxesName = result[2][y];
+        let buildData = [];
+        for (let i = 0; i < data.length; i++) {
+            buildData.push({x: data[i][x], y: data[i][y]});
+        }
+        let config = [];
+        config.push('scatter');
+        let dataSet = {
+            datasets: [{
+                label: 'data',
+                data: buildData,
+                backgroundColor: 'rgba(189, 232, 255, 0.5)',
+                borderColor:  'rgba(22, 117, 170, 1)'
+            }]
+        };
+        config.push(dataSet);
+        let scales = {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: xAxesName
+                }
+            }],
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: yAxesName
+                }
+            }]
+        };
+        config.push(scales);
+        return config;
+    }
+
+    let SVM_Chart = function (data, label, x, y) {
+        let greenData = [];
+        let redData = [];
+        const xAxesName = result[2][x];
+        const yAxesName = result[2][y];
+        for (let i = 0; i < data.length; i++) {
+            if(label[i]===1)
+                greenData.push({x: data[i][x], y: data[i][y]});
+            else    
+                redData.push({x: data[i][x], y: data[i][y]});
+        }
+        let config = [];
+        config.push('scatter');
+        let dataSet = {
+            datasets: [{
+                label: 'Green Data',          
+                data: greenData,
+                backgroundColor: 'rgba(80, 220, 108, 0.5)',
+                borderColor:  'rgba(27, 115, 45, 1)'
+            },{
+                label: 'Red Data',
+                data: redData,
+                backgroundColor: 'rgba(222, 83, 83, 0.5)',
+                borderColor:  'rgba(216, 18, 18, 1)'
+            }]
+        };
+        config.push(dataSet);
+                        
+        let scales = {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: xAxesName
+                }
+            }],
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: yAxesName 
+                }
+            }]
+        }
+        config.push(scales);
+        return config;
+    }
+    
+    let RL_Chart = function (data, label, x, y) {
+        let pointData = [];
+        const xAxesName = result[2][x];
+        const yAxesName = result[2][y];
+        for (let i = 0; i < data.length; i++) {
+            pointData.push({x: data[i][x], y: data[i][y]});
+        }
+        console.log(pointData);
+        let lineData = []; 
+        lineData.push({x: data[0][x], y: label[0]});
+        lineData.push({x: data[data.length-1][x], y: label[data.length-1]});
+        console.log(lineData);
+        let config = [];
+        config.push('line');
+        let dataSet = {
+            datasets: [{
+                type: 'scatter',
+                label: 'Data',
+                data: pointData,
+                backgroundColor: 'rgba(189, 232, 255, 0.5)',
+                borderColor:  'rgba(22, 117, 170, 1)',
+                xAxisID: 'x-axis-1'
+            },{
+                type: 'line',
+                label: 'Linear Regression',
+                data: lineData,
+                backgroundColor: 'rgba(222, 83, 83, 0.5)',
+                borderColor:  'rgba(216, 18, 18, 1)',
+                fill: false,
+                pointRadius: 0
+            }]
+        };
+        config.push(dataSet);
+
+        const xValues = data.map(x => x[0]);
+        const minValue = Math.min.apply(null, xValues);
+        console.log(minValue);
+        const maxValue = Math.max.apply(null, xValues);
+        console.log(maxValue);
+        let scales = {
+            xAxes: [{
+                display: false,
+            }, {
+                id: 'x-axis-1',
+                type: 'linear',
+                display: true,  
+                ticks: {
+                    min: minValue,
+                    max: maxValue,
+                    stepSize: 35
+                },        
+                scaleLabel: {
+                    display: true,
+                    labelString: xAxesName 
+                }
+            }],
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: yAxesName
+                }
+            }]
+        };
+        config.push(scales);
+        return config;
+    }
+    
+    let configChart = function(result, x, y){
+        const data = result[0];
+        const label = result[1];
+        const xAxesName = result[2][x];
+        const yAxesName = result[2][y];
+        const title = 'correlazione ' + xAxesName + '-' + yAxesName;
+
+        const isNull = (currentValue) => currentValue === 0;
+        let nomodel = label.every(isNull);
+        let chartConfiguration = [];
+        if(nomodel){
+            chartConfiguration = genericChart(data, label, x, y);
+        }
+        else{
+            const isClass = (currentValue) => currentValue === -1 || currentValue === 1;
+            let SVM = label.every(isClass);
+            if(SVM)
+                chartConfiguration = SVM_Chart(data, label, x, y);
+            
+            else
+                chartConfiguration = RL_Chart(data, label, x, y);
+        }
+        console.log(chartConfiguration);
+        let myDiv = document.getElementById('mychart'); 
+        let chart = document.createElement('canvas');
+        chart.id = 'chart';
+        chart.width = '100';
+        chart.height = '100';
+        myDiv.appendChild(chart);
+        const ctx = document.getElementById('chart').getContext('2d');
+        const scatterChart = new Chart(ctx, {
+            type: chartConfiguration[0],
+            data: chartConfiguration[1],
+            options: {
+                title: { 
+                    display: true,
+                    text: title
+                },
+                scales: chartConfiguration[2]
+            }
+        });
+    }
+   
+</script>
+
 </body>
 </html>

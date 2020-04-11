@@ -106,7 +106,7 @@ test('Test addDataSource() works.', async () => {
     );
     await importCtrl.onUpload(jsonTest);
     importCtrl.name = 'AddDSTest';
-    importCtrl.database = 'TelegrafTest';
+    importCtrl.database = 'telegraf';
     importCtrl.host = 'http://test';
     importCtrl.port = '8086';
     await importCtrl.addDataSource();

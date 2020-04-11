@@ -4,7 +4,9 @@
   "description": "Programma di addestramento predittore",
   "main": "app.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "testcoverage": "jest --verbose --coverage",
+    "testwatch": "jest --watchAll"
   },
   "author": "Carbon12",
   "license": "ISC",
@@ -13,19 +15,26 @@
     "csv": "^5.3.1",
     "csv-parse": "^4.8.8",
     "ejs": "^3.0.1",
-    "eslint-plugin-header": "^3.0.0",
     "express": "^4.17.1",
     "formidable": "^1.2.2",
-    "jest": "^25.1.0",
     "mime": "^2.4.4",
     "mime-types": "^2.1.26",
     "ml-modules": "^0.1.0",
-    "nconf": "^0.10.0"
+    "nconf": "^0.10.0",
+    "parse-function": "^5.6.10",
+    "request": "latest"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-import": "^2.20.1",
-    "jest": "^25.1.0"
+    "form-data": "latest",
+    "jest": "^25.1.0",
+    "node-fetch": "^2.6.0",
+    "os-utils": "0.0.14",
+    "stream-equal": "^1.1.1",
+    "superagent": "^5.2.2",
+    "supertest": "^4.0.2"
   }
 }

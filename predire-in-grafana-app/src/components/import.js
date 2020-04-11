@@ -125,13 +125,7 @@ export default class importCtrl {
 
         const sources = this.influx.getSources();
         // const instances = this.influx.getInstances();
-        const instances = [
-            {
-                name: 'cpu',
-                columns: ['fieldKey', 'fieldType'],
-                values: [[Array], [Array]],
-            },
-        ];
+        const instances = this.influx.getInstances();
         for (let i = 0, j = 0; i < sources.length; ++i) {
             // itero sul totale delle sorgenti
             this.availableSources.push(sources[i].name);

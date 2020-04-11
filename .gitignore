@@ -7,3 +7,6 @@
 /predire-in-grafana-app/package-lock.json
 /predire-in-grafana-app/yarn.lock
 /predire-in-grafana-app/coverage
+/addestramento/node_modules/
+/addestramento/coverage/
+/addestramento/package-lock.json

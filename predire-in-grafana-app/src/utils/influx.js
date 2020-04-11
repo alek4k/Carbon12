@@ -46,9 +46,9 @@ export default class Influx extends DBConnection {
      * @returns {Number} Number che contiene l'ultimo valore memorizzato
      */
     getLastValue(source, instance, param) {
-        const query = instance
-            ? `q=select ${param} from ${source} where instance='${instance}' order by time desc limit 1`
-            : `q=select ${param} from ${source} order by time desc limit 1`;
+        const query = instance ?
+            `q=select ${param} from ${source} where instance='${instance}' order by time desc limit 1` :
+            `q=select ${param} from ${source} order by time desc limit 1`;
         let result;
         $.ajax({
             async: false,
@@ -83,12 +83,12 @@ export default class Influx extends DBConnection {
             processData: false,
             success: (data) => {
                 const sources = data.results[0].series;
-                this.predictions = 0;
+                this.predictions = [];
                 sources.forEach((source) => {
                     if (!source.name.startsWith('predizione')) {
                         result.push(source);
                     } else {
-                        ++this.predictions;
+                        this.predictions.push(source.name.substr(10), 10);
                     }
                 });
             },
@@ -147,6 +147,10 @@ export default class Influx extends DBConnection {
     }
 
     deleteMeasurement(measurement) {
+        if (measurement.startsWith('predizione')) {
+            const toRemove = parseInt(measurement.substr(10), 10);
+            this.predictions.splice(this.predictions.indexOf(toRemove), 1);
+        }
         const query = `q=drop measurement ${measurement}`;
         $.ajax({
             async: false,
@@ -165,8 +169,8 @@ export default class Influx extends DBConnection {
     }
 
     deletePredictions() {
-        for (let i = 1; i <= this.predictions; ++i) {
-            this.deleteMeasurement('predizione' + i);
+        while (this.predictions.length) {
+            this.deleteMeasurement('predizione' + this.predictions[0]);
         }
     }
 }

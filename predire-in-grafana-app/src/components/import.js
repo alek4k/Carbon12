@@ -9,7 +9,9 @@
  * Changelog: modifiche effettuate
  */
 
-import { appEvents } from 'grafana/app/core/core';
+import {
+    appEvents
+} from 'grafana/app/core/core';
 
 // importo il template della dashboard per la creazione del pannello
 import defaultDashboard from '../dashboards/default.json';
@@ -54,7 +56,6 @@ export default class importCtrl {
         const fPredictor = new FilePredictor(json);
         if (fPredictor.validity()) {
             this.predictor = fPredictor.getConfiguration();
-            this.error = '';
             this.notes = fPredictor.getNotes();
             this.model = fPredictor.getModel();
             this.view = (this.model === 'SVM') ? 'Indicatore' : 'Grafico';
@@ -70,7 +71,7 @@ export default class importCtrl {
                     this.step = 2;
                 });
         } else {
-            this.error = 'Il JSON inserito non è un predittore';
+            appEvents.emit('alert-error', ['Predittore non valido', '']);
         }
     }
 
@@ -159,14 +160,12 @@ export default class importCtrl {
             instances: this.instances,
             params: this.params
         }
-        this.dashboard.templating.list.push(
-            {
-                hide: 2,    // nascosto
-                name: panelID.toString(),
-                query: setting,
-                type: "textbox"
-            }
-        );
+        this.dashboard.templating.list.push({
+            hide: 2, // nascosto
+            name: panelID.toString(),
+            query: setting,
+            type: "textbox"
+        });
     }
 
     // setto il pannello secondo le scelte dell'utente
@@ -214,9 +213,9 @@ export default class importCtrl {
             this.dashboard.panels[lastPanel].gridPos.h = 8;
             this.dashboard.panels[lastPanel].gridPos.w = 12;
             this.dashboard.panels[lastPanel].type = 'graph';
-            this.dashboard.panels[lastPanel].title = this.panelName ? 
-                this.panelName : 'Grafico di Predizione ' + panelID;
-            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di ${this.availableDataEntry}`;
+            this.dashboard.panels[lastPanel].title = this.panelName ?
+                this.panelName : 'Grafico di Predizione ' + panelID;            
+            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di: ${this.sources}`;
         } else {
             this.dashboard.panels[lastPanel].gridPos.h = 4;
             this.dashboard.panels[lastPanel].gridPos.w = 4;
@@ -224,7 +223,7 @@ export default class importCtrl {
             this.dashboard.panels[lastPanel].thresholds = '0, 0.5';
             this.dashboard.panels[lastPanel].title = this.panelName ?
                 this.panelName : 'Indicatore di Predizione ' + panelID;
-            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di ${this.availableDataEntry}`;
+            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di ${this.sources}`;
             this.dashboard.panels[lastPanel].colorBackground = 'true';
         }
     }
@@ -234,8 +233,8 @@ export default class importCtrl {
         this.error = '';
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
             if (this.sources[i] === undefined) {
-                this.error = 'La sorgente di '
-                    + this.availableDataEntry[i] + ' non è stata selezionata';
+                this.error = 'La sorgente di ' +
+                    this.availableDataEntry[i] + ' non è stata selezionata';
             }
         }
         if (!this.error) {

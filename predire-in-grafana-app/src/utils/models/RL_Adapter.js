@@ -27,6 +27,10 @@ class RlAdapter extends Model {
         console.log('train');
         return this.regression.toJSON();
     }
+
+    predict(point) {
+        return this.regression.predict(point);
+    }
 }
 
 module.exports = RlAdapter;

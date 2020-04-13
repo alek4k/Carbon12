@@ -11,7 +11,7 @@
 
 
 /* eslint-disable import/no-unresolved */
-import * as $ from 'jquery';
+import $ from 'jquery';
 import DBConnection from './db_connection';
 
 export default class Influx extends DBConnection {

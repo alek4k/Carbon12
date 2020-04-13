@@ -1,0 +1,25 @@
+{
+    "header": {
+        "title": "Carbon12 Predire in Grafana",
+        "plugin_version": "0.0.0",
+        "train_version": "0.0.0"
+    },
+    "data_entry": {
+        "source0": "A",
+        "source1": "B"
+    },
+    "model": "Reti Neurali",
+    "file_version": 0,
+    "notes": "test",
+    "configuration": {
+        "N": 60,
+        "D": 3,
+        "b": 25889865728,
+        "kernelType": "linear",
+        "w": [
+            -4838.896484375,
+            489.25675450149345,
+            1224.422537904899
+        ]
+    }
+}

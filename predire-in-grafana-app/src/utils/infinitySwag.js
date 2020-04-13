@@ -11,6 +11,7 @@
 
 import Influx from './influx.js';
 
+const RL = require('./models/RL_Adapter');
 const SVM = require('./models/SVM_Adapter');
 const GrafanaApiQuery = require('./grafana_query.js');
 
@@ -67,24 +68,39 @@ class InfinitySwag {
     }
 
     getPrediction() {
-        const svm = new SVM();
         const results = [];
         this.variables.forEach((variable) => {
             const predictor = variable.query.predittore;
-            svm.fromJSON(predictor);
             const point = [];
-            for (let i = 0; i < variable.query.sources.length; ++i) {
+            for (let i = 0; i < predictor.D; ++i) {
                 point.push(
                     this.db[results.length].getLastValue(
                         variable.query.sources[i],
                         variable.query.instances[i],
-                        variable.query.params[i],
-                    ),
+                        variable.query.params[i]
+                    )
                 );
             }
-            results.push(svm.predictClass(point));
+            console.log(point);
+            results.push(
+                variable.query.model === 'SVM'
+                    ?  this.predictSVM(predictor, point) : this.predictRL(predictor, point)
+            );
         });
         return results;
+    }
+    
+    predictSVM(predictor, point) {
+        const svm = new SVM();
+        svm.fromJSON(predictor);
+        return svm.predictClass(point);
+    }
+
+    predictRL(predictor, point) {
+        const options = { numX: predictor.D, numY: 1 };
+        const rl = new RL(options);
+        rl.fromJSON(predictor);
+        return rl.predict(point);
     }
 }
 

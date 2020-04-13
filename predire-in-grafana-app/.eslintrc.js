@@ -5,7 +5,8 @@ module.exports = {
     ],
     "env": {
         "browser": true,
-        "es6": true
+        "es6": true,
+        "jest": true,
     },
     "rules": {
         //header da utilizzare in tutti gli script

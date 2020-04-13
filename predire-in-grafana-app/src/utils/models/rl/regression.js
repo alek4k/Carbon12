@@ -39,14 +39,9 @@ module.exports = class Regression {
     }
   
     fromJSON(json) {
-      console.log('json reg'+json)
-      console.log('N'+json.N)
         this.N = json.N
-        console.log(this.N)
         this.D = json.D
-        console.log(this.D)
         this.coefficients = json.alpha
-        console.log(this.coefficients)
     }
   
     constructor(options){

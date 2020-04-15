@@ -182,7 +182,6 @@ module.exports = class Server {
 
             const strPredittore = this.train(data, labels, config);
             console.log('addestramento terminato');
-
             this.savePredittore(csvReader, strPredittore, nomePredittore);
 
             res.writeHead(301, { Location: 'downloadPredittore' });
@@ -211,7 +210,7 @@ module.exports = class Server {
             const csvReader = new CSVr(pathTrainFile, null);
             if (csvReader.checkStructure()) {
                 result = [];
-                result.push(csvReader.getDataGraph());
+                result.push(csvReader.autoGetData());
                 result.push(csvReader.autoGetLabel());
                 result.push(csvReader.getDataSource());
             }

@@ -51,62 +51,6 @@ module.exports = class csvReader {
 
     /**
      *
-     * @return dati per il grafico
-     */
-    getDataGraph() {
-        // seleziona tutte le colonne, eccetto quella delle data entry(Series), delle Labels e quella vuota che mette grafana
-        const dataColumns = [];
-        this.columns.forEach((element) => {
-            if ((!(element === 'Labels')) && (!(element === 'Time'))) {
-                dataColumns.push(element);
-            }
-        });
-
-        const res = [];
-        let i = 0;
-        this.records.forEach((row) => {
-            const validRow = [];
-            let c = 0;
-            for (const key in row) {
-                if (dataColumns.includes(key)) {
-                    // per ogni riga del csv, prendo i valori nelle colonne che sono specificate in columns
-                    // in validRow alla fine del ciclo sarà presente la riga corrente con solo le colonne valide
-                    let count = 0;
-                    let ji = 0;
-                    for (ji; ji < row[key].length; ji++) {
-                        if (row[key].charAt(ji) === '.') {
-                            count++;
-                        }
-                    }
-                    if (count > 1) {
-                        let st = row[key];
-                        for (let dot = 1; dot <= count; dot++) {
-                            st = st.replace('.', '');
-                        }
-                        validRow[c++] = st;
-                    } else {
-                        validRow[c++] = row[key];
-                    }
-                }
-            }
-            res[i++] = validRow;
-        });
-        // converte i valori ottenuti nel giusto formato
-        for (let k = 0; k < res.length; k++) {
-            // converte i valori in float
-            for (let j = 0; j < res[k].length; j++) {
-                if (res[k][j] === 'null') {
-                    res[k][j] = 0;
-                } else {
-                    res[k][j] = parseFloat(res[k][j]) / 1000000;
-                }
-            }
-        }
-        return res;
-    }
-
-    /**
-     *
      * @param {Array} columns Lista di colonne da ritornare.
      * @returns {Array} Ritorna la matrice contenente ogni riga di ogni colonna selezionata.
      */
@@ -145,7 +89,6 @@ module.exports = class csvReader {
             }
         });
         const res = this.getData(dataColumns);
-
         // converte i valori ottenuti nel giusto formato
         for (let i = 0; i < res.length; i++) {
             // converte i valori in float
@@ -153,7 +96,9 @@ module.exports = class csvReader {
                 if (res[i][j] === 'null') {
                     res[i][j] = 0;
                 } else {
+                    res[i][j] = res[i][j].replace(',', '.');
                     res[i][j] = parseFloat(res[i][j]);
+                    res[i][j] = Math.round(res[i][j] * 1e8) / 1e8;
                 }
             }
         }

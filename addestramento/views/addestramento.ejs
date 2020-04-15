@@ -273,11 +273,10 @@
         for (let i = 0; i < data.length; i++) {
             pointData.push({x: data[i][x], y: data[i][y]});
         }
-        console.log(pointData);
         let lineData = []; 
         lineData.push({x: data[0][x], y: label[0]});
         lineData.push({x: data[data.length-1][x], y: label[data.length-1]});
-        console.log(lineData);
+
         let config = [];
         config.push('line');
         let dataSet = {
@@ -302,9 +301,7 @@
 
         const xValues = data.map(x => x[0]);
         const minValue = Math.min.apply(null, xValues);
-        console.log(minValue);
         const maxValue = Math.max.apply(null, xValues);
-        console.log(maxValue);
         let scales = {
             xAxes: [{
                 display: false,
@@ -315,7 +312,7 @@
                 ticks: {
                     min: minValue,
                     max: maxValue,
-                    stepSize: 35
+                    stepSize: 5
                 },        
                 scaleLabel: {
                     display: true,
@@ -356,7 +353,6 @@
             else
                 chartConfiguration = RL_Chart(data, label, x, y);
         }
-        console.log(chartConfiguration);
         let myDiv = document.getElementById('mychart'); 
         let chart = document.createElement('canvas');
         chart.id = 'chart';

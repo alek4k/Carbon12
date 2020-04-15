@@ -34,7 +34,7 @@
     "node-fetch": "^2.6.0",
     "os-utils": "0.0.14",
     "stream-equal": "^1.1.1",
-    "superagent": "latest",
+    "superagent": "^5.2.2",
     "supertest": "^4.0.2"
   }
 }

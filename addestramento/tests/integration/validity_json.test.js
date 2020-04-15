@@ -1,8 +1,8 @@
 /**
- * File name: app.js
+ * File name: validity_json.test.js
  * Date: 2020-03-18
  *
- * @file Script principale del programma di addestramento
+ * @file Test metodo validityJson()
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
@@ -35,7 +35,7 @@ test('Error messagge: addestramento version is not compatible', () => {
         fs.readFileSync('./tests/files/predittore_test_NotVersionCompatibility.json').toString(),
     ));
     expect(server.validityJson(managePredittore, ['A', 'B']))
-        .toEqual('Versione file di addestramento non compatibile',);
+        .toEqual('Versione file di addestramento non compatibile');
 });
 
 test('Error messagge: the n. of sources of file.csv are not equal to file.json sources', () => {

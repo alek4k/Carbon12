@@ -1,8 +1,8 @@
 /**
- * File name: app.js
+ * File name: csv_reader.test.js
  * Date: 2020-03-18
  *
- * @file Script principale del programma di addestramento
+ * @file Test metodi della class CSV_Reader
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
@@ -25,22 +25,20 @@ test('It should response that function getData of file.csv work correctly', () =
 
 test('It should response that file.csv data were read correctly', () => {
     const data = [
-        [0, 36350749646.49240],
-        [0.02222222222222222, 36350877192.98240],
-        [5777649385.56921, 454035087719.29800],
-        [5.8, 36385837242.67630],
-        [115111111111.11100, 45438596491.22800],
-        [575555555555.55500, 45438437058.11550],
-        [57333333333.33330, 45438596491.22800],
-        [0, 364202858887.18100],
-        [0, 36385837242.67630],
-        [0.0666681481810707, 274737806097.56500],
+        [0, 36350749646],
+        [0.02222222222222222, 36350877193],
+        [577764938556921, 45403508771929800],
+        [5.8, 3638583724267630],
+        [11511111111111100, 4543859649122800],
+        [57555555555555500, 4543843705811550],
+        [5733333333333330, 4543859649122800],
+        [0, 36420285888718100],
+        [0, 3638583724267630],
+        [0.0666681481810707, 27473780609756500],
     ];
-    const ret = csvReader.autoGetData();
     expect(csvReader.autoGetData()).toEqual(data);
-    // expect(csvReader.autoGetData()).toEqual(expect.arrayContaining(data));
-    // data.forEach(x=> expect(ret).toContain(x));
 });
+
 
 test('It should response that file.csv has the expected label', () => {
     expect(csvReader.autoGetLabel()).toEqual([-1, -1, 1, -1, 1, 1, 1, -1, -1, -1]);

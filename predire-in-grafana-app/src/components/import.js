@@ -71,7 +71,7 @@ export default class importCtrl {
         this.grafana.getDataSources()
             .then((dataSources) => {
                 // dataSoources ha la struttura di un json
-                dataSources.forEach((dataSource) => {                
+                dataSources.forEach((dataSource) => {
                     this.availableDataSources.push(dataSource.name);
                 });
                 this.step = (this.step === 2) ? 3 : 2;
@@ -85,17 +85,17 @@ export default class importCtrl {
             defaultDashboard.panels[0].datasource = this.dataSource;
             const dataSources = this.grafana.getDataSources();
             dataSources.then((dataSource) => {
-            let found = false;
-            // dataSources ha la struttura di un json
-            for (let i = 0; dataSource[i] !== undefined && !found; ++i) {
-                if (dataSource[i].name === this.dataSource) {
-                    found = true;
-                    // vado ad estrarre le informazioni della data source selezionata
-                    this.database = dataSource[i].database;
-                    const endOfHost = dataSource[i].url.lastIndexOf(':');
-                    this.host = dataSource[i].url.substring(0, endOfHost);
-                    this.port = dataSource[i].url.substring(endOfHost + 1);
-                    this.connection();
+                let found = false;
+                // dataSources ha la struttura di un json
+                for (let i = 0; dataSource[i] !== undefined && !found; ++i) {
+                    if (dataSource[i].name === this.dataSource) {
+                        found = true;
+                        // vado ad estrarre le informazioni della data source selezionata
+                        this.database = dataSource[i].database;
+                        const endOfHost = dataSource[i].url.lastIndexOf(':');
+                        this.host = dataSource[i].url.substring(0, endOfHost);
+                        this.port = dataSource[i].url.substring(endOfHost + 1);
+                        this.connection();
                     }
                 }
             });
@@ -160,13 +160,13 @@ export default class importCtrl {
             database: this.database,
             sources: this.sources,
             instances: this.instances,
-            params: this.params
-        }
+            params: this.params,
+        };
         this.dashboard.templating.list.push({
             hide: 2, // nascosto
             name: panelID.toString(),
             query: settings,
-            type: "textbox"
+            type: 'textbox',
         });
     }
 
@@ -217,7 +217,7 @@ export default class importCtrl {
             this.dashboard.panels[lastPanel].type = 'graph';
             this.dashboard.panels[lastPanel].title = this.panelName
                 ? this.panelName : 'Grafico di Predizione ' + panelID;
-            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di: ${this.sources}`;
+            this.dashboard.panels[lastPanel].description = `Grafico relativo alla predizione di: ${this.sources}`;
         } else {
             this.dashboard.panels[lastPanel].gridPos.h = 4;
             this.dashboard.panels[lastPanel].gridPos.w = 4;
@@ -235,8 +235,8 @@ export default class importCtrl {
         this.error = '';
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
             if (this.sources[i] === undefined) {
-                this.error = 'La sorgente di ' +
-                    this.availableDataEntry[i] + ' non è stata selezionata';
+                this.error = 'La sorgente di '
+                    + this.availableDataEntry[i] + ' non è stata selezionata';
             }
         }
         if (!this.error) {
@@ -253,9 +253,15 @@ export default class importCtrl {
                         this.grafana
                             .getDashboard('predire-in-grafana')
                             .then((db) => {
-                                const newID = db.dashboard.version + 1;
+                                let newID = 1;
+                                db.dashboard.panels.forEach((panel) => {
+                                    if (newID <= panel.id) {
+                                        newID = panel.id + 1;
+                                    }
+                                });
                                 db.dashboard.panels.push(defaultDashboard.panels[0]);
                                 db.dashboard.panels[db.dashboard.panels.length - 1].id = newID;
+                                this.influx.deleteMeasurement('predizione' + newID);
                                 this.setPanel(db.dashboard);
                                 this.storePanelSettings(newID);
                             });

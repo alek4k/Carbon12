@@ -9,11 +9,11 @@
  * Changelog: modifiche effettuate
  */
 
-import Influx from './influx.js';
+import Influx from './influx';
 
 const RL = require('./models/RL_Adapter');
 const SVM = require('./models/SVM_Adapter');
-const GrafanaApiQuery = require('./grafana_query.js');
+const GrafanaApiQuery = require('./grafana_query');
 
 class InfinitySwag {
     constructor() {
@@ -81,7 +81,6 @@ class InfinitySwag {
                     )
                 );
             }
-            console.log(point);
             results.push(
                 variable.query.model === 'SVM'
                     ?  this.predictSVM(predictor, point) : this.predictRL(predictor, point)

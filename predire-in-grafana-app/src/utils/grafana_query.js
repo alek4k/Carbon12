@@ -39,10 +39,29 @@ class GrafanaApiQuery {
     }
 
     postDashboard(dashboard) {
-        return this.backendSrv.post('api/dashboards/import', {
+        return this.backendSrv.post('api/dashboards/db', {
             dashboard,
             folderId: 0,
             overwrite: true,
+        });
+    }
+
+    getAlerts() {
+        return this.backendSrv.get('api/alert-notifications');
+    }
+
+    deleteAlert(uid) {
+        return this.backendSrv.delete('api/alert-notifications/uid/' + uid);
+    }
+
+    postAlert(teamsUrl) {
+        return this.backendSrv.post('api/alert-notifications', {
+            uid: "predire-in-grafana-alert",
+            name: "Predire in Grafana Alert",
+            type: "teams",
+            settings: {
+                url: teamsUrl
+            }
         });
     }
 }

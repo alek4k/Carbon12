@@ -11,7 +11,7 @@
 
 import { appEvents } from 'grafana/app/core/core';
 import { InfinitySwag } from '../utils/infinitySwag';
-import GrafanaApiQuery from '../utils/grafana_query.js';
+import GrafanaApiQuery from '../utils/grafana_query';
 
 export default class predictCtrl {
     /** @ngInject */
@@ -21,6 +21,13 @@ export default class predictCtrl {
         this.time = '';
         this.timeUnit = 'secondi';
         this.grafana = new GrafanaApiQuery(this.backendSrv);
+        this.oldTeamsUrl = '';
+        this.teamsUrl = '';
+        this.panelsAreShown = false;
+        this.graphPanels = [];
+        this.value = [];
+        this.when = [];
+        this.message = [];
         this.init();
 
         // localStorage will be cleared on tab close
@@ -36,7 +43,16 @@ export default class predictCtrl {
         } else {
             this.started = window.localStorage.getItem('started') === 'yes';
         }
-        this.verifyDashboard();
+        this.grafana
+            .getAlerts()
+            .then((alerts) => {
+                for (let i = 0; i < alerts.length && !this.teamsUrl; ++i) {
+                    if (alerts[i].uid === 'predire-in-grafana-alert') {
+                        this.oldTeamsUrl = alerts[i].settings.url;
+                    }
+                }
+                this.verifyDashboard();
+            });
     }
 
     verifyDashboard() {
@@ -55,9 +71,34 @@ export default class predictCtrl {
                         .getDashboard('predire-in-grafana')
                         .then((db) => {
                             this.dashboardEmpty = !db.dashboard.panels.length;
+                            this.getAlertsState(db.dashboard.panels);
                         });
                 }
             });
+    }
+
+    getAlertsState(panels) {
+        this.graphPanels = [];
+        this.value = [];
+        this.when = [];
+        panels.forEach((panel) => {
+            if (panel.type === 'graph') {
+                if (panel.alert !== undefined) {
+                    this.teamsUrl = panel.alert.notifications[0].uid ? this.oldTeamsUrl : '';
+                    this.value.push(panel.alert.conditions[0].evaluator.params[0].toString());
+                    this.when.push(
+                        panel.alert.conditions[0].evaluator.type === 'gt'
+                            ? 'superiore' : 'inferiore'
+                    );
+                    this.message.push(panel.alert.message);
+                } else {
+                    this.value.push('');
+                    this.when.push('');
+                    this.message.push('');
+                }
+                this.graphPanels.push(panel);
+            }
+        });
     }
 
     timeToMilliseconds() {
@@ -75,6 +116,87 @@ export default class predictCtrl {
         return 0.0;
     }
 
+    configTeamsSender() {
+        if(this.teamsUrl) {
+            if (!this.oldTeamsUrl) {
+                this.grafana.postAlert(this.teamsUrl);
+            } else if (this.oldTeamsUrl !== this.teamsUrl) {
+                this.grafana
+                    .deleteAlert('predire-in-grafana-alert')
+                    .then(() => {
+                        this.grafana.postAlert(this.teamsUrl);
+                    });
+            }
+            this.saveAlertsState('predire-in-grafana-alert');
+        } else {
+            this.saveAlertsState('');
+        }
+    }
+
+    saveAlertsState(alertName) {
+        this.grafana
+            .getDashboard('predire-in-grafana')
+            .then((db) => {
+                for (let i = 0, j = 0; i < this.graphPanels.length; ++j) {
+                    try {
+                        parseFloat(this.value[i]);
+                    } catch {
+                        this.value[i] = '';
+                    }
+                    const complete = this.value[i] && this.when[i];
+                    if (db.dashboard.panels[j].type === 'graph') {
+                        if (complete) {
+                            db.dashboard.panels[j].thresholds = [{
+                                colorMode: "critical",
+                                fill: true,
+                                line: true,
+                                op: (this.when[i] === 'superiore') ? "gt" : "lt",
+                                value: parseFloat(this.value[i]),
+                            }];
+                            db.dashboard.panels[j].alert = {
+                                conditions: [{
+                                    evaluator: {
+                                        params: [
+                                            parseFloat(this.value[i]),
+                                        ],
+                                        type: (this.when[i] === 'superiore') ? "gt" : "lt",
+                                    },
+                                    operator: {
+                                        type: "and"
+                                    },
+                                    query: {
+                                        params: [
+                                            db.dashboard.panels[j].targets[0].refId,
+                                            '1m',
+                                            "now",
+                                        ]
+                                    },
+                                    reducer: {
+                                        params: [],
+                                        type: "avg"
+                                    },
+                                    type: "query"
+                                }],
+                                executionErrorState: "alerting",
+                                frequency: "10s",
+                                message: this.message[i],
+                                name: this.graphPanels[i].title + " alert",
+                                noDataState: "alerting",
+                                notifications: [{
+                                    uid: alertName,
+                                }],
+                            };
+                        } else if (db.dashboard.panels[j].alert !== undefined) {
+                            delete db.dashboard.panels[j].thresholds;
+                            delete db.dashboard.panels[j].alert;
+                        }
+                        ++i;
+                    }
+                }
+                this.grafana.postDashboard(db.dashboard);
+            });
+    }
+
     startPrediction() {
         const refreshTime = this.timeToMilliseconds();
         if (!this.dashboardExists) {
@@ -89,6 +211,7 @@ export default class predictCtrl {
             if (InfinitySwag.backendSrv === null) {
                 InfinitySwag.setBackendSrv(this.backendSrv);
             }
+            this.configTeamsSender();
             appEvents.emit('alert-success', ['Predizione avviata', '']);
             InfinitySwag.startPrediction(refreshTime);
         }

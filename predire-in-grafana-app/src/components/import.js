@@ -180,7 +180,6 @@ export default class importCtrl {
             policy: 'default',
             resultFormat: 'time_series',
             orderByTime: 'ASC',
-            tags: [],
             select: [
                 [{
                     type: 'field',
@@ -192,17 +191,17 @@ export default class importCtrl {
                     params: [],
                 }],
             ],
-        });
-        this.dashboard.panels[lastPanel].groupBy.push({
-            type: 'time',
-            params: [
-                '$__interval',
-            ],
-        }, {
-            type: 'fill',
-            params: [
-                'null',
-            ],
+            groupBy: [{
+                    type: 'time',
+                    params: [
+                        '$__interval',
+                    ]
+                }, {
+                    type: "fill",
+                    params: [
+                        'previous',
+                    ]
+                }]
         });
         this.setView(lastPanel);
         this.saveDashboard();

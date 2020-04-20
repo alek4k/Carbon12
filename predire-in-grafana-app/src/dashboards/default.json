@@ -1,19 +1,4 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": false,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "limit": 100,
-        "name": "Annotations & Alerts",
-        "showIn": 0,
-        "type": "dashboard"
-      }
-    ]
-  },
   "panels": [{
     "colors": [
       "#d44a3a",
@@ -21,16 +6,9 @@
       "#299c46"
     ],
     "colorBackground": false,
-    "datasource": "",
-    "gridPos": {
-      "h": 0,
-      "w": 0
-    },
-    "groupBy": [],
+    "gridPos": {},
     "id": 1,
     "targets": [],
-    "title": "",
-    "type": "",
     "valueMaps": [{
         "op": "=",
         "text": "Good &#128077;",
@@ -52,8 +30,8 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
-    "to": "now+15m"
+    "from": "now-5m",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [

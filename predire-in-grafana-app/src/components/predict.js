@@ -178,7 +178,7 @@ export default class predictCtrl {
                                     type: "query"
                                 }],
                                 executionErrorState: "alerting",
-                                frequency: "10s",
+                                frequency: "30s",
                                 message: this.message[i],
                                 name: this.graphPanels[i].title + " alert",
                                 noDataState: "alerting",

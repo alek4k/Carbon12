@@ -32,7 +32,7 @@ test('It should response that function getData of file.csv work correctly', () =
 test('It should response that file.csv data were read correctly', () => {
     const data = [
         [0, 36350749646],
-        [0.02222222222222222, 36350877193],
+        [0.02222222, 36350877193],
         [577764938556921, 45403508771929800],
         [5.8, 3638583724267630],
         [11511111111111100, 4543859649122800],
@@ -40,7 +40,7 @@ test('It should response that file.csv data were read correctly', () => {
         [5733333333333330, 4543859649122800],
         [0, 36420285888718100],
         [0, 3638583724267630],
-        [0.0666681481810707, 27473780609756500],
+        [0.06666815, 27473780609756500],
     ];
     expect(csvReader.autoGetData()).toEqual(data);
 });

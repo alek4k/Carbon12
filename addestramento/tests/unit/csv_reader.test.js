@@ -10,9 +10,15 @@
  */
 
 const CSVr = require('../../fileManager/csv_reader.js');
+let csvReader = null;
 
-const csvReader = new CSVr('./tests/files/dati_test.csv', null);
+beforeEach(() => {
+    csvReader=new CSVr('./tests/files/dati_test.csv', null);
+});
 
+afterEach(() => {
+    csvReader = null;
+});
 
 test('It should response that function getData of file.csv work correctly with 0 columns', () => {
     expect(csvReader.getDataSource()).toEqual(['A', 'B']);

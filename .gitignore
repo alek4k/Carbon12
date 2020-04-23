@@ -1,7 +1,8 @@
-/addestramento/.vscode/*
-/.idea/
-/addestramento/.idea/
-/addestramento/node_modules/
-/addestramento/coverage/
+.idea/
 
+addestramento/.vscode/*
+addestramento/.idea/
+addestramento/node_modules/
+addestramento/coverage/
 addestramento/package-lock.json
+addestramento/yarn.lock

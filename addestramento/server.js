@@ -21,6 +21,7 @@ const CSVr = require('./fileManager/csv_reader.js');
 const SvmAdapter = require('./models/SVM_Adapter');
 const RlAdapter = require('./models/RL_Adapter');
 
+let csvReader;
 let model = 'SVM';
 let sources;
 let notes;
@@ -46,10 +47,6 @@ module.exports = class Server {
     }
 
     validityCsv(csvReader) {
-        if (csvReader.checkStructure() === false) {
-            console.log('Error: csv non valido');
-            return 'Struttura csv non valida';
-        }
         const labels = csvReader.autoGetLabel();
         if (labels.every((value) => value === 0)) {
             console.log('Error: csv - valori attesi mancanti');
@@ -116,7 +113,7 @@ module.exports = class Server {
         return modelAdapter.train(data, labels);
     }
 
-    savePredittore(csvReader, strPredittore, nome) {
+    savePredittore(strPredittore, nome) {
         // salvataggio predittore
         const managePredittore = new WPredittore();
         managePredittore.setHeader(nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'));
@@ -148,12 +145,9 @@ module.exports = class Server {
             }
             console.log('nome: ' + nomePredittore);
 
-            // dir temporanea dove è salvato il file csv addestramento
-            const pathTrainFile = files.trainFile.path;
             // dir temporanea dove è salvato il file json config
             const pathConfigFile = files.configFile.path;
 
-            const csvReader = new CSVr(pathTrainFile, null);
             error = this.validityCsv(csvReader);
             if (error.length > 0) {
                 res.writeHead(301, { Location: '/' });
@@ -183,7 +177,7 @@ module.exports = class Server {
 
             const strPredittore = this.train(data, labels, config);
             console.log('addestramento terminato');
-            this.savePredittore(csvReader, strPredittore, nomePredittore);
+            this.savePredittore(strPredittore, nomePredittore);
 
             res.writeHead(301, { Location: 'downloadPredittore' });
             return res.end();
@@ -204,18 +198,30 @@ module.exports = class Server {
 
     getChartData(request, response) {
         const form = new formidable.IncomingForm();
+        let result = null;
+        form.parse(request).on('field', (name, field) => {
+            const columnValue = field;
+            result = [];
+            csvReader.setLabelsColumn(columnValue);
+            result.push(csvReader.autoGetData());
+            result.push(csvReader.autoGetLabel());
+            result.push(csvReader.getDataSource());
+        });
+        form.on('end', () => {
+            response.end(JSON.stringify(result));
+        });
+
+        form.parse(request);
+    }
+
+    getCSVColumns(request, response) {
+        const form = new formidable.IncomingForm();
         form.multiples = false;
         let result = null;
         form.on('file', (fields, file) => {
             const pathTrainFile = file.path;
-            const csvReader = new CSVr(pathTrainFile, null);
-            if (csvReader.checkStructure()) {
-                result = [];
-                result.push(csvReader.autoGetData());
-                result.push(csvReader.autoGetLabel());
-                result.push(csvReader.getDataSource());
-            }
-            return null;
+            csvReader = new CSVr(pathTrainFile, null);
+            result = csvReader.autoGetColumns();
         });
 
         form.on('end', () => {
@@ -245,6 +251,10 @@ module.exports = class Server {
 
         this.router.post('/loadCsv', (request, response) => {
             this.getChartData(request, response);
+        });
+
+        this.router.post('/loadColumns', (request, response) => {
+            this.getCSVColumns(request, response);
         });
     }
 

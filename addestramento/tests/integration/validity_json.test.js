@@ -13,7 +13,15 @@ const fs = require('fs');
 const Server = require('../../server');
 const RPredittore = require('../../fileManager/r_predittore.js');
 
-const server = new Server();
+let server = null;
+
+beforeEach(() => {
+    server = new Server();
+});
+
+afterEach(() => {
+    server = null;
+});
 
 test('Error messagge: the structure of file.json is not correct, title is not correct', () => {
     const managePredittore = new RPredittore(JSON.parse(

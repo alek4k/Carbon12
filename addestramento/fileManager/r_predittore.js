@@ -37,19 +37,28 @@ class RPredittore {
      * @return {boolean}
      */
     checkVersion(pluginV, trainV) {
-        let cpV = pluginV;
-        let ctV = trainV;
-        for (let i = 0; i < 2; i++) {
-            cpV = cpV.replace('.', '');
-            ctV = ctV.replace('.', '');
-        }
-        let pV = this.getPluginVersion();
-        let tV = this.getTrainVersion();
-        for (let i = 0; i < 2; i++) {
-            pV = pV.replace('.', '');
-            tV = tV.replace('.', '');
-        }
+        const cpV = this.versionToInt(pluginV);
+        const ctV = this.versionToInt(trainV);
+        const pV = this.versionToInt(this.getPluginVersion());
+        const tV = this.versionToInt(this.getTrainVersion());
         return parseInt(pV) <= parseInt(cpV) && parseInt(tV) <= parseInt(ctV);
+    }
+
+    /**
+     * Converte una stringa che rappresenta una versione in int
+     * @param strVersion stringa che rappresenta la versione
+     * @return {int}
+     */
+    versionToInt(strVersion) {
+        let res = strVersion.replace('.', '');
+        res = strVersion.replace('.', '');
+        res = res.replace('a', '0');
+        res = res.replace('b', '1');
+        res = parseInt(res);
+        if (Number.isNaN(res)) {
+            console.log('Wrong version inside json.');
+        }
+        return res;
     }
 
     /**

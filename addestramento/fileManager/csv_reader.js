@@ -39,14 +39,22 @@ module.exports = class csvReader {
             // columns contiene un vettore di stringhe, ogni stringa è un nome di una colonna del csv
             this.columns = Object.keys(this.records[0]);
         }
+        this.labelsColumn = null;
     }
 
     /**
-     * @returns {Boolean} Ritorna true se la prima colonna ha etichetta Time e l'ultima Labels
+     * @returns {Array} Ritorna un vettore contenente tutte le intestazioni delle colonne del CSV.
      */
-    checkStructure() {
-        const columnsLength = this.columns.length - 1;
-        return this.columns[0] === 'Time' && this.columns[columnsLength] === 'Labels';
+    autoGetColumns() {
+        return this.columns;
+    }
+
+    /**
+     * @param int columnValue indice della colonna con le labels
+     * imposta il valore della colonna che contiene le labels
+     */
+    setLabelsColumn(columnValue) {
+        this.labelsColumn = this.columns[columnValue];
     }
 
     /**
@@ -84,7 +92,7 @@ module.exports = class csvReader {
         // seleziona tutte le colonne, eccetto quella delle data entry(Series), delle Labels e quella vuota che mette grafana
         const dataColumns = [];
         this.columns.forEach((element) => {
-            if ((!(element === 'Labels')) && (!(element === 'Time'))) {
+            if (!(element === this.labelsColumn)) {
                 dataColumns.push(element);
             }
         });
@@ -105,6 +113,7 @@ module.exports = class csvReader {
         return res;
     }
 
+
     /**
      * @returns {Array} Ritorna un vettore contenente le Labels
      * Ritorna un vettore contenente le Label già convertite in int.
@@ -112,7 +121,7 @@ module.exports = class csvReader {
     autoGetLabel() {
         // usa getData per ottenere la colonna delle Labels
         const labCol = [];
-        labCol[0] = 'Labels';
+        labCol[0] = this.labelsColumn;
         const res = this.getData(labCol);
 
         // converte le Label da String a int
@@ -128,7 +137,7 @@ module.exports = class csvReader {
     getDataSource() {
         const res = [];
         this.columns.forEach((element) => {
-            if (!(element === 'Labels' || element === 'Time')) {
+            if (!(element === this.labelsColumn)) {
                 res.push(element);
             }
         });

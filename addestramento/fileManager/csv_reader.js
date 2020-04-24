@@ -11,14 +11,16 @@
 
 const fs = require('fs');
 const parse = require('csv-parse/lib/sync');
+const dataReader = require('./dataReader.js');
 
-module.exports = class csvReader {
+module.exports = class csvReader extends dataReader {
     /**
      * @param {string} path Percorso da cui viene caricato il file.
      * @param {object} options Le opzioni passate al lettore di csv. Vedi: https://csv.js.org/parse/options/
      */
 
     constructor(path, options) {
+        super();
         const input = fs.readFileSync(path, 'utf8');
         let readOptions = options;
         // opzioni di default per csv

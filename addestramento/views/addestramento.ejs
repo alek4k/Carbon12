@@ -19,17 +19,11 @@
     per ottenere il predittore da inserire nel plug-in</p>
 <form action="fileupload" method="post" enctype="multipart/form-data">
     <fieldset>
-        <% if (error == 'Struttura csv non valida') { %>
-            <p class='error'>Struttura file csv non valida: 
-                <br/>la prima colonna deve avere etichetta <b>Time</b>, l'ultima etichetta <b>Labels</b>
-            </p>
-        <%} else { %>
-            <p class='error'><%= error %></p>
-        <%}%>
+        <p class='error'><%= error %></p>
+
         <label for="trainFile">Seleziona il file coi dati di addestramento (formato CSV):</label>
         <i class="fa fa-info-circle icon" aria-hidden="true"></i>
-        <p class="adv">Il file deve contenere le intestazioni Time | Source 1 | ... | Source n | Labels <br/>
-            In fondo a questa pagina potrai visualizzare un grafico con la disposizione dei tuoi dati.
+        <p class="adv"> In fondo a questa pagina potrai visualizzare un grafico con la disposizione dei tuoi dati.
         </p>
         <input type="file"  id="trainFile" accept=".csv" name="trainFile" required>
         <label for="configFile">Seleziona il file con la configurazione del modello (formato JSON):</label>
@@ -77,56 +71,96 @@
     let result;
     $(document).ready(function(){
         $(document).on('change', '#trainFile', function(){
-            let name = document.getElementById("trainFile").files[0].name;
             let form_data = new FormData();
+            let name = document.getElementById("trainFile").files[0].name;
             let ext = name.split('.').pop().toLowerCase();
             if(jQuery.inArray(ext, ['csv']) !== -1)
             {
                 form_data.append('trainFile', document.getElementById('trainFile').files[0]);
 
                 $.ajax({
-                    url:"/loadCsv",
+                    url:"/loadColumns",
                     method:"POST",
                     data: form_data,
                     contentType: false,
                     cache: false,
                     processData: false,
-                    success:function(response){
+                    success: function(response){
                         if(document.getElementById('configChart')){
                             $('#configChart').remove();
                         }
                         if(document.getElementById('chart')){
                             $('#chart').remove();
                         }
-                        if(response === 'null'){
-                            $("#trainFile").replaceWith($("#trainFile").val('').clone(true));
-                            alert('struttura csv non valida');
+                        if(document.getElementById('columnPara')){
+                            $('#columnPara').remove();
+                        }
+                        if(document.getElementById('columnNames')){
+                            $('#columnNames').remove();
                         }
                         result = JSON.parse(response);
-                        if(result[2].length <2){
+                        if(result.length < 3){
                                 alert('Il file deve avere almeno due sorgenti di dati');
                                 $("#trainFile").replaceWith($("#trainFile").val('').clone(true));
                             }
                         else{
-                            drawChart(result);
+                            selectLabels(result);
                         }
                     }
                 });
             }
         });
-        $(document).on('change', 'input:radio[name="assex"]', function(){
+
+        $(document).on('change', '#columnNames', function(){
+            let form_data = new FormData();
+            let name = $(this).val();
+            form_data.append('columnName', document.getElementById('columnNames').value);
+            $.ajax({
+                url:"/loadCsv",
+                method:"POST",
+                data: form_data,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(response){
+                    result = JSON.parse(response);
+                    drawChart(result);
+                }
+            });
+        });
+
+        $(document).on('change', '#selectX', function(){
             let assex = $(this).val();
-            let assey = $('input:radio[name="assey"]:checked').val();
+            let assey = $('#selectY').val();
             configChart(result, assex, assey);
         });
-        $(document).on('change', 'input:radio[name="assey"]', function(){
-            let assex = $('input:radio[name="assex"]:checked').val();
+        $(document).on('change', '#selectY', function(){
+            let assex = $('#selectX').val();
             let assey = $(this).val();
             configChart(result, assex, assey);
         });
     });
 
-    let drawChart = function(result) {          
+    let selectLabels = function(result){
+        let myParagrah = document.createElement('p');
+        myParagrah.id = 'columnPara';
+        myParagrah.appendChild(document.createTextNode
+            ('Seleziona l\'etichetta corrispondente alla colonna contenente i valori attesi per l\'addestramento'));
+        let train = document.getElementById('trainFile')
+        let select = document.createElement('select'); 
+        select.name = 'columnNames'; 
+        select.id = 'columnNames'; 
+        for(let i = 0; i<result.length; i++){
+            let option = document.createElement("option");
+            option.text = result[i];
+            option.value = i;
+            select.options.add(option);
+        }
+        train.parentNode.insertBefore(myParagrah, train.nextSibling);
+        myParagrah.parentNode.insertBefore(select, myParagrah.nextSibling);
+    }
+
+    let drawChart = function(result) { 
         let sorgenti = result[2];
         let myDiv = document.createElement('div'); 
         myDiv.id = 'configChart';
@@ -140,43 +174,35 @@
         asseX.appendChild(document.createTextNode('Seleziona la sorgente da visualizzare sull\'asse x'));
         asseX.classList.add('chartP');
         myDiv.appendChild(asseX);
+
+        let selectX = document.createElement('select'); 
+        selectX.name = 'assex'; 
+        selectX.id = 'selectX'; 
         for(let i = 0; i<sorgenti.length; i++){
-            let radio = document.createElement('input'); 
-            radio.type = "radio"; 
-            radio.name = 'assex'; 
-            radio.value = i; 
-            radio.id = sorgenti[i]+'X'; 
-            
-            let label = document.createElement('label'); 
-            label.htmlFor = sorgenti[i]; 
-            label.classList.add('radioLabel');
-            label.appendChild(document.createTextNode(sorgenti[i])); 
-            
-            myDiv.appendChild(radio); 
-            myDiv.appendChild(label); 
+            let option = document.createElement("option");
+            option.text = sorgenti[i];
+            option.value = i;
+            selectX.options.add(option);
         }
+        myDiv.appendChild(selectX); 
+
         let asseY = document.createElement('p');
         asseY.appendChild(document.createTextNode('Seleziona la sorgente da visualizzare sull\'asse y'));
         asseY.classList.add('chartP');
         myDiv.appendChild(asseY);
+
+        let selectY = document.createElement('select'); 
+        selectY.name = 'assey'; 
+        selectY.id = 'selectY'; 
         for(let i = 0; i<sorgenti.length; i++){
-            let radio = document.createElement('input'); 
-            radio.type = "radio"; 
-            radio.name = 'assey'; 
-            radio.value = i; 
-            radio.id = sorgenti[i]+'Y'; 
-            
-            let label = document.createElement('label'); 
-            label.htmlFor = sorgenti[i]; 
-            label.classList.add('radioLabel');
-            label.appendChild(document.createTextNode(sorgenti[i])); 
-            myDiv.appendChild(radio); 
-            myDiv.appendChild(label); 
+            let option = document.createElement("option");
+            option.text = sorgenti[i];
+            option.value = i;
+            selectY.options.add(option);
         }
-        let xSource = document.getElementById(sorgenti[0]+'X');
-        let ySource = document.getElementById(sorgenti[1]+'Y');
-        xSource.checked = true;
-        ySource.checked = true;
+        myDiv.appendChild(selectY); 
+
+        document.getElementById('selectY').value = 1;
         configChart(result, 0, 1);
     }
     

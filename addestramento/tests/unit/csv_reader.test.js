@@ -15,6 +15,7 @@ let csvReader = null;
 
 beforeEach(() => {
     csvReader = new CSVr('./tests/files/dati_test.csv', null);
+    csvReader.setLabelsColumn(2);
 });
 
 afterEach(() => {
@@ -22,7 +23,6 @@ afterEach(() => {
 });
 
 test('It should response that function getData of file.csv work correctly with 0 columns', () => {
-    csvReader.setLabelsColumn(2);
     expect(csvReader.getDataSource()).toEqual(['A', 'B']);
 });
 

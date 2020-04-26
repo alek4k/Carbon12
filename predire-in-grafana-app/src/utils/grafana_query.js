@@ -9,7 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-class GrafanaApiQuery {
+export default class GrafanaApiQuery {
     constructor(backendSrv) {
         this.backendSrv = backendSrv;
     }
@@ -50,10 +50,6 @@ class GrafanaApiQuery {
         return this.backendSrv.get('api/alert-notifications');
     }
 
-    deleteAlert(uid) {
-        return this.backendSrv.delete('api/alert-notifications/uid/' + uid);
-    }
-
     postAlert(teamsUrl) {
         return this.backendSrv.post('api/alert-notifications', {
             uid: "predire-in-grafana-alert",
@@ -64,6 +60,15 @@ class GrafanaApiQuery {
             }
         });
     }
-}
 
-module.exports = GrafanaApiQuery;
+    updateAlert(teamsUrl) {
+        return this.backendSrv.put('api/alert-notifications/uid/predire-in-grafana-alert', {
+            uid: "predire-in-grafana-alert",
+            name: "Predire in Grafana Alert",
+            type: "teams",
+            settings: {
+                url: teamsUrl
+            }
+        });
+    }
+}

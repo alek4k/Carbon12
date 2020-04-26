@@ -10,45 +10,49 @@
     </div>
   </div>
 
-  <div class="gf-form-group">
-    <div class="gf-form-inline">
+  <div ng-if="ctrl.allPanels" class="gf-form-group">
+    <div ng-repeat="panel in ctrl.allPanels" class="gf-form-inline dashlist-section">
+      <div class="gf-form">
+        <input type="text" class="gf-form-input width-14" readonly value="{{panel}}"/>
+      </div>
       <div class="gf-form">
         <label class="gf-form-label width-7">Predici ogni:</label>
-        <input type="text" class="gf-form-input width-6" pattern="^(([1-9]+)?([0.9]+.[0-9]+)?)$"
-          ng-model="ctrl.time"/>
+        <input type="text" class="gf-form-input width-6" pattern="^(([0-9]+)?([0.9]+.[0-9]+)?)$"
+          ng-model="ctrl.time[$index]"/>
       </div>
       <div class="gf-form-select-wrapper">
         <select class="gf-form-input"
-          ng-model="ctrl.timeUnit" ng-options="t for t in ['secondi','minuti']"/>
+          ng-model="ctrl.timeUnit[$index]" ng-options="t for t in ['secondi','minuti']"/>
       </div>
-      <div ng-if="!ctrl.started" class="gf-form">
+      <div ng-if="!ctrl.started[$index]" class="gf-form">
         <button class="btn btn-primary"
-          ng-click="ctrl.startPrediction()">Start</button>
+          ng-click="ctrl.startPrediction($index)">Start</button>
       </div>
-      <div ng-if="ctrl.started" class="gf-form">
+      <div ng-if="ctrl.started[$index]" class="gf-form">
         <button class="btn btn-danger"
-          ng-click="ctrl.stopPrediction()">Stop</button>
+          ng-click="ctrl.stopPrediction($index)">Stop</button>
       </div>
     </div>
   </div>
 
-  <div ng-if="ctrl.dashboardExists" class="gf-form-group">
-    <button class="btn btn-primary"
+  <div class="gf-form-group">
+    <button  ng-if="ctrl.dashboardExists" class="btn btn-primary"
       ng-click="ctrl.redirect()">Vai alla Dashboard</button>
+    <button  ng-if="!ctrl.dashboardExists" class="btn btn-primary"
+      ng-click="ctrl.redirect()">Crea una Dashboard</button>
   </div>
 
   <br/>
-  <br/>
 
-  <div class="gf-form-group">
-    <div class="gf-form">
-      <label class="gf-form-label width-8">Notifica alert a:</label>
-      <input type="text" class="gf-form-input width-25" placeholder="Microsoft Teams WebHook URL"
-        ng-model="ctrl.teamsUrl"/>
+  <div ng-if="ctrl.allPanels" class="gf-form-group">
+    <div class="gf-form-group">
+      <div class="gf-form">
+        <label class="gf-form-label width-8">Notifica alert a:</label>
+        <input type="text" class="gf-form-input width-25" placeholder="Microsoft Teams WebHook URL"
+          ng-model="ctrl.teamsUrl"/>
+      </div>
     </div>
-  </div>
 
-  <div class="gf-form-group">
     <div class="row">
       <div class="col-md-10">
         <p>Imposta gli alert dei pannelli di tuo interesse.</p>
@@ -66,7 +70,7 @@
       <ol class="card-list">
         <li ng-repeat="panel in ctrl.graphPanels" class="card-item-wrapper">
           <div class="card-item preloader">
-            <p class="card-item-header h6 text-center">{{panel.title}}</p>
+            <p class="card-item-header h6 text-center">{{panel}}</p>
             <div class="card-item-body">
               <div class="card-item-details">
                 <div class="gf-form">

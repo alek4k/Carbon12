@@ -82,7 +82,7 @@ export default class Influx extends DBConnection {
             data: query,
             processData: false,
             success: (data) => {
-                const sources = data.results[0].series;
+                const sources = data.results[0].series !== undefined ? data.results[0].series : [];
                 this.predictions = [];
                 sources.forEach((source) => {
                     if (!source.name.startsWith('predizione')) {

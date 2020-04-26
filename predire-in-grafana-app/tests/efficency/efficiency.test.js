@@ -14,6 +14,7 @@ import { performance } from 'perf_hooks';
 import fs from 'fs';
 import ImportCtrl from '../../src/components/import';
 import BackendSrvMock, { getMock, postMock } from '../../__mocks__/backendSrvMock';
+import ScopeMock from '../../__mocks__/scopeMock';
 import LocationMock from '../../__mocks__/locationMock';
 
 beforeEach(() => {
@@ -58,7 +59,7 @@ afterEach(() => {
 });
 
 test('Efficenty tests import.js with already existing datasource', async () => {
-    const importCtrl = new ImportCtrl(new LocationMock(), new BackendSrvMock());
+    const importCtrl = new ImportCtrl(new LocationMock(), new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(fs.readFileSync('./tests/files/predittore_test.json').toString());
     const t0 = performance.now();
 
@@ -78,7 +79,7 @@ test('Efficenty tests import.js with already existing datasource', async () => {
 });
 
 test('Efficenty tests import.js with new datasource', async () => {
-    const importCtrl = new ImportCtrl(new LocationMock(), new BackendSrvMock());
+    const importCtrl = new ImportCtrl(new LocationMock(), new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(fs.readFileSync('./tests/files/predittore_test.json').toString());
     const t0 = performance.now();
 

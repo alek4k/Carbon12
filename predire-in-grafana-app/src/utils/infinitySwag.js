@@ -9,19 +9,22 @@
  * Changelog: modifiche effettuate
  */
 
+import GrafanaApiQuery from './grafana_query';
 import Influx from './influx';
 
 const RL = require('./models/RL_Adapter');
 const SVM = require('./models/SVM_Adapter');
-const GrafanaApiQuery = require('./grafana_query');
 
 class InfinitySwag {
     constructor() {
+        this.$scope = null;
         this.backendSrv = null;
         this.db = [];
+        this.predictions = [];
     }
 
-    setBackendSrv(backendSrv) {
+    setBackendSrv($scope, backendSrv) {
+        this.$scope = $scope;
         this.backendSrv = backendSrv;
         this.setConfig();
     }
@@ -33,6 +36,7 @@ class InfinitySwag {
             .then((dash) => {
                 this.variables = dash.dashboard.templating.list;
                 this.setInflux();
+                this.$scope.$evalAsync();
             });
     }
 
@@ -52,43 +56,34 @@ class InfinitySwag {
         this.db[index].storeValue('predizione' + this.variables[index].name, info);
     }
 
-    startPrediction(refreshTime) {
+    startPrediction(index, refreshTime) {
         console.log('START');
-        this.prediction = setInterval(() => {
-            const results = this.getPrediction();
-            for (let i = 0; i < results.length; ++i) {
-                this.dbWrite(results[i], i);
-            }
+        this.predictions[index] = setInterval(() => {
+            this.dbWrite(this.getPrediction(index), index);
         }, refreshTime);
     }
 
-    stopPrediction() {
+    stopPrediction(index) {
         console.log('STOP');
-        clearInterval(this.prediction);
+        clearInterval(this.predictions[index]);
     }
 
-    getPrediction() {
-        const results = [];
-        this.variables.forEach((variable) => {
-            const predictor = variable.query.predittore;
-            const point = [];
-            for (let i = 0; i < predictor.D; ++i) {
-                point.push(
-                    this.db[results.length].getLastValue(
-                        variable.query.sources[i],
-                        variable.query.instances[i],
-                        variable.query.params[i]
-                    )
-                );
-            }
-            results.push(
-                variable.query.model === 'SVM'
-                    ?  this.predictSVM(predictor, point) : this.predictRL(predictor, point)
+    getPrediction(index) {
+        const predictor = this.variables[index].query.predittore;
+        const point = [];
+        for (let i = 0; i < predictor.D; ++i) {
+            point.push(
+                this.db[index].getLastValue(
+                    this.variables[index].query.sources[i],
+                    this.variables[index].query.instances[i],
+                    this.variables[index].query.params[i],
+                ),
             );
-        });
-        return results;
+        }
+        return this.variables[index].query.model === 'SVM'
+            ? this.predictSVM(predictor, point) : this.predictRL(predictor, point);
     }
-    
+
     predictSVM(predictor, point) {
         const svm = new SVM();
         svm.fromJSON(predictor);

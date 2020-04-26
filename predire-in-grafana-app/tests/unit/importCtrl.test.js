@@ -13,6 +13,7 @@ import fs from 'fs';
 import ImportCtrl from '../../src/components/import';
 import GrafanaAPI from '../../src/utils/grafana_query';
 import BackendSrvMock, { getMock, postMock } from '../../__mocks__/backendSrvMock';
+import ScopeMock from '../../__mocks__/scopeMock';
 import R_Predictor from '../../src/utils/r_predittore';
 
 beforeEach(() => {
@@ -23,7 +24,7 @@ beforeEach(() => {
 });
 
 test('Test the onUpload function error.', async () => {
-    const importCtrl = new ImportCtrl('', new BackendSrvMock());
+    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(
         fs.readFileSync('./tests/files/predittore_test_NotValidStructure.json').toString(),
     );
@@ -33,7 +34,7 @@ test('Test the onUpload function error.', async () => {
 
 
 test('Test that onUpload() set correct params inside importCtrl.', async () => {
-    const importCtrl = new ImportCtrl('', new BackendSrvMock());
+    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(
         fs.readFileSync('./tests/files/predittore_test.json').toString(),
     );
@@ -57,7 +58,7 @@ test('Test that onUpload() set correct params inside importCtrl.', async () => {
 });
 
 test('Test that database, host and port are correctly set inside setDataSource().', async () => {
-    const importCtrl = new ImportCtrl('', new BackendSrvMock());
+    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(
         fs.readFileSync('./tests/files/predittore_test.json').toString(),
     );
@@ -89,7 +90,7 @@ test('Test that database, host and port are correctly set inside setDataSource()
 });
 
 test('Test that setDataSource() raises an error if no datasource is selected.', async () => {
-    const importCtrl = new ImportCtrl('', new BackendSrvMock());
+    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(
         fs.readFileSync('./tests/files/predittore_test.json').toString(),
     );
@@ -100,7 +101,7 @@ test('Test that setDataSource() raises an error if no datasource is selected.', 
 });
 
 test('Test addDataSource() works.', async () => {
-    const importCtrl = new ImportCtrl('', new BackendSrvMock());
+    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(
         fs.readFileSync('./tests/files/predittore_test.json').toString(),
     );
@@ -119,7 +120,7 @@ test('Test addDataSource() works.', async () => {
 });
 
 test('Test that addDataSource() raises an error if datasource\'s configuration is incorrect.', async () => {
-    const importCtrl = new ImportCtrl('', new BackendSrvMock());
+    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(
         fs.readFileSync('./tests/files/predittore_test.json').toString(),
     );

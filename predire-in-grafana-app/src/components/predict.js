@@ -12,46 +12,45 @@
 import { appEvents } from 'grafana/app/core/core';
 import { InfinitySwag } from '../utils/infinitySwag';
 import GrafanaApiQuery from '../utils/grafana_query';
+import Dashboard from "../utils/dashboard";
 
 export default class predictCtrl {
     /** @ngInject */
-    constructor($location, backendSrv) {
+    constructor($location, $scope, backendSrv) {
         this.$location = $location;
+        this.$scope = $scope;
         this.backendSrv = backendSrv;
-        this.time = '';
-        this.timeUnit = 'secondi';
         this.grafana = new GrafanaApiQuery(this.backendSrv);
-        this.oldTeamsUrl = '';
-        this.teamsUrl = '';
         this.panelsAreShown = false;
-        this.graphPanels = [];
-        this.value = [];
-        this.when = [];
-        this.message = [];
+        InfinitySwag.setBackendSrv(this.$scope, this.backendSrv);
         this.init();
 
         // localStorage will be cleared on tab close
         window.addEventListener('unload', function () {
-            localStorage.removeItem('started');
+            const toRemove = [];
+            for (let i = 0; i < localStorage.length; ++i) {
+                if (localStorage.key(i).startsWith('started')) {
+                    toRemove.push(localStorage.key(i));
+                }
+            }
+            toRemove.forEach((localItem) => {
+                localStorage.removeItem(localItem);
+            });
         });
     }
 
     init() {
-        if (window.localStorage.getItem('started') === undefined) {
-            this.started = false;
-            window.localStorage.setItem('started', 'no');
-        } else {
-            this.started = window.localStorage.getItem('started') === 'yes';
-        }
         this.grafana
             .getAlerts()
             .then((alerts) => {
-                for (let i = 0; i < alerts.length && !this.teamsUrl; ++i) {
+                this.oldTeamsUrl = '';
+                for (let i = 0; i < alerts.length && !this.oldTeamsUrl; ++i) {
                     if (alerts[i].uid === 'predire-in-grafana-alert') {
                         this.oldTeamsUrl = alerts[i].settings.url;
                     }
                 }
                 this.verifyDashboard();
+                this.$scope.$evalAsync();
             });
     }
 
@@ -71,18 +70,40 @@ export default class predictCtrl {
                         .getDashboard('predire-in-grafana')
                         .then((db) => {
                             this.dashboardEmpty = !db.dashboard.panels.length;
-                            this.getAlertsState(db.dashboard.panels);
+                            if (!this.dashboardEmpty) {
+                                this.started = [];
+                                for (let i = 0; i < db.dashboard.panels.length; ++i) {
+                                    if (localStorage.getItem('started' + i) === null) {
+                                        this.started[i] = false;
+                                        localStorage.setItem('started' + i, 'no');
+                                    } else {
+                                        this.started[i] =
+                                            localStorage.getItem('started' + i) === 'yes';
+                                    }
+                                }
+                                this.getPanelsState(db.dashboard.panels);
+                            }
+                            this.$scope.$evalAsync();
                         });
                 }
+                this.$scope.$evalAsync();
             });
     }
 
-    getAlertsState(panels) {
+    getPanelsState(panels) {
+        this.time = [];
+        this.timeUnit = [];
+        this.allPanels = [];
         this.graphPanels = [];
         this.value = [];
         this.when = [];
+        this.message = [];
         panels.forEach((panel) => {
+            this.allPanels.push(panel.title);
+            this.time.push('1');
+            this.timeUnit.push('secondi');
             if (panel.type === 'graph') {
+                this.graphPanels.push(panel.title);
                 if (panel.alert !== undefined) {
                     this.teamsUrl = panel.alert.notifications[0].uid ? this.oldTeamsUrl : '';
                     this.value.push(panel.alert.conditions[0].evaluator.params[0].toString());
@@ -96,22 +117,21 @@ export default class predictCtrl {
                     this.when.push('');
                     this.message.push('');
                 }
-                this.graphPanels.push(panel);
             }
         });
     }
 
-    timeToMilliseconds() {
-        if (this.time) {
+    timeToMilliseconds(index) {
+        if (this.time[index]) {
             try {
-                parseFloat(this.time);
+                parseFloat(this.time[index]);
             } catch (err) {
                 return 0.0;
             }
-            if (this.timeUnit === 'secondi') {
-                return parseFloat(this.time) * 1000;
+            if (this.timeUnit[index] === 'secondi') {
+                return parseFloat(this.time[index]) * 1000;
             }
-            return parseFloat(this.time) * 60000;
+            return parseFloat(this.time[index]) * 60000;
         }
         return 0.0;
     }
@@ -119,15 +139,20 @@ export default class predictCtrl {
     configTeamsSender() {
         if(this.teamsUrl) {
             if (!this.oldTeamsUrl) {
-                this.grafana.postAlert(this.teamsUrl);
+                this.grafana
+                    .postAlert(this.teamsUrl)
+                    .then(() => {
+                        this.saveAlertsState('predire-in-grafana-alert');
+                        this.$scope.$evalAsync();
+                    });
             } else if (this.oldTeamsUrl !== this.teamsUrl) {
                 this.grafana
-                    .deleteAlert('predire-in-grafana-alert')
+                    .updateAlert(this.teamsUrl)
                     .then(() => {
-                        this.grafana.postAlert(this.teamsUrl);
+                        this.saveAlertsState('predire-in-grafana-alert');
+                        this.$scope.$evalAsync();
                     });
             }
-            this.saveAlertsState('predire-in-grafana-alert');
         } else {
             this.saveAlertsState('');
         }
@@ -145,15 +170,16 @@ export default class predictCtrl {
                     }
                     const complete = this.value[i] && this.when[i];
                     if (db.dashboard.panels[j].type === 'graph') {
+                        let dashboard = new Dashboard(db.dashboard);
                         if (complete) {
-                            db.dashboard.panels[j].thresholds = [{
+                            dashboard.setThresholds([{
                                 colorMode: "critical",
                                 fill: true,
                                 line: true,
                                 op: (this.when[i] === 'superiore') ? "gt" : "lt",
                                 value: parseFloat(this.value[i]),
-                            }];
-                            db.dashboard.panels[j].alert = {
+                            }], j);
+                            dashboard.setAlert({
                                 conditions: [{
                                     evaluator: {
                                         params: [
@@ -180,52 +206,53 @@ export default class predictCtrl {
                                 executionErrorState: "alerting",
                                 frequency: "30s",
                                 message: this.message[i],
-                                name: this.graphPanels[i].title + " alert",
+                                name: this.graphPanels[i] + " alert",
                                 noDataState: "alerting",
                                 notifications: [{
                                     uid: alertName,
                                 }],
-                            };
+                            }, j);
                         } else if (db.dashboard.panels[j].alert !== undefined) {
-                            delete db.dashboard.panels[j].thresholds;
-                            delete db.dashboard.panels[j].alert;
+                            dashboard.deleteThresholds(j);
+                            dashboard.deleteAlert(j);
                         }
                         ++i;
                     }
                 }
-                this.grafana.postDashboard(db.dashboard);
+                this.grafana
+                    .postDashboard(db.dashboard)
+                    .then(() => {
+                        this.$scope.$evalAsync();
+                    });
+                this.$scope.$evalAsync();
             });
     }
 
-    startPrediction() {
-        const refreshTime = this.timeToMilliseconds();
-        if (!this.dashboardExists) {
-            appEvents.emit('alert-error', ['Dashboard non trovata', '']);
-        } else if (this.dashboardEmpty) {
+    startPrediction(index) {
+        const refreshTime = this.timeToMilliseconds(index);
+        if (this.dashboardEmpty) {
             appEvents.emit('alert-error', ['Dashboard vuota', '']);
         } else if (refreshTime <= 0.0) {
             appEvents.emit('alert-error', ['Frequenza di predizione non supportata', '']);
         } else {
-            this.started = true;
-            window.localStorage.setItem('started', 'yes');
-            if (InfinitySwag.backendSrv === null) {
-                InfinitySwag.setBackendSrv(this.backendSrv);
-            }
+            this.started[index] = true;
+            localStorage.setItem('started' + index, 'yes');
             this.configTeamsSender();
             appEvents.emit('alert-success', ['Predizione avviata', '']);
-            InfinitySwag.startPrediction(refreshTime);
+            InfinitySwag.startPrediction(index, refreshTime);
         }
     }
 
-    stopPrediction() {
-        this.started = false;
-        window.localStorage.setItem('started', 'no');
+    stopPrediction(index) {
+        this.started[index] = false;
+        localStorage.setItem('started' + index, 'no');
         appEvents.emit('alert-success', ['Predizione terminata', '']);
-        InfinitySwag.stopPrediction();
+        InfinitySwag.stopPrediction(index);
     }
 
     redirect() {
-        this.$location.url('/d/carbon12/predire-in-grafana');
+        this.$location.url(this.dashboardExists
+            ? '/d/carbon12/predire-in-grafana' : 'plugins/predire-in-grafana-app/page/import');
     }
 }
 

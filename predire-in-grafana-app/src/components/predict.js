@@ -12,7 +12,7 @@
 import { appEvents } from 'grafana/app/core/core';
 import { InfinitySwag } from '../utils/infinitySwag';
 import GrafanaApiQuery from '../utils/grafana_query';
-import Dashboard from "../utils/dashboard";
+import Dashboard from '../utils/dashboard';
 
 export default class predictCtrl {
     /** @ngInject */
@@ -26,7 +26,7 @@ export default class predictCtrl {
         this.init();
 
         // localStorage will be cleared on tab close
-        window.addEventListener('unload', function () {
+        window.addEventListener('unload', () => {
             const toRemove = [];
             for (let i = 0; i < localStorage.length; ++i) {
                 if (localStorage.key(i).startsWith('started')) {
@@ -77,8 +77,8 @@ export default class predictCtrl {
                                         this.started[i] = false;
                                         localStorage.setItem('started' + i, 'no');
                                     } else {
-                                        this.started[i] =
-                                            localStorage.getItem('started' + i) === 'yes';
+                                        this.started[i] = localStorage
+                                            .getItem('started' + i) === 'yes';
                                     }
                                 }
                                 this.getPanelsState(db.dashboard.panels);
@@ -109,7 +109,7 @@ export default class predictCtrl {
                     this.value.push(panel.alert.conditions[0].evaluator.params[0].toString());
                     this.when.push(
                         panel.alert.conditions[0].evaluator.type === 'gt'
-                            ? 'superiore' : 'inferiore'
+                            ? 'superiore' : 'inferiore',
                     );
                     this.message.push(panel.alert.message);
                 } else {
@@ -137,7 +137,7 @@ export default class predictCtrl {
     }
 
     configTeamsSender() {
-        if(this.teamsUrl) {
+        if (this.teamsUrl) {
             if (!this.oldTeamsUrl) {
                 this.grafana
                     .postAlert(this.teamsUrl)
@@ -170,13 +170,13 @@ export default class predictCtrl {
                     }
                     const complete = this.value[i] && this.when[i];
                     if (db.dashboard.panels[j].type === 'graph') {
-                        let dashboard = new Dashboard(db.dashboard);
+                        const dashboard = new Dashboard(db.dashboard);
                         if (complete) {
                             dashboard.setThresholds([{
-                                colorMode: "critical",
+                                colorMode: 'critical',
                                 fill: true,
                                 line: true,
-                                op: (this.when[i] === 'superiore') ? "gt" : "lt",
+                                op: (this.when[i] === 'superiore') ? 'gt' : 'lt',
                                 value: parseFloat(this.value[i]),
                             }], j);
                             dashboard.setAlert({
@@ -185,29 +185,29 @@ export default class predictCtrl {
                                         params: [
                                             parseFloat(this.value[i]),
                                         ],
-                                        type: (this.when[i] === 'superiore') ? "gt" : "lt",
+                                        type: (this.when[i] === 'superiore') ? 'gt' : 'lt',
                                     },
                                     operator: {
-                                        type: "and"
+                                        type: 'and',
                                     },
                                     query: {
                                         params: [
                                             db.dashboard.panels[j].targets[0].refId,
                                             '1m',
-                                            "now",
-                                        ]
+                                            'now',
+                                        ],
                                     },
                                     reducer: {
                                         params: [],
-                                        type: "avg"
+                                        type: 'avg',
                                     },
-                                    type: "query"
+                                    type: 'query',
                                 }],
-                                executionErrorState: "alerting",
-                                frequency: "30s",
+                                executionErrorState: 'alerting',
+                                frequency: '30s',
                                 message: this.message[i],
-                                name: this.graphPanels[i] + " alert",
-                                noDataState: "alerting",
+                                name: this.graphPanels[i] + ' alert',
+                                noDataState: 'alerting',
                                 notifications: [{
                                     uid: alertName,
                                 }],

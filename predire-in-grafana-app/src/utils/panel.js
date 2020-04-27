@@ -12,13 +12,13 @@ import Target from "./target";
 import View from "./view";
 
 export default class Panel {
-    constructor(target, view){
+    constructor(target, view) {
         this.target = target;
         this.view = view;
     }
 
-    getJSON(){
-        let pannello = this.view.getJSON();
+    getJSON() {
+        const pannello = this.view.getJSON();
         pannello.targets = [];
         pannello.targets.push(this.target.getJSON());
         console.log(pannello);

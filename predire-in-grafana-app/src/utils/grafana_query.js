@@ -52,23 +52,23 @@ export default class GrafanaApiQuery {
 
     postAlert(teamsUrl) {
         return this.backendSrv.post('api/alert-notifications', {
-            uid: "predire-in-grafana-alert",
-            name: "Predire in Grafana Alert",
-            type: "teams",
+            uid: 'predire-in-grafana-alert',
+            name: 'Predire in Grafana Alert',
+            type: 'teams',
             settings: {
-                url: teamsUrl
-            }
+                url: teamsUrl,
+            },
         });
     }
 
     updateAlert(teamsUrl) {
         return this.backendSrv.put('api/alert-notifications/uid/predire-in-grafana-alert', {
-            uid: "predire-in-grafana-alert",
-            name: "Predire in Grafana Alert",
-            type: "teams",
+            uid: 'predire-in-grafana-alert',
+            name: 'Predire in Grafana Alert',
+            type: 'teams',
             settings: {
-                url: teamsUrl
-            }
+                url: teamsUrl,
+            },
         });
     }
 }

@@ -9,16 +9,16 @@
  * Changelog: modifiche effettuate
  */
 export default class Target {
-    setId(i){
+    setId(i) {
         this.id = i;
     }
 
-    getId(){
+    getId() {
         return this.id;
     }
 
-    getJSON(){
-        if(this.id !== null){
+    getJSON() {
+        if (this.id !== null) {
             return {
                 refId: 'Predizione' + this.id,
                 measurement: 'predizione' + this.id,
@@ -47,8 +47,8 @@ export default class Target {
                         'previous',
                     ],
                 }],
-            }
+            };
         }
-         
+        return undefined;
     }
 }

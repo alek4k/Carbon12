@@ -8,22 +8,22 @@
  *
  * Changelog: modifiche effettuate
  */
-import Target from "./target";
-import View from "./view";
+import Target from './target';
+import View from './view';
 
 export default class Builder {
-    buildTarget(config){
+    buildTarget(config) {
         const target = new Target();
         target.setId(config.id);
         return target;
     }
 
-    buildView(config){
+    buildView(config) {
         const view = new View(config.type, config.title, config.id, config.datasource);
-        if(config.description){
+        if (config.description) {
             view.setDescription(config.description);
         }
-        if(config.background){
+        if (config.background) {
             view.setBackground(config.background);
         }
         return view;

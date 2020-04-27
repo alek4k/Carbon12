@@ -16,7 +16,7 @@ import DBConnection from './db_connection';
 
 export default class Influx extends DBConnection {
     /**
-     *  Ritora il risultato di una query
+     *  Ritorna il risultato di una query
      * @param {query} String rappresenta la query per il database
      * @returns {Array} Array che contiene i risultati della query
      */
@@ -46,9 +46,10 @@ export default class Influx extends DBConnection {
      * @returns {Number} Number che contiene l'ultimo valore memorizzato
      */
     getLastValue(source, instance, param) {
-        const query = instance ?
-            `q=select ${param} from ${source} where instance='${instance}' order by time desc limit 1` :
-            `q=select ${param} from ${source} order by time desc limit 1`;
+        const query = instance
+            ? `q=select ${param} from ${source} where 
+                instance='${instance}' order by time desc limit 1`
+            : `q=select ${param} from ${source} order by time desc limit 1`;
         let result;
         $.ajax({
             async: false,

@@ -1,5 +1,5 @@
 /**
- * File name: r_redittore.js
+ * File name: r_predittore.js
  * Date: 2020-03-23
  *
  * @file classe per la lettura e scrittura del JSON con il predittore

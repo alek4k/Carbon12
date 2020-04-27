@@ -37,7 +37,7 @@ describe('Testing constructor', () => {
                 text: 'Bad &#128078;',
                 value: '-1',
             }],
-            valueName: 'current'
+            valueName: 'current',
         });
     });
 
@@ -65,7 +65,7 @@ describe('Testing constructor', () => {
                 op: '=',
                 text: 'Bad &#128078;',
                 value: '-1',
-            } ],
+            }],
             valueName: 'current',
         });
     });
@@ -146,7 +146,7 @@ describe('Testing method', () => {
                 targets: [],
                 valueMaps: [
                     { op: '=', text: 'Good &#128077;', value: '1' },
-                    { op: '=', text: 'Bad &#128078;', value: '-1' }
+                    { op: '=', text: 'Bad &#128078;', value: '-1' },
                 ],
                 valueName: 'current',
                 type: 'graph',
@@ -166,7 +166,7 @@ describe('Testing method', () => {
                 targets: [],
                 valueMaps: [
                     { op: '=', text: 'Good &#128077;', value: '1' },
-                    { op: '=', text: 'Bad &#128078;', value: '-1' }
+                    { op: '=', text: 'Bad &#128078;', value: '-1' },
                 ],
                 valueName: 'current',
                 type: 'singlestat',

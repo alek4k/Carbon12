@@ -16,9 +16,9 @@ import defaultDashboard from '../dashboards/default.json';
 import Influx from '../utils/influx';
 import GrafanaApiQuery from '../utils/grafana_query';
 import FilePredictor from '../utils/r_predittore';
-import Builder from "../utils/builder";
-import Dashboard from "../utils/dashboard";
-import Panel from "../utils/panel";
+import Builder from '../utils/builder';
+import Dashboard from '../utils/dashboard';
+import Panel from '../utils/panel';
 
 export default class importCtrl {
     /** @ngInject */
@@ -75,7 +75,7 @@ export default class importCtrl {
         this.grafana
             .getDataSources()
             .then((dataSources) => {
-                // dataSoources ha la struttura di un json
+                // dataSources ha la struttura di un json
                 dataSources.forEach((dataSource) => {
                     this.availableDataSources.push(dataSource.name);
                 });
@@ -174,22 +174,22 @@ export default class importCtrl {
         this.dashboard1.storeSettings(panelID, settings);
     }
 
-    panelGenerator(panelID){
-        this.builder1 = new Builder(); // aggiungere: description, backgroud
+    panelGenerator(panelID) {
+        this.builder1 = new Builder(); // aggiungere: description, background
         const config = {
             id: panelID,
             type: this.view,
             title: this.panelName,
             description: this.description,
-            background: "true",
-            datasource: this.dataSource
-        }
+            background: 'true',
+            datasource: this.dataSource,
+        };
         const target = this.builder1.buildTarget(config);
         const view = this.builder1.buildView(config);
         this.panel1 = new Panel(target, view);
     }
 
-    createPanel(){
+    createPanel() {
         this.error = '';
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
             if (this.sources[i] === undefined) {
@@ -217,7 +217,7 @@ export default class importCtrl {
                                         newID = panel.id + 1;
                                     }
                                 });
-                                console.log("");
+                                console.log('');
                                 this.influx.deleteMeasurement('predizione' + newID);
                                 this.dashboard1 = new Dashboard(db.dashboard);
                                 this.panelGenerator(newID);
@@ -237,15 +237,14 @@ export default class importCtrl {
                     this.$scope.$evalAsync();
                 });
         }
-        
     }
-    
+
     // salvo la dashboard
     saveDashboard() {
         appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
             .postDashboard(this.dashboard1.getJSON())
-            .then((db) => {
+            .then(() => {
                 // reindirizzo alla pagina che gestisce la predizione
                 this.$location.url('plugins/predire-in-grafana-app/page/predizione');
                 this.$scope.$evalAsync();

@@ -8,77 +8,77 @@
  *
  * Changelog: modifiche effettuate
  */
+
 export default class View {
-    constructor(type, title, id, datasource){
+    constructor(type, title, id, datasource) {
         this.type = type;
         this.title = title;
         this.id = id;
         this.dataSource = datasource;
         this.dashboard = {
             colors: [
-              "#d44a3a",
-              "rgba(237, 129, 40, 0.89)",
-              "#299c46"
+                '#d44a3a',
+                'rgba(237, 129, 40, 0.89)',
+                '#299c46',
             ],
             gridPos: {},
             id: this.id,
             targets: [],
             valueMaps: [{
-                op: "=",
-                text: "Good &#128077;",
-                value: "1"
-              },
-              {
-                op: "=",
-                text: "Bad &#128078;",
-                value: "-1"
-              }
-            ],
-            valueName: "current"
-          }
+                op: '=',
+                text: 'Good &#128077;',
+                value: '1',
+            },
+            {
+                op: '=',
+                text: 'Bad &#128078;',
+                value: '-1',
+            }],
+            valueName: 'current',
+        };
     }
 
-    setType(i){
+    setType(i) {
         this.type = i;
     }
 
-    setTitle(i){
+    setTitle(i) {
         this.title = i;
     }
 
-    setId(i){
+    setId(i) {
         this.id = i;
     }
 
-    setDescription(i){
+    setDescription(i) {
         this.description = i;
     }
 
-    setBackground(i){
+    setBackground(i) {
         this.background = i;
     }
 
-    getType(){
+    getType() {
         return this.type;
     }
 
-    getTitle(){
+    getTitle() {
         return this.title;
     }
 
-    getId(){
+    getId() {
         return this.id;
     }
 
-    getDescription(){
+    getDescription() {
         return this.description;
     }
 
-    getBackground(){
+    getBackground() {
         return this.background;
     }
 
-    getJSON(){
+    getJSON() {
         if (this.type === 'Grafico') {
             this.dashboard.gridPos.h = 8;
             this.dashboard.gridPos.w = 12;
@@ -100,5 +100,4 @@ export default class View {
         }
         return this.dashboard;
     }
-
 }

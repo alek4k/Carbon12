@@ -14,20 +14,27 @@ const fs = require('fs');
 const Server = require('../../server');
 const CSVr = require('../../fileManager/csv_reader.js');
 
-const server = new Server();
+let server = null;
 
-test('It should response the GET method', () => {
+beforeEach(() => {
+    server = new Server();
     server.startServer();
+});
 
-    return request(server.app)
+afterEach(() => {
+    server.server.close();
+    server = null;
+});
+
+test('It should response the GET method', async () => {
+    await request(server.app)
         .get('/')
         .expect(200);
 });
 
-test('Test for config addestramento', () => {
-    server.config();
 
-    return request(server.app)
+test('Test for config addestramento', async () => {
+    await request(server.app)
         .get('/')
         .expect('Content-Type', /html/)
         .expect(200);
@@ -44,10 +51,8 @@ test("Test for config fileupload", () =>{
 });
 */
 
-test('Test for config downloadPredittore', () => {
-    server.config();
-
-    return request(server.app)
+test('Test for config downloadPredittore', async () => {
+    await request(server.app)
         .get('/downloadPredittore')
         .expect('Content-Type', /html/)
         .expect(200);
@@ -64,10 +69,8 @@ test("Test for config downloadFile", () =>{
 });
 */
 
-test('Test for config loadCsv', () => {
-    server.config();
-
-    return request(server.app)
+test('Test for config loadCsv', async () => {
+    await request(server.app)
         .post('/loadCsv')
         .expect(200);
 });
@@ -114,7 +117,8 @@ test('salvataggio json', () => {
     const strPredittore = '';
     const csvReader = new CSVr('./tests/files/dati_test.csv', null);
 
-    server.savePredittore(csvReader, strPredittore, nome);
+    server.csvReader = csvReader;
+    server.savePredittore(strPredittore, nome);
 
     const stats = fs.statSync('./greg.json');
 

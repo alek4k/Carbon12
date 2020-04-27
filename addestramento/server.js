@@ -234,10 +234,10 @@ module.exports = class Server {
     config() {
         this.app.use('/', this.router);
 
-        const error2 = this.error; // TODO: dare un nome migliore alla variabile
+        let error2 = this.error; // TODO: dare un nome migliore alla variabile
         this.router.get('/', (request, response) => {
             response.render('addestramento', { error2 });
-            this.error = '';
+            error2 = '';
         });
 
         this.router.post('/fileupload', (request, response) => {
@@ -263,7 +263,7 @@ module.exports = class Server {
 
     startServer() {
         this.config();
-        this.app.listen(nconf.get('PORT'), () => {
+        this.server = this.app.listen(nconf.get('PORT'), () => {
             console.log('Listening on port ' + nconf.get('PORT'));
         });
     }

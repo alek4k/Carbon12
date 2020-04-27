@@ -32,8 +32,8 @@ class RPredittore {
 
     /**
      * Controllo versione plugin, train
-     * @param pluginV versione plugin
-     * @param trainV versione addestramento
+     * @param pluginV versione plugin nella configurazione in uso
+     * @param trainV versione addestramento nella configurazione in uso
      * @return {boolean}
      */
     checkVersion(pluginV, trainV) {
@@ -75,30 +75,21 @@ class RPredittore {
      * @return {string} title nell'header del predittore
      */
     getTitle() {
-        if (this.jsonContent.header.title) {
-            return this.jsonContent.header.title;
-        }
-        return '';
+        return this.jsonContent.header.title;
     }
 
     /**
      * @return {string} plug-in version nell'header del predittore
      */
     getPluginVersion() {
-        if (this.jsonContent.header.plugin_version) {
-            return this.jsonContent.header.plugin_version;
-        }
-        return '';
+        return this.jsonContent.header.plugin_version;
     }
 
     /**
      * @return {string} train version nell'header del predittore
      */
     getTrainVersion() {
-        if (this.jsonContent.header.train_version) {
-            return this.jsonContent.header.train_version;
-        }
-        return '';
+        return this.jsonContent.header.train_version;
     }
 
     /**
@@ -126,10 +117,7 @@ class RPredittore {
      * @return {string} modello utilizzato per l'allenamento
      */
     getModel() {
-        if (this.jsonContent.model) {
-            return this.jsonContent.model;
-        }
-        return '';
+        return this.jsonContent.model;
     }
 
     /**
@@ -147,10 +135,7 @@ class RPredittore {
      * stringa contenente node sull'allenamento
      */
     getNotes() {
-        if (this.jsonContent.notes) {
-            return this.jsonContent.notes;
-        }
-        return '';
+        return this.jsonContent.notes;
     }
 
     /**
@@ -158,10 +143,7 @@ class RPredittore {
      * stringa JSON con la configurazione salvata per la creazione del modello
      */
     getConfiguration() {
-        if (this.jsonContent.configuration) {
-            return this.jsonContent.configuration;
-        }
-        return '';
+        return this.jsonContent.configuration;
     }
 }
 

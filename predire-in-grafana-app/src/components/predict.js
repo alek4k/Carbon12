@@ -165,7 +165,7 @@ export default class predictCtrl {
                 for (let i = 0, j = 0; i < this.graphPanels.length; ++j) {
                     try {
                         parseFloat(this.value[i]);
-                    } catch {
+                    } catch (err) {
                         this.value[i] = '';
                     }
                     const complete = this.value[i] && this.when[i];

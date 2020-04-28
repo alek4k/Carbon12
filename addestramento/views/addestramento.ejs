@@ -123,6 +123,12 @@
                 cache: false,
                 processData: false,
                 success: function(response){
+                    if(document.getElementById('configChart')){
+                        $('#configChart').remove();
+                    }
+                    if(document.getElementById('chart')){
+                        $('#chart').remove();
+                    }
                     result = JSON.parse(response);
                     drawChart(result);
                 }

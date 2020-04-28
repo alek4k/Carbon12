@@ -46,8 +46,8 @@ module.exports = class Server {
         nconf.defaults({ PORT: 8080, TRAIN_VERSION: '0.0.0', PLUGIN_VERSION: '0.0.0' });
     }
 
-    validityCsv(csvReader) {
-        const labels = csvReader.autoGetLabel();
+    validityCsv(csvReaderV) {
+        const labels = csvReaderV.autoGetLabel();
         if (labels.every((value) => value === 0)) {
             console.log('Error: csv - valori attesi mancanti');
             return 'Valori attesi nel campo Labels del file csv mancanti';

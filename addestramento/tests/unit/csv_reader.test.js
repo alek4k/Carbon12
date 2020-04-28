@@ -10,10 +10,12 @@
  */
 
 const CSVr = require('../../fileManager/csv_reader.js');
+
 let csvReader = null;
 
 beforeEach(() => {
-    csvReader=new CSVr('./tests/files/dati_test.csv', null);
+    csvReader = new CSVr('./tests/files/dati_test.csv', null);
+    csvReader.setLabelsColumn(2);
 });
 
 afterEach(() => {

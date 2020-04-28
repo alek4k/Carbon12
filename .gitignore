@@ -1,7 +1,8 @@
 .idea/
-
-addestramento/.vscode/*
 addestramento/.idea/
+.vscode/
+addestramento/.vscode/
+
 addestramento/node_modules/
 addestramento/coverage/
 addestramento/package-lock.json

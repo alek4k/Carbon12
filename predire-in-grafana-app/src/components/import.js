@@ -12,7 +12,6 @@
 import { appEvents } from 'grafana/app/core/core';
 
 // importo il template della dashboard per la creazione del pannello
-import defaultDashboard from '../dashboards/default.json';
 import Influx from '../utils/influx';
 import GrafanaApiQuery from '../utils/grafana_query';
 import FilePredictor from '../utils/r_predittore';
@@ -88,7 +87,6 @@ export default class importCtrl {
     setDataSource() {
         if (this.dataSource) {
             this.error = '';
-            defaultDashboard.panels[0].datasource = this.dataSource;
             this.grafana
                 .getDataSources()
                 .then((dataSource) => {
@@ -120,7 +118,6 @@ export default class importCtrl {
                 .postDataSource(this.name, this.database, this.host, this.port)
                 .then(() => {
                     this.error = '';
-                    defaultDashboard.panels[0].datasource = this.name;
                     this.connection();
                     this.$scope.$evalAsync();
                 });

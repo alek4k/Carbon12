@@ -10,8 +10,8 @@
     </div>
   </div>
 
-  <div ng-if="ctrl.allPanels" class="gf-form-group">
-    <div ng-repeat="panel in ctrl.allPanels" class="gf-form-inline dashlist-section">
+  <div ng-if="ctrl.panelsList" class="gf-form-group">
+    <div ng-repeat="panel in ctrl.panelsList" class="gf-form-inline dashlist-section">
       <div class="gf-form">
         <input type="text" class="gf-form-input width-14" readonly value="{{panel}}"/>
       </div>
@@ -40,62 +40,5 @@
       ng-click="ctrl.redirect()">Vai alla Dashboard</button>
     <button  ng-if="!ctrl.dashboardExists" class="btn btn-primary"
       ng-click="ctrl.redirect()">Crea una Dashboard</button>
-  </div>
-
-  <br/>
-
-  <div ng-if="ctrl.allPanels" class="gf-form-group">
-    <div class="gf-form-group">
-      <div class="gf-form">
-        <label class="gf-form-label width-8">Notifica alert a:</label>
-        <input type="text" class="gf-form-input width-25" placeholder="Microsoft Teams WebHook URL"
-          ng-model="ctrl.teamsUrl"/>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-10">
-        <p>Imposta gli alert dei pannelli di tuo interesse.</p>
-      </div>
-    </div>
-
-    <div class="gf-form-group">
-      <button ng-if="!ctrl.panelsAreShown" type="button" class="btn btn-secondary"
-        ng-click="ctrl.panelsAreShown = true">Visualizza lista pannelli</button>
-      <button ng-if="ctrl.panelsAreShown" type="button" class="btn btn-secondary"
-        ng-click="ctrl.panelsAreShown = false">Chiudi lista pannelli</button>
-    </div>
-
-    <section ng-if="ctrl.panelsAreShown" class="card-list-layout-grid">
-      <ol class="card-list">
-        <li ng-repeat="panel in ctrl.graphPanels" class="card-item-wrapper">
-          <div class="card-item preloader">
-            <p class="card-item-header h6 text-center">{{panel}}</p>
-            <div class="card-item-body">
-              <div class="card-item-details">
-                <div class="gf-form">
-                  <label class="gf-form-label width-6">Valore:</label>
-                  <input type="text" class="gf-form-input width-12"
-                    pattern="^((-)?([0-9]+)?([0.9]+.[0-9]+)?)$" ng-model="ctrl.value[$index]"/>
-                </div>
-                <div class="gf-form">
-                  <label class="gf-form-label width-6">Quando:</label>
-                  <div class="gf-form-select-wrapper">
-                    <select class="gf-form-input width-12" ng-model="ctrl.when[$index]"
-                      ng-options="w for w in ['superiore','inferiore']"/>
-                  </div>
-                </div>
-                <div ng-if="ctrl.teamsUrl" class="gf-form">
-                  <label class="gf-form-label width-6">Messaggio:</label>
-                  <textarea class="gf-form-input width-12" rows="2" ng-model="ctrl.message[$index]"
-                    placeholder="Inserisci il messaggio da inviare..."></textarea>
-                </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ol>
-    </section>
   </div>
 </div>

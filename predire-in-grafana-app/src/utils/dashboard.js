@@ -66,15 +66,26 @@ export default class Dashboard {
     }
 
     setThresholds(thresholds, index) {
-        this.dashboard.panels[index].thresholds = thresholds;
+        if (this.dashboard.panels[index].type === 'graph') {
+            this.dashboard.panels[index].thresholds = thresholds;
+        } else {
+            this.dashboard.panels[index].thresholds = thresholds[0].value.toString()
+                 + ',' + thresholds[0].value.toString();
+                 console.log(thresholds[0].op);
+            this.dashboard.panels[index].colors = thresholds[0].op === 'gt'
+                ? ['#299c46','rgba(237, 129, 40, 0.89)','#d44a3a',]
+                : ['#d44a3a','rgba(237, 129, 40, 0.89)','#299c46',];
+        }
     }
 
     setAlert(alert, index) {
-        this.dashboard.panels[index].alert = alert;
+        if (this.dashboard.panels[index].type === 'graph') {
+            this.dashboard.panels[index].alert = alert;
+        }
     }
 
     deleteThresholds(index) {
-        delete this.dashboard.panels[index].thresholds;
+        delete this.dashboard.panels[index].thresholds;ss
     }
 
     deleteAlert(index) {

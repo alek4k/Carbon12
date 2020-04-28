@@ -40,6 +40,14 @@
       "role": "Editor",
       "addToNav": true,
       "defaultNav": true
+    },
+    {
+      "type": "page",
+      "name": "Alert",
+      "component": "alertCtrl",
+      "role": "Editor",
+      "addToNav": true,
+      "defaultNav": true
     }
   ],
 

@@ -1,6 +1,6 @@
 /**
- * File name: view.js
- * Date: 2020-03-18
+ * File name: view.test.js
+ * Date: 2020-04-27
  *
  * @file Script principale del programma di addestramento
  * @author Carbon12 <carbon.dodici@gmail.com>

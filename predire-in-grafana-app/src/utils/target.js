@@ -9,6 +9,10 @@
  * Changelog: modifiche effettuate
  */
 export default class Target {
+    constructor(id) {
+        this.id = id;
+    }
+
     setId(i) {
         this.id = i;
     }
@@ -18,7 +22,7 @@ export default class Target {
     }
 
     getJSON() {
-        if (this.id !== null) {
+        if (this.id !== null && this.id !== undefined) {
             return {
                 refId: 'Predizione' + this.id,
                 measurement: 'predizione' + this.id,

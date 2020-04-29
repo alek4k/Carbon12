@@ -1,8 +1,8 @@
 {
     "header": {
         "title": "Carbon12 Predire in Grafana",
-        "plugin_version": "b.3.0",
-        "train_version": "b.3.0"
+        "plugin_version": "1.4.0",
+        "train_version": "1.4.0"
     },
     "data_entry": {
         "source0": "win_mem.mean",

@@ -50,7 +50,7 @@ module.exports = class Server {
         const labels = csvReaderV.autoGetLabel();
         if (labels.every((value) => value === 0)) {
             console.log('Error: csv - valori attesi mancanti');
-            return 'Valori attesi nel campo Labels del file csv mancanti';
+            return 'Valori attesi nel file csv mancanti';
         }
         console.log('csv valido');
         return '';

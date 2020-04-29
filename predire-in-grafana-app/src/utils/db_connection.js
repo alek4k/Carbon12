@@ -11,12 +11,9 @@
 
 class DBConnection {
     constructor(host, port, database) {
-        if (host === undefined
-            || port === undefined
-            || database === undefined
-            || host === ''
-            || port === undefined
-            || host === '') {
+        if (typeof host !== 'string'
+        || typeof port !== 'number'
+        || typeof database !== 'string') {
             throw new Error('Incorrect values');
         }
 

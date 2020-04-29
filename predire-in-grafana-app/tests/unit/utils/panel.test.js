@@ -1,6 +1,6 @@
 /**
- * File name: target.test.js
- * Date: 2020-04-28
+ * File name: panel.test.js
+ * Date: 2020-04-29
  *
  * @file Script principale del programma di addestramento
  * @author Carbon12 <carbon.dodici@gmail.com>

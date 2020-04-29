@@ -8,8 +8,6 @@
  *
  * Changelog: modifiche effettuate
  */
-import Target from "./target";
-import View from "./view";
 
 export default class Panel {
     constructor(target, view) {

@@ -32,7 +32,15 @@ npm build
 --- 
 
 ## Installazione programma di addestramento
-Spostare la cartella `addestramento` nella posizione desiderata, in modo che sia disponibile agli utenti che dovranno gestire l'addestramento. 
+Spostare la cartella `addestramento` nella posizione desiderata, in modo che sia disponibile agli utenti che dovranno gestire l'addestramento. Successivamente installare le dipendenze utilizzando i comandi seguenti:
+
+```
+yarn install
+```
+oppure:
+```
+npm install
+```
 
 --- 
 

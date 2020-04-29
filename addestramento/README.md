@@ -13,20 +13,19 @@ Per il corretto funzionamento del programma di addestramento il file dovrà:
 1. essere un file con estensione `.csv`
 2. presentare la struttura seguente: 
 
-| Time | Source_1 | Source_2  | ... | Labels |
-| :--- | :------- | :-------- | :---| :-----:| 
-| value| value 	  | value     | ... | value  |
+| Source_1 | Source_2  | ... | Labels |
+| :------- | :-------- | :---| :-----:| 
+| value 	 | value     | ... | value  |
 
   dove 
-  * *Time* è il timestamp di riferimento
-    * l'intestazione della colonna **deve** essere rispettata 
   * *Source_n* è il nome della sorgente dati 
     *  il numero di colonne dipende dal numero di sorgenti monitorate e valutate
     *  i nomi verranno inclusi nel predittore allenato
   * *Labels* è la previsione attesa 
-    * l'intestazione della colonna **deve** essere rispettata 
+    * nel caso di modello SVM il valore dovrà essere 1 oppure -1 
+    * l'intestazione della colonna può essere a scelta
 
-3. i dati devono essere nel formato **numero con separatore di migliaia**
+3. i dati devono essere nel formato corretto, in base all'unità di misura utilizzata da Grafana per la loro memorizzazione
 In figura viene presentato un esempio del file di addestramento.
 
 ![file_csv](https://github.com/alek4k/Carbon12/blob/addestramento/addestramento/img_README/formatoFileCSV.png)

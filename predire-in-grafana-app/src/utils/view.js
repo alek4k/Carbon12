@@ -15,34 +15,18 @@ export default class View {
      * @param {type} String rappresenta il tipo di visualizzazione del pannello che si desidera inizializzare
      * @param {title} String rappresenta il titolo del pannello che si desidera inizializzare
      * @param {id} Number rappresenta l'id del pannello che si desidera inizializzare
-     * @param {datasource} String indica la sorgente rappresentata dal pannello che si desidera inizializzare
+     * @param {dataSource} String indica la sorgente rappresentata dal pannello che si desidera inizializzare
      */
-    constructor(type, title, id, datasource) {
+    constructor(type, title, id) {
         this.type = type;
         this.title = title;
         this.id = id;
-        this.dataSource = datasource;
 
         // viene inizializzata la struttura di base della visualizzazione
-        this.dashboard = {
-            colors: [
-                '#d44a3a',
-                'rgba(237, 129, 40, 0.89)',
-                '#299c46',
-            ],
+        this.viewSettings = {
             gridPos: {},
             id: this.id,
             targets: [],
-            valueMaps: [{
-                op: '=',
-                text: 'Good &#128077;',
-                value: '1',
-            },
-            {
-                op: '=',
-                text: 'Bad &#128078;',
-                value: '-1',
-            }],
             valueName: 'current',
         };
     }
@@ -78,6 +62,16 @@ export default class View {
     }
 
     /**
+     * Imposta la sorgente dati del pannello corrente
+     * @param {dataSource} Number rappresenta la sorgente dati del pannello corrente
+     */
+    setDataSource(dataSource) {
+        if (dataSource) {
+            this.dataSource = dataSource;
+        }
+    }
+
+    /**
      * Imposta la descrizione del pannello corrente
      * @param {description} String rappresenta la descrizione del pannello corrente
      */
@@ -88,12 +82,27 @@ export default class View {
     }
 
     /**
-     * Imposta il colore di background del pannello corrente
-     * @param {background} String rappresenta il colore di background del pannello corrente
+     * Imposta il background del pannello corrente
+     * @param {dafault} Boolean rappresenta la scelta di applicare o meno il background di deafult
+     * nel pannello corrente
      */
-    setBackground(background) {
-        if (background) {
-            this.background = background;
+    setDefaultBackground(dafault) {
+        if (dafault) {
+            this.viewSettings.colors = [
+                '#d44a3a',
+                'rgba(237, 129, 40, 0.89)',
+                '#299c46',
+            ],
+            this.viewSettings.thresholds = '0, 0';
+            this.viewSettings.valueMaps = [{
+                op: '=',
+                text: 'Good &#128077;',
+                value: '1',
+            }, {
+                op: '=',
+                text: 'Bad &#128078;',
+                value: '-1',
+            }];
         }
     }
 
@@ -122,6 +131,14 @@ export default class View {
     }
 
     /**
+     * Ritorna la sorgente dati del pannello corrente
+     * @returns {String} che rappresenta la sorgente dati del pannello corrente
+     */
+    getDataSource() {
+        return this.dataSource;
+    }
+
+    /**
      * Ritorna la descrizione del pannello corrente
      * @returns {String} che rappresenta la descrizione del pannello corrente
      */
@@ -130,38 +147,28 @@ export default class View {
     }
 
     /**
-     * Ritorna il colore di background del pannello corrente
-     * @returns {String} che rappresenta il colore di background del pannello corrente
-     */
-    getBackground() {
-        return this.background;
-    }
-
-    /**
      * Genera il JSON della visualizzazione del pannello
      * @returns {Object} che rappresenta la parte grafica del pannello
      */
     getJSON() {
         if (this.type === 'Grafico') {
-            this.dashboard.gridPos.h = 8;
-            this.dashboard.gridPos.w = 12;
-            this.dashboard.type = 'graph';
-            this.dashboard.title = this.title ?
+            this.viewSettings.gridPos.h = 8;
+            this.viewSettings.gridPos.w = 12;
+            this.viewSettings.type = 'graph';
+            this.viewSettings.title = this.title ?
                 this.title : 'Grafico di Predizione ' + this.id;
-            this.dashboard.description = this.description ? this.description : '';
-            this.dashboard.datasource = this.dataSource;
         } else {
-            this.dashboard.gridPos.h = 4;
-            this.dashboard.gridPos.w = 4;
-            this.dashboard.type = 'singlestat';
-            this.dashboard.thresholds = '0, 0.5';
-            this.dashboard.title = this.title ?
+            this.viewSettings.gridPos.h = 4;
+            this.viewSettings.gridPos.w = 4;
+            this.viewSettings.type = 'singlestat';
+            this.viewSettings.title = this.title ?
                 this.title : 'Indicatore di Predizione ' + this.id;
-            this.dashboard.description = this.description ? this.description : '';
-            this.dashboard.colorBackground = this.background;
-            this.dashboard.datasource = this.dataSource;
+            this.viewSettings.colorBackground = this.viewSettings.thresholds !== undefined
+                ? true : false;
         }
+        this.viewSettings.description = this.description ? this.description : '';
+        this.viewSettings.datasource = this.dataSource;
 
-        return this.dashboard;
+        return this.viewSettings;
     }
 }

@@ -54,6 +54,10 @@ export default class alertCtrl {
                         .then((db) => {
                             this.dashboardEmpty = !db.dashboard.panels.length;
                             if (!this.dashboardEmpty) {
+                                this.isRL = [];
+                                db.dashboard.templating.list.forEach((variable) => {
+                                    this.isRL.push(variable.query.model === 'RL');
+                                });
                                 this.getAlertsState(db.dashboard.panels);
                             }
                             this.$scope.$evalAsync();
@@ -79,7 +83,7 @@ export default class alertCtrl {
                     ? 'superiore' : 'inferiore'
                 );
                 this.message.push(panel.alert.message);
-            } else if (panel.type === 'singlestat') {
+            } else if (panel.type === 'singlestat' && panel.thresholds !== undefined) {
                 this.value.push(panel.thresholds.substr(0, panel.thresholds.indexOf(',')));
                 this.when.push(panel.colors[0] === '#299c46' ? 'superiore' : 'inferiore');
                 this.message.push('');
@@ -131,6 +135,7 @@ export default class alertCtrl {
         this.grafana
             .getDashboard('predire-in-grafana')
             .then((db) => {
+                const dashboard = new Dashboard(db.dashboard);
                 let error = false;
                 for (let i = 0; i < this.panelsList.length && !error; ++i) {
                     try {
@@ -138,7 +143,6 @@ export default class alertCtrl {
                     } catch {
                         this.value[i] = '';
                     }
-                    const dashboard = new Dashboard(db.dashboard);
                     if ((!this.value[i] && this.when[i]) || (this.value[i] && !this.when[i])) {
                         error = true;
                         appEvents.emit('alert-error', ["L'altert di " + '"'
@@ -161,18 +165,18 @@ export default class alertCtrl {
                                         type: (this.when[i] === 'superiore') ? 'gt' : 'lt',
                                     },
                                     operator: {
-                                        type: 'and'
+                                        type: 'and',
                                     },
                                     query: {
                                         params: [
-                                            db.dashboard.panels[i].targets[0].refId,
+                                            dashboard.getJSON().panels[i].targets[0].refId,
                                             '1m',
                                             'now',
                                         ]
                                     },
                                     reducer: {
                                         params: [],
-                                        type: 'avg'
+                                        type: 'avg',
                                     },
                                     type: 'query'
                                 }],
@@ -186,14 +190,14 @@ export default class alertCtrl {
                                 }],
                             }, i);
                         } else {
-                            dashboard.deleteThresholds(i);
-                            dashboard.deleteAlert(i);
+                            dashboard.removeThresholds(i);
+                            dashboard.removeAlert(i);
                         }
                     }
                 }
                 if (!error) {
                     this.grafana
-                        .postDashboard(db.dashboard)
+                        .postDashboard(dashboard.getJSON())
                         .then(() => {
                             appEvents.emit('alert-success', ['Salvataggio completato', '']);
                             this.$scope.$evalAsync();

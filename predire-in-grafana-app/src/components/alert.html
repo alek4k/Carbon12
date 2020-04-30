@@ -34,7 +34,7 @@
 
     <section class="card-list-layout-grid">
       <ol class="card-list">
-        <li ng-repeat="panel in ctrl.panelsList" class="card-item-wrapper">
+        <li ng-repeat="panel in ctrl.panelsList" ng-if="ctrl.isRL[$index]" class="card-item-wrapper">
           <div class="card-item preloader">
             <p class="card-item-header h6 text-center">{{panel}}</p>
             <div class="card-item-body">

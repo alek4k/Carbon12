@@ -19,13 +19,10 @@ export default class Builder {
     }
 
     buildView(config) {
-        const view = new View(config.type, config.title, config.id, config.datasource);
-        if (config.description) {
-            view.setDescription(config.description);
-        }
-        if (config.background) {
-            view.setBackground(config.background);
-        }
+        const view = new View(config.type, config.title, config.id);
+        view.setDataSource(config.dataSource);
+        view.setDescription(config.description);
+        view.setDefaultBackground(config.model === 'SVM');
         return view;
     }
 }

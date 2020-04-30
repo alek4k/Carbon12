@@ -42,22 +42,22 @@ export default class predictCtrl {
                         .then((db) => {
                             this.dashboardEmpty = !db.dashboard.panels.length;
                             if (!this.dashboardEmpty) {
-                                this.resetButtunsState('no');
+                                this.resetButtonsState('no');
                                 InfinitySwag.setBackendSrv(this.$scope, this.backendSrv);
                                 this.getPanelsState(db.dashboard.panels);
                             } else {
-                                this.resetButtunsState();
+                                this.resetButtonsState();
                             }
                             this.$scope.$evalAsync();
                         });
                 } else {
-                    this.resetButtunsState();
+                    this.resetButtonsState();
                 }
                 this.$scope.$evalAsync();
             });
     }
 
-    resetButtunsState(onStatus) {
+    resetButtonsState(onStatus) {
         const toRemove = [];
         for (let i = 0; i < localStorage.length; ++i) {
             const localItem = localStorage.key(i);

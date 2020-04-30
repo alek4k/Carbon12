@@ -16,10 +16,9 @@ export default class Panel {
     }
 
     getJSON() {
-        const pannello = this.view.getJSON();
-        pannello.targets = [];
-        pannello.targets.push(this.target.getJSON());
-        console.log(pannello);
-        return pannello;
+        const panel = this.view.getJSON();
+        panel.targets = [];
+        panel.targets.push(this.target.getJSON());
+        return panel;
     }
 }

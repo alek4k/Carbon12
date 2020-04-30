@@ -25,28 +25,10 @@ export default class importCtrl {
         this.$location = $location;
         this.$scope = $scope;
         this.step = 1;
-        this.error = '';
-        this.availableDataSources = [];
-        this.dataSource = '';
-        this.name = '';
-        this.database = '';
         this.host = 'http://localhost';
         this.port = '8086';
-        this.notes = '';
-        this.model = '';
-        this.availableDataEntry = [];
-        this.availableSources = [];
-        this.availableInstances = [];
-        this.availableParams = [];
-        this.sources = [];
-        this.instances = [];
-        this.params = [];
-        this.view = '';
         this.influx = null;
         this.grafana = new GrafanaApiQuery(backendSrv);
-        this.dashboard = {};
-        this.predictor = {};
-        this.panelName = '';
     }
 
     // carico il file del predittore
@@ -134,6 +116,8 @@ export default class importCtrl {
         const sources = this.influx.getSources();
         // const instances = this.influx.getInstances();
         this.availableSources = [];
+        this.availableParams = [];
+        this.availableInstances = [];
         const instances = this.influx.getInstances();
         for (let i = 0, j = 0; i < sources.length; ++i) {
             // itero sul totale delle sorgenti
@@ -168,22 +152,25 @@ export default class importCtrl {
             instances: this.instances,
             params: this.params,
         };
-        this.dashboard1.storeSettings(panelID, settings);
+        this.dashboard.storeSettings(panelID, settings);
     }
 
     panelGenerator(panelID) {
-        this.builder1 = new Builder(); // aggiungere: description, background
+        const builder = new Builder(); // aggiungere: description, background
         const config = {
             id: panelID,
             type: this.view,
             title: this.panelName,
             description: this.description,
-            background: 'true',
-            datasource: this.dataSource,
+            model: this.model,
+            dataSource: this.dataSource,
         };
-        const target = this.builder1.buildTarget(config);
-        const view = this.builder1.buildView(config);
-        this.panel1 = new Panel(target, view);
+        const target = builder.buildTarget(config);
+        const view = builder.buildView(config);
+        const panel = new Panel(target, view);
+        this.storePanelSettings(panelID);
+        this.dashboard.addPanel(panel);
+        this.saveDashboard();
     }
 
     createPanel() {
@@ -216,20 +203,14 @@ export default class importCtrl {
                                 });
                                 console.log('');
                                 this.influx.deletePrediction(newID);
-                                this.dashboard1 = new Dashboard(db.dashboard);
+                                this.dashboard = new Dashboard(db.dashboard);
                                 this.panelGenerator(newID);
-                                this.storePanelSettings(newID);
-                                this.dashboard1.addPanel(this.panel1);
-                                this.saveDashboard();
                                 this.$scope.$evalAsync();
                             });
                     } else {
                         this.influx.deleteAllPredictions();
-                        this.dashboard1 = new Dashboard();
+                        this.dashboard = new Dashboard();
                         this.panelGenerator(1);
-                        this.storePanelSettings(1);
-                        this.dashboard1.addPanel(this.panel1);
-                        this.saveDashboard();
                     }
                     this.$scope.$evalAsync();
                 });
@@ -240,7 +221,7 @@ export default class importCtrl {
     saveDashboard() {
         appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
-            .postDashboard(this.dashboard1.getJSON())
+            .postDashboard(this.dashboard.getJSON())
             .then(() => {
                 // reindirizzo alla pagina che gestisce la predizione
                 this.$location.url('plugins/predire-in-grafana-app/page/predizione');

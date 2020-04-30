@@ -42,8 +42,8 @@ export const getJSONMock = jest.fn(() => {
     };
 });
 
-const backendSrvMock = jest.fn().mockImplementation(() => ({
+const targetMock = jest.fn().mockImplementation(() => ({
     getJSON: getJSONMock,
 }));
 
-export default backendSrvMock;
+export default targetMock;

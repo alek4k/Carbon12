@@ -58,8 +58,8 @@ export const getJSONMock = jest.fn(() => {
     return dashboard;
 });
 
-const backendSrvMock = jest.fn().mockImplementation(() => ({
+const viewMock = jest.fn().mockImplementation(() => ({
     getJSON: getJSONMock,
 }));
 
-export default backendSrvMock;
+export default viewMock;

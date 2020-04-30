@@ -57,15 +57,18 @@ class InfinitySwag {
     }
 
     startPrediction(index, refreshTime) {
-        console.log('START');
-        this.predictions[index] = setInterval(() => {
-            this.dbWrite(this.getPrediction(index), index);
-        }, refreshTime);
+        if (this.predictions[index] === undefined) {
+            console.log('START');
+            this.predictions[index] = setInterval(() => {
+                this.dbWrite(this.getPrediction(index), index);
+            }, refreshTime);
+        }
     }
 
     stopPrediction(index) {
         console.log('STOP');
         clearInterval(this.predictions[index]);
+        this.predictions[index] = undefined;
     }
 
     getPrediction(index) {

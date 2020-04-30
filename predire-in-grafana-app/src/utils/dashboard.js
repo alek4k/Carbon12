@@ -8,12 +8,11 @@
  *
  * Changelog: modifiche effettuate
  */
-import Panel from './panel';
 
 export default class Dashboard {
     constructor(db) {
         if (!db) {
-            this.dashboard = {
+            this.dashboardSettings = {
                 panels: [],
                 refresh: '5s',
                 tags: [
@@ -44,16 +43,52 @@ export default class Dashboard {
                 uid: 'carbon12',
             };
         } else {
-            this.dashboard = db;
+            this.dashboardSettings = db;
+        }
+    }
+
+    setThresholds(thresholds, index) {
+        if (this.dashboardSettings.panels[index].type === 'graph') {
+            this.dashboardSettings.panels[index].thresholds = thresholds;
+        } else {
+            this.dashboardSettings.panels[index].thresholds = thresholds[0].value.toString()
+                 + ',' + thresholds[0].value.toString();
+            this.dashboardSettings.panels[index].colors = thresholds[0].op === 'gt'
+                ? ['#299c46','rgba(237, 129, 40, 0.89)','#d44a3a',]
+                : ['#d44a3a','rgba(237, 129, 40, 0.89)','#299c46',];
+            if (this.dashboardSettings.panels[index].type === 'singlestat') {
+                this.dashboardSettings.panels[index].colorBackground = true;
+            }
+        }
+    }
+
+    setAlert(alert, index) {
+        if (this.dashboardSettings.panels[index].type === 'graph') {
+            this.dashboardSettings.panels[index].alert = alert;
+        }
+    }
+
+    removeThresholds(index) {
+        if (this.dashboardSettings.panels[index].thresholds !== undefined) {
+            delete this.dashboardSettings.panels[index].thresholds;
+            if (this.dashboardSettings.panels[index].type === 'singlestat') {
+                this.dashboardSettings.panels[index].colorBackground = false;
+            }
+        }
+    }
+
+    removeAlert(index) {
+        if (this.dashboardSettings.panels[index].alert !== undefined) {
+            delete this.dashboardSettings.panels[index].alert;
         }
     }
 
     addPanel(panel) {
-        this.dashboard.panels.push(panel.getJSON());
+        this.dashboardSettings.panels.push(panel.getJSON());
     }
 
     storeSettings(panelID, settings) {
-        this.dashboard.templating.list.push({
+        this.dashboardSettings.templating.list.push({
             hide: 2, // nascosto
             name: panelID.toString(),
             query: settings,
@@ -62,33 +97,6 @@ export default class Dashboard {
     }
 
     getJSON() {
-        return this.dashboard;
-    }
-
-    setThresholds(thresholds, index) {
-        if (this.dashboard.panels[index].type === 'graph') {
-            this.dashboard.panels[index].thresholds = thresholds;
-        } else {
-            this.dashboard.panels[index].thresholds = thresholds[0].value.toString()
-                 + ',' + thresholds[0].value.toString();
-                 console.log(thresholds[0].op);
-            this.dashboard.panels[index].colors = thresholds[0].op === 'gt'
-                ? ['#299c46','rgba(237, 129, 40, 0.89)','#d44a3a',]
-                : ['#d44a3a','rgba(237, 129, 40, 0.89)','#299c46',];
-        }
-    }
-
-    setAlert(alert, index) {
-        if (this.dashboard.panels[index].type === 'graph') {
-            this.dashboard.panels[index].alert = alert;
-        }
-    }
-
-    deleteThresholds(index) {
-        delete this.dashboard.panels[index].thresholds;ss
-    }
-
-    deleteAlert(index) {
-        delete this.dashboard.panels[index].alert;
+        return this.dashboardSettings;
     }
 }

@@ -13,32 +13,10 @@ import View from '../../../src/utils/view';
 
 describe('Testing constructor', () => {
     it('with type Indicatore', () => {
-        const view = new View('Indicatore', 'TestPanelI', 0, 'cpu');
+        const view = new View('Indicatore', 'TestPanelI', 0);
         expect(view.type).toEqual('Indicatore');
         expect(view.title).toEqual('TestPanelI');
         expect(view.id).toEqual(0);
-        expect(view.dataSource).toEqual('cpu');
-        expect(view.dashboard).toEqual({
-            colors: [
-                '#d44a3a',
-                'rgba(237, 129, 40, 0.89)',
-                '#299c46',
-            ],
-            gridPos: {},
-            id: view.id,
-            targets: [],
-            valueMaps: [{
-                op: '=',
-                text: 'Good &#128077;',
-                value: '1',
-            },
-            {
-                op: '=',
-                text: 'Bad &#128078;',
-                value: '-1',
-            }],
-            valueName: 'current',
-        });
     });
 
     it('with type Grafico', () => {
@@ -46,35 +24,13 @@ describe('Testing constructor', () => {
         expect(view.type).toEqual('Grafico');
         expect(view.title).toEqual('TestPanelG');
         expect(view.id).toEqual(0);
-        expect(view.dataSource).toEqual('cpu');
-        expect(view.dashboard).toEqual({
-            colors: [
-                '#d44a3a',
-                'rgba(237, 129, 40, 0.89)',
-                '#299c46',
-            ],
-            gridPos: {},
-            id: view.id,
-            targets: [],
-            valueMaps: [{
-                op: '=',
-                text: 'Good &#128077;',
-                value: '1',
-            },
-            {
-                op: '=',
-                text: 'Bad &#128078;',
-                value: '-1',
-            }],
-            valueName: 'current',
-        });
     });
 });
 
 describe('Testing method', () => {
     let view = null;
     beforeEach(() => {
-        view = new View('Indicatore', 'TestPanelI', 0, 'cpu');
+        view = new View('Indicatore', 'TestPanelI', 0);
     });
 
     afterEach(() => {
@@ -107,8 +63,20 @@ describe('Testing method', () => {
 
     it('setBackground', () => {
         const newBackground = 'true';
-        view.setBackground(newBackground);
-        expect(view.background).toEqual(newBackground);
+        view.setDefaultBackground(newBackground);
+        expect(view.viewSettings.colors).toEqual([
+            '#d44a3a', 'rgba(237, 129, 40, 0.89)', '#299c46'
+        ]);
+        expect(view.viewSettings.thresholds).toEqual('0, 0');
+        expect(view.viewSettings.valueMaps).toEqual([{
+            op: '=',
+            text: 'Good &#128077;',
+            value: '1',
+        }, {
+            op: '=',
+            text: 'Bad &#128078;',
+            value: '-1',
+        }]);
     });
 
     it('getType', () => {
@@ -131,23 +99,13 @@ describe('Testing method', () => {
         expect(view.getDescription()).toEqual(view.description);
     });
 
-    it('getBackground', () => {
-        view.background = 'false';
-        expect(view.getBackground()).toEqual(view.background);
-    });
-
     describe('getJSON', () => {
         it('with type Grafico', () => {
             view.type = 'Grafico';
             expect(view.getJSON()).toEqual({
-                colors: ['#d44a3a', 'rgba(237, 129, 40, 0.89)', '#299c46'],
                 gridPos: { h: 8, w: 12 },
                 id: view.id,
                 targets: [],
-                valueMaps: [
-                    { op: '=', text: 'Good &#128077;', value: '1' },
-                    { op: '=', text: 'Bad &#128078;', value: '-1' },
-                ],
                 valueName: 'current',
                 type: 'graph',
                 title: view.title
@@ -160,21 +118,14 @@ describe('Testing method', () => {
         it('with type Indicatore', () => {
             view.type = 'Indicatore';
             expect(view.getJSON()).toEqual({
-                colors: ['#d44a3a', 'rgba(237, 129, 40, 0.89)', '#299c46'],
                 gridPos: { h: 4, w: 4 },
                 id: view.id,
                 targets: [],
-                valueMaps: [
-                    { op: '=', text: 'Good &#128077;', value: '1' },
-                    { op: '=', text: 'Bad &#128078;', value: '-1' },
-                ],
                 valueName: 'current',
                 type: 'singlestat',
-                thresholds: '0, 0.5',
-                title: view.title
-                    ? view.title : 'Indicatore di Predizione ' + view.id,
+                title: view.title ? view.title : 'Indicatore di Predizione ' + view.id,
                 description: view.description ? view.description : '',
-                colorBackground: view.background,
+                colorBackground: (view.viewSettings.thresholds !== undefined) ? true : false,
                 datasource: view.dataSource,
             });
         });

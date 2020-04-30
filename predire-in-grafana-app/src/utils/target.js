@@ -13,8 +13,8 @@ export default class Target {
         this.id = id;
     }
 
-    setId(i) {
-        this.id = i;
+    setId(id) {
+        this.id = id;
     }
 
     getId() {

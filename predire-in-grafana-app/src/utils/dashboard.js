@@ -56,9 +56,7 @@ export default class Dashboard {
             this.dashboardSettings.panels[index].colors = thresholds[0].op === 'gt'
                 ? ['#299c46','rgba(237, 129, 40, 0.89)','#d44a3a',]
                 : ['#d44a3a','rgba(237, 129, 40, 0.89)','#299c46',];
-            if (this.dashboardSettings.panels[index].type === 'singlestat') {
-                this.dashboardSettings.panels[index].colorBackground = true;
-            }
+            this.dashboardSettings.panels[index].colorBackground = true;
         }
     }
 

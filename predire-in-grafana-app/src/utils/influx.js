@@ -147,31 +147,31 @@ export default class Influx extends DBConnection {
         });
     }
 
-    deleteMeasurement(measurement) {
-        if (measurement.startsWith('predizione')) {
-            const toRemove = parseInt(measurement.substr(10), 10);
-            this.predictions.splice(this.predictions.indexOf(toRemove), 1);
+    deletePrediction(prediction) {
+        const query = `q=drop measurement predizione${prediction}`;
+        if (this.predictions.indexOf(prediction) >= 0) {
+            $.ajax({
+                async: false,
+                url: `${this.host}:${this.port}/query?db=${this.database}`,
+                type: 'GET',
+                contentType: 'application/octet-stream',
+                data: query,
+                processData: false,
+                success: () => {
+                    this.predictions.splice(this.predictions.indexOf(prediction), 1);
+                    console.log('Measurement was dropped.');
+                },
+                error: (test, status, exception) => {
+                    console.log(`Error: ${exception}`);
+                },
+            });
         }
-        const query = `q=drop measurement ${measurement}`;
-        $.ajax({
-            async: false,
-            url: `${this.host}:${this.port}/query?db=${this.database}`,
-            type: 'GET',
-            contentType: 'application/octet-stream',
-            data: query,
-            processData: false,
-            success: () => {
-                console.log('Measurement was dropped.');
-            },
-            error: (test, status, exception) => {
-                console.log(`Error: ${exception}`);
-            },
-        });
     }
 
-    deletePredictions() {
-        while (this.predictions.length) {
-            this.deleteMeasurement('predizione' + this.predictions[0]);
+    deleteAllPredictions() {
+        const oldPred = this.predictions;
+        for (let i = 0; i < oldPred.length; i++) {
+            this.deletePrediction(oldPred[i]);
         }
     }
 }

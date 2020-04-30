@@ -215,7 +215,7 @@ export default class importCtrl {
                                     }
                                 });
                                 console.log('');
-                                this.influx.deleteMeasurement('predizione' + newID);
+                                this.influx.deletePrediction(newID);
                                 this.dashboard1 = new Dashboard(db.dashboard);
                                 this.panelGenerator(newID);
                                 this.storePanelSettings(newID);
@@ -224,7 +224,7 @@ export default class importCtrl {
                                 this.$scope.$evalAsync();
                             });
                     } else {
-                        this.influx.deletePredictions();
+                        this.influx.deleteAllPredictions();
                         this.dashboard1 = new Dashboard();
                         this.panelGenerator(1);
                         this.storePanelSettings(1);

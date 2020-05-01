@@ -27,6 +27,7 @@ describe('Testing constructor', () => {
             predictions: [],
         });
     });
+
     describe('with incorrect values', () => {
         it('for host param', () => {
             const parHost = null;
@@ -36,6 +37,7 @@ describe('Testing constructor', () => {
             expect(() => { new Influx(parHost, parPort, parDatabase); })
                 .toThrow(new Error('Incorrect values'));
         });
+
         it('for port param', () => {
             const parHost = 'localhost';
             const parPort = undefined;
@@ -44,6 +46,7 @@ describe('Testing constructor', () => {
             expect(() => { new Influx(parHost, parPort, parDatabase); })
                 .toThrow(new Error('Incorrect values'));
         });
+
         it('for database param', () => {
             const parHost = 'localhost';
             const parPort = 1234;

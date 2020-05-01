@@ -9,6 +9,8 @@
  * Changelog: modifiche effettuate
  */
 
-export default class ScopeMock {
-    $evalAsync() {}
-}
+const ScopeMock = jest.fn().mockImplementation(() => ({
+    $evalAsync: jest.fn(),
+}));
+
+export default ScopeMock;

@@ -10,7 +10,7 @@
  */
 
 import { appEvents } from 'grafana/app/core/core';
-import { InfinitySwag } from '../utils/infinitySwag';
+import InfinitySwag from '../utils/infinitySwag';
 import GrafanaApiQuery from '../utils/grafana_query';
 
 export default class predictCtrl {

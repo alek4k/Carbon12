@@ -11,9 +11,8 @@
 
 import GrafanaApiQuery from './grafana_query';
 import Influx from './influx';
-
-const RL = require('./models/RL_Adapter');
-const SVM = require('./models/SVM_Adapter');
+import RL from './models/RL_Adapter';
+import SVM from './models/SVM_Adapter';
 
 class InfinitySwag {
     constructor() {
@@ -87,12 +86,14 @@ class InfinitySwag {
             ? this.predictSVM(predictor, point) : this.predictRL(predictor, point);
     }
 
+    // eslint-disable-next-line class-methods-use-this
     predictSVM(predictor, point) {
         const svm = new SVM();
         svm.fromJSON(predictor);
         return svm.predictClass(point);
     }
 
+    // eslint-disable-next-line class-methods-use-this
     predictRL(predictor, point) {
         const options = { numX: predictor.D, numY: 1 };
         const rl = new RL(options);
@@ -102,4 +103,4 @@ class InfinitySwag {
 }
 
 const o = new InfinitySwag();
-export { o as InfinitySwag };
+export default o;

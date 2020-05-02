@@ -46,8 +46,8 @@ $(document).ready(function() {
         let name = $(this).val();
         form_data.append('columnName', document.getElementById('columnNames').value);
         $.ajax({
-            url: "/loadCsv",
-            method: "POST",
+            url: '/loadCsv',
+            method: 'POST',
             data: form_data,
             contentType: false,
             cache: false,
@@ -258,7 +258,7 @@ let RL_Chart = function (data, label, x, y) {
     const xAxesName = result[2][x];
     const yAxesName = result[2][y];
     for (let i = 0; i < data.length; i++) {
-        pointData.push({x: data[i][x], y: data[i][y]});
+        pointData.push({ x: data[i][x], y: data[i][y] });
     }
     let lineData = [];
     lineData.push({ x: data[0][x], y: label[0] });
@@ -273,8 +273,8 @@ let RL_Chart = function (data, label, x, y) {
             data: pointData,
             backgroundColor: 'rgba(189, 232, 255, 0.5)',
             borderColor: 'rgba(22, 117, 170, 1)',
-            xAxisID: 'x-axis-1'
-        },{
+            xAxisID: 'x-axis-1',
+        }, {
             type: 'line',
             label: 'Linear Regression',
             data: lineData,

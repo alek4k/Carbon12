@@ -25,9 +25,9 @@ module.exports = class Server {
     constructor() {
         this.csvReader = null;
         this.model = 'SVM';
-        this.source = null;
+        this.sources = null;
         this.notes = null;
-        this.nomePredittore = null;
+        this.nomePredittore = '';
         this.error = '';
         this.FILE_VERSION = 0;
 
@@ -234,8 +234,8 @@ module.exports = class Server {
     config() {
         this.app.use('/', this.router);
 
-        let error2 = this.error; // TODO: dare un nome migliore alla variabile
         this.router.get('/', (request, response) => {
+            let error2 = this.error; // TODO: dare un nome migliore alla variabile
             response.render('addestramento', { error2 });
             error2 = '';
         });
@@ -244,13 +244,15 @@ module.exports = class Server {
             this.uploadForm(request, response);
         });
 
-        const model2 = this.model; // TODO: dare un nome migliore alla variabile
-        const sources2 = this.sources; // TODO: dare un nome migliore alla variabile
         this.router.get('/downloadPredittore', (request, response) => {
+            const model2 = this.model; // TODO: dare un nome migliore alla variabile
+            const sources2 = this.sources; // TODO: dare un nome migliore alla variabile
             response.render('downloadPredittore', { model2, sources2 });
         });
 
-        this.router.post('/downloadFile', this.downloadPredittore);
+        this.router.post('/downloadFile', (request, response) => {
+            this.downloadPredittore(request, response);
+        });
 
         this.router.post('/loadCsv', (request, response) => {
             this.getChartData(request, response);

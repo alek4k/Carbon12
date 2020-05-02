@@ -68,6 +68,10 @@ describe('Testing method', () => {
     let influx = null;
     beforeEach(() => {
         influx = new (function testInflux() { })();
+        influx.host = 'localhost';
+        influx.port = 8080;
+        influx.database = 'telegraf';
+
     });
 
     afterEach(() => {
@@ -77,9 +81,6 @@ describe('Testing method', () => {
 
     it('query', () => {
         influx.query = Influx.prototype.query;
-        influx.host = 'localhost';
-        influx.port = 8080;
-        influx.database = 'telegraf';
 
         const query = 'q=show field keys on telegraf';
         influx.query(query);
@@ -93,9 +94,6 @@ describe('Testing method', () => {
     describe('getLastValue', () => {
         it('with instance', () => {
             influx.getLastValue = Influx.prototype.getLastValue;
-            influx.host = 'localhost';
-            influx.port = 8080;
-            influx.database = 'telegraf';
 
             const parSource = 'TestSource';
             const parInstance = 'TestInstance';
@@ -113,9 +111,6 @@ describe('Testing method', () => {
 
         it('without instance', () => {
             influx.getLastValue = Influx.prototype.getLastValue;
-            influx.host = 'localhost';
-            influx.port = 8080;
-            influx.database = 'telegraf';
 
             const parSource = 'TestSource';
             const parParam = 'TestParam';
@@ -132,9 +127,6 @@ describe('Testing method', () => {
 
     it('getSources', () => {
         influx.getSources = Influx.prototype.getSources;
-        influx.host = 'localhost';
-        influx.port = 8080;
-        influx.database = 'telegraf';
 
         const query = `q=show field keys on ${influx.database}`;
         influx.getSources();
@@ -147,9 +139,6 @@ describe('Testing method', () => {
 
     it('getInstances', () => {
         influx.getInstances = Influx.prototype.getInstances;
-        influx.host = 'localhost';
-        influx.port = 8080;
-        influx.database = 'telegraf';
 
         const query = `q=show tag values on "${influx.database}" with key = "instance"`;
         influx.getInstances();
@@ -162,9 +151,6 @@ describe('Testing method', () => {
 
     it('storeValue', () => {
         influx.storeValue = Influx.prototype.storeValue;
-        influx.host = 'localhost';
-        influx.port = 8080;
-        influx.database = 'telegraf';
 
         const parMeasurement = 'TestCPU';
         const parValue = 'TestValue';
@@ -179,9 +165,6 @@ describe('Testing method', () => {
 
     it('deletePrediction', () => {
         influx.deletePrediction = Influx.prototype.deletePrediction;
-        influx.host = 'localhost';
-        influx.port = 8080;
-        influx.database = 'telegraf';
         influx.predictions = [1, 2];
 
         const parPrediction = influx.predictions[0];
@@ -198,9 +181,6 @@ describe('Testing method', () => {
     it('deleteAllPredictions', () => {
         influx.deleteAllPredictions = Influx.prototype.deleteAllPredictions;
         influx.deletePrediction = jest.fn(() => { });
-        influx.host = 'localhost';
-        influx.port = 8080;
-        influx.database = 'telegraf';
         influx.predictions = [1, 2];
 
 

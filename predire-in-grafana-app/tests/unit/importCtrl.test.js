@@ -106,7 +106,7 @@ test('Test addDataSource() works.', async () => {
         fs.readFileSync('./tests/files/predittore_test.json').toString(),
     );
     await importCtrl.onUpload(jsonTest);
-    importCtrl.name = 'AddDSTest';
+    importCtrl.newDataSource = 'AddDSTest';
     importCtrl.database = 'telegraf';
     importCtrl.host = 'http://test';
     importCtrl.port = '8086';

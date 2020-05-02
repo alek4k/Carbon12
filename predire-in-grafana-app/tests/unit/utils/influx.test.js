@@ -13,7 +13,6 @@ import { ajaxMock } from 'jquery';
 
 import Influx from '../../../src/utils/influx';
 
-
 describe('Testing constructor', () => {
     it('with correct values', () => {
         const parHost = 'localhost';

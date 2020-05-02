@@ -83,6 +83,7 @@ export default class importCtrl {
     setDataSource() {
         if (this.dataSource) {
             this.error = '';
+            this.newDataSource = '';
             this.grafana
                 .getDataSources()
                 .then((dataSource) => {
@@ -110,12 +111,13 @@ export default class importCtrl {
      * Aggiunge la configurazione della sorgente dati alla lista delle sorgenti dati di Grafana
      */
     addDataSource() {
-        const configComplete = this.name && this.database && this.host && this.port;
+        const configComplete = this.newDataSource && this.database && this.host && this.port;
         if (configComplete) {
+            this.error = '';
+            this.dataSource = '';
             this.grafana
-                .postDataSource(this.name, this.database, this.host, this.port)
+                .postDataSource(this.newDataSource, this.database, this.host, this.port)
                 .then(() => {
-                    this.error = '';
                     this.connection();
                     this.$scope.$evalAsync();
                 });
@@ -188,7 +190,7 @@ export default class importCtrl {
             title: this.panelName,
             description: this.description,
             model: this.model,
-            dataSource: this.dataSource,
+            dataSource: this.dataSource ? this.dataSource : this.newDataSource,
         };
         const target = builder.buildTarget(config);
         const view = builder.buildView(config);

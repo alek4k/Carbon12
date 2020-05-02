@@ -169,7 +169,7 @@ describe('Testing method', () => {
     it('stopPrediction', () => {
         infinitySwag.stopPrediction = infinitySwagProto.stopPrediction;
         const predictionMock = [1, 2];
-        infinitySwag.predictions = [...predictionMock];
+        infinitySwag.predictions = predictionMock.slice(0);
 
         const parIndex = 0;
         infinitySwag.stopPrediction(parIndex);

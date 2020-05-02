@@ -62,10 +62,10 @@ export default class Dashboard {
             this.dashboardSettings.panels[index].thresholds = thresholds;
         } else {
             this.dashboardSettings.panels[index].thresholds = thresholds[0].value.toString()
-                 + ',' + thresholds[0].value.toString();
+                + ',' + thresholds[0].value.toString();
             this.dashboardSettings.panels[index].colors = thresholds[0].op === 'gt'
-                ? ['#299c46','rgba(237, 129, 40, 0.89)','#d44a3a',]
-                : ['#d44a3a','rgba(237, 129, 40, 0.89)','#299c46',];
+                ? ['#299c46', 'rgba(237, 129, 40, 0.89)', '#d44a3a']
+                : ['#d44a3a', 'rgba(237, 129, 40, 0.89)', '#299c46'];
             this.dashboardSettings.panels[index].colorBackground = true;
         }
     }

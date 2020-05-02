@@ -22,10 +22,6 @@ afterEach(() => {
     csvReader = null;
 });
 
-test('It should response that function getData of file.csv work correctly with 0 columns', () => {
-    expect(csvReader.getDataSource()).toEqual(['A', 'B']);
-});
-
 test('It should response that function getData of file.csv work correctly', () => {
     expect(csvReader.getData(['Labels'])).toEqual([
         ['-1'], ['-1'], ['1'], ['-1'], ['1'], ['1'], ['1'], ['-1'], ['-1'], ['-1']]);

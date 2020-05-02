@@ -1,411 +1,155 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="it">
 <head>
     <title>Pagina di addestramento</title>
-    <meta charset="utf-8">
-    <meta name="author" content="Carbon12">
-    <meta name="title" content="Addestramento - Predire in Grafana" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="icon" type="image/png" href="/images/logomini.png">
+    <meta name="language" content="italian it"/>
+    <meta name="author" content="Carbon12"/>
+    <meta name="title" content="Addestramento - Predire in Grafana"/>
     <meta name="description" content="Pagina di addestramento dei modelli di machine learning"/>
-    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <link href="/css/materialize.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/js/Chart.min.js"></script>
+    <script src="/js/jquery-3.5.0.min.js"></script>
+    <script src="/js/materialize.min.js"></script>
+    <link href="/css/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/js/carbonScript.js"></script>
 </head>
 <body>
-<img src="/images/C.png" alt=""/>
-<h1>Predire in Grafana</h1>
-<h2>Pagina di addestramento</h2>
-<p>In questa pagina è possibile addestrare il modello di predizione
-    per ottenere il predittore da inserire nel plug-in</p>
-<form action="fileupload" method="post" enctype="multipart/form-data">
-    <fieldset>
-        <p class='error'><%= error2 %></p>
 
-        <label for="trainFile">Seleziona il file coi dati di addestramento (formato CSV):</label>
-        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
-        <p class="adv"> In fondo a questa pagina potrai visualizzare un grafico con la disposizione dei tuoi dati.
-        </p>
-        <input type="file"  id="trainFile" accept=".csv" name="trainFile" required>
-        <label for="configFile">Seleziona il file con la configurazione del modello (formato JSON):</label>
-        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
-        <p class="adv">Se desideri aggiornare il modello, 
-            inserisci il file JSON con la configurazione ottenuto nel precedente allenamento.
-        </p>
-        <input type="file" id="configFile" accept=".json" name="configFile">
-        <label for="modelType">Seleziona il modello da addestrare:</label>
-        <select name="modello" id="modelType">
-            <option selected value="SVM">SVM</option>
-            <option value="RL">RL</option>
-        </select>
-        <label for="note">Inserisci delle note per il predittore</label>
-        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
-        <p class="adv">Queste informazioni verranno salvate nel file di configurazione che otterrai alla fine dell'addestramento. 
-            In seguito saranno utili per ricordare con quali parametri è stato allenato il modello. 
-        </p>
-        <textarea id="note" rows="4" cols="100" placeholder="le tue note..." name="note" required></textarea>
-        <label for="nomeFile">Inserisci il nome del file Predittore</label>
-        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
-        <p class="adv">Di default il nome del file sarà predittore. 
-            Puoi inserire un nome più significativo per il file di configurazione (max. 50char).
-        </p>
-        <input type="text" id="nomeFile" name="nomeFile" placeholder="predittore" maxlength="50">
-        <input type="submit" id="submit" value="AVVIO ADDESTRAMENTO">
-    </fieldset>
-</form>
-<div id="mychart">
-    <div id="infoChart">
-        <i class="fa fa-info-circle icon" aria-hidden="true"></i>
-        <p class="adv">Verrà visualizzato un grafico con la distribuzione dei dati inseriti. </br>
-        Se non si conosce ancora quale modello è più adatto per l'allenamento, lasciando tutta la colonna Labels con valore `0`, 
-        il programma visualizzerà la disposizione dei dati permettendo di comprendere quale sia il modello più adatto. <br/>
-        Se invece si intende utilizzare il modello SVM e i dati sono già stati classificati con le etichette -1, 1, 
-        il grafico riporterà la distribuzione dei dati con la classificazione inserita: i dati con etichetta 1 saranno visualizzati in verde, 
-        i dati con etichetta -1 saranno visualizzati in rosso. <br/>
-        Infine, nel caso della RL in cui le etichette avranno valori continui diversi dai soli 1 e -1, 
-        il grafico visualizzerà la distribuzione dei dati e la retta di regressione risultante. 
-        </p>
-    </div>  
+<main>
+<div class="container">
+    <div class="row center-align" id="header">
+        <div class="col s12 m3 l2 auto-margin">
+            <img class="responsive-img" id="logo" src="/images/C.png" alt="logo"/>
+        </div>
+        <div class="col s12 m9 l10">
+            <h1>Predire in Grafana</h1>
+            <h2>Pagina di addestramento</h2>
+        </div>
+    </div>
+
+    <blockquote>
+        In questa pagina è possibile addestrare il modello di predizione
+        per ottenere il predittore da inserire nel plug-in
+    </blockquote>
+
+    <div class="row no-margin-bottom">
+        <div class="col s12">
+            <div class="card-panel">
+                <p class='error'><%= error2 %></p>
+                <form action="fileupload" method="post" enctype="multipart/form-data">
+                    <p class="fieldTitle">Seleziona il file coi dati di addestramento (formato CSV):</p>
+                    <p class="infoLabel"><span class="fa fa-info-circle icon" aria-hidden="true"></span>
+                        In fondo a questa pagina potrai visualizzare un grafico con la disposizione dei tuoi dati.</p>
+                    <div class="file-field input-field">
+                        <div class="btn">
+                            <span>CSV</span>
+                            <input type="file" id="trainFile" accept=".csv" name="trainFile" required>
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate col s12 m8 l6 xl4" type="text">
+                        </div>
+                    </div>
+                    <div class="row no-margin-bottom hidden" id="titleBlockLabelCsv">
+                        <div class="input-field col s6 m4 l3 xl2 no-margin" id="blockLabelCsv">
+                        </div>
+                    </div>
+                    <p class="fieldTitle">Seleziona il file con la configurazione del modello (formato JSON):</p>
+                    <p class="infoLabel"><span class="fa fa-info-circle icon" aria-hidden="true"></span>
+                        Se desideri aggiornare il modello,
+                        inserisci il file JSON con la configurazione ottenuto nel precedente allenamento.
+                    </p>
+                    <div class="file-field input-field">
+                        <div class="btn">
+                            <span>JSON</span>
+                            <input type="file" id="configFile" accept=".json" name="configFile">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate col s12 m8 l6 xl4" type="text">
+                        </div>
+                    </div>
+                    <p class="fieldTitle">Seleziona il modello da addestrare</p>
+                    <div class="row">
+                        <div class="input-field col s6 m4 l3 xl2 no-margin">
+                            <select name="modello" id="modelType">
+                                <option selected value="SVM">SVM</option>
+                                <option value="RL">RL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="fieldTitle">Inserisci delle note per il predittore</p>
+                    <p class="infoLabel"><span class="fa fa-info-circle icon" aria-hidden="true"></span>
+                        Queste informazioni verranno salvate nel file di configurazione che otterrai alla fine
+                        dell'addestramento.
+                        In seguito saranno utili per ricordare con quali parametri è stato allenato il modello.
+                    </p>
+                    <div class="row">
+                        <div class="input-field col s12 no-margin-bottom">
+                            <textarea id="textarea1" class="materialize-textarea" id="note" rows="4" cols="100"
+                                      name="note" required></textarea>
+                            <label for="textarea1">Le tue note...</label>
+                        </div>
+                    </div>
+                    <p class="fieldTitle">Inserisci il nome del file Predittore</p>
+                    <p class="infoLabel"><span class="fa fa-info-circle icon" aria-hidden="true"></span>
+                        Di default il nome del file sarà predittore.
+                        Puoi inserire un nome più significativo per il file di configurazione (max. 50char).
+                    </p>
+                    <div class="row">
+                        <div class="input-field col s12 m8 l6 xl4">
+                            <input type="text" id="nomeFile" name="nomeFile" maxlength="50">
+                            <label for="nomeFile">predittore</label>
+                        </div>
+                    </div>
+
+                    <div class="row center-align no-margin-bottom">
+                        <button class="btn waves-effect waves-light" type="submit" id="btn-submit" name="action">
+                            AVVIO ADDESTRAMENTO
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <p class="infoLabel"><span class="fa fa-info-circle icon" aria-hidden="true"></span>
+                Verrà visualizzato un grafico con la distribuzione dei dati inseriti. </br>
+                Se non si conosce ancora quale modello è più adatto per l'allenamento, lasciando tutta la colonna Labels
+                con valore `0`,
+                il programma visualizzerà la disposizione dei dati permettendo di comprendere quale sia il modello più
+                adatto. <br/>
+                Se invece si intende utilizzare il modello SVM e i dati sono già stati classificati con le etichette -1,
+                1,
+                il grafico riporterà la distribuzione dei dati con la classificazione inserita: i dati con etichetta 1
+                saranno visualizzati in verde,
+                i dati con etichetta -1 saranno visualizzati in rosso. <br/>
+                Infine, nel caso della RL in cui le etichette avranno valori continui diversi dai soli 1 e -1,
+                il grafico visualizzerà la distribuzione dei dati e la retta di regressione risultante.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="mychart" class="col s12">
+        </div>
+    </div>
+
 </div>
+</main>
 
-<script>
-    let result;
-    $(document).ready(function(){
-        $(document).on('change', '#trainFile', function(){
-            let form_data = new FormData();
-            let name = document.getElementById("trainFile").files[0].name;
-            let ext = name.split('.').pop().toLowerCase();
-            if(jQuery.inArray(ext, ['csv']) !== -1)
-            {
-                form_data.append('trainFile', document.getElementById('trainFile').files[0]);
-
-                $.ajax({
-                    url:"/loadColumns",
-                    method:"POST",
-                    data: form_data,
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: function(response){
-                        if(document.getElementById('configChart')){
-                            $('#configChart').remove();
-                        }
-                        if(document.getElementById('chart')){
-                            $('#chart').remove();
-                        }
-                        if(document.getElementById('columnPara')){
-                            $('#columnPara').remove();
-                        }
-                        if(document.getElementById('columnNames')){
-                            $('#columnNames').remove();
-                        }
-                        result = JSON.parse(response);
-                        if(result.length < 3){
-                                alert('Il file deve avere almeno due sorgenti di dati');
-                                $("#trainFile").replaceWith($("#trainFile").val('').clone(true));
-                            }
-                        else{
-                            selectLabels(result);
-                        }
-                    }
-                });
-            }
-        });
-
-        $(document).on('change', '#columnNames', function(){
-            let form_data = new FormData();
-            let name = $(this).val();
-            form_data.append('columnName', document.getElementById('columnNames').value);
-            $.ajax({
-                url:"/loadCsv",
-                method:"POST",
-                data: form_data,
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function(response){
-                    if(document.getElementById('configChart')){
-                        $('#configChart').remove();
-                    }
-                    if(document.getElementById('chart')){
-                        $('#chart').remove();
-                    }
-                    result = JSON.parse(response);
-                    drawChart(result);
-                }
-            });
-        });
-
-        $(document).on('change', '#selectX', function(){
-            let assex = $(this).val();
-            let assey = $('#selectY').val();
-            configChart(result, assex, assey);
-        });
-        $(document).on('change', '#selectY', function(){
-            let assex = $('#selectX').val();
-            let assey = $(this).val();
-            configChart(result, assex, assey);
-        });
-    });
-
-    let selectLabels = function(result){
-        let myParagrah = document.createElement('p');
-        myParagrah.id = 'columnPara';
-        myParagrah.appendChild(document.createTextNode
-            ('Seleziona l\'etichetta corrispondente alla colonna contenente i valori attesi per l\'addestramento'));
-        let train = document.getElementById('trainFile')
-        let select = document.createElement('select'); 
-        select.name = 'columnNames'; 
-        select.id = 'columnNames'; 
-        for(let i = 0; i<result.length; i++){
-            let option = document.createElement("option");
-            option.text = result[i];
-            option.value = i;
-            select.options.add(option);
-        }
-        train.parentNode.insertBefore(myParagrah, train.nextSibling);
-        myParagrah.parentNode.insertBefore(select, myParagrah.nextSibling);
-    }
-
-    let drawChart = function(result) { 
-        let sorgenti = result[2];
-        let myDiv = document.createElement('div'); 
-        myDiv.id = 'configChart';
-        let div = document.getElementById('mychart');
-        let chart = document.getElementById('chart');
-        div.insertBefore(myDiv, chart);
-        let myParagrah = document.createElement('p');
-        myParagrah.appendChild(document.createTextNode('Visualizza la disposizione dei tuoi dati'));
-        myDiv.appendChild(myParagrah);
-        let asseX = document.createElement('p');
-        asseX.appendChild(document.createTextNode('Seleziona la sorgente da visualizzare sull\'asse x'));
-        asseX.classList.add('chartP');
-        myDiv.appendChild(asseX);
-
-        let selectX = document.createElement('select'); 
-        selectX.name = 'assex'; 
-        selectX.id = 'selectX'; 
-        for(let i = 0; i<sorgenti.length; i++){
-            let option = document.createElement("option");
-            option.text = sorgenti[i];
-            option.value = i;
-            selectX.options.add(option);
-        }
-        myDiv.appendChild(selectX); 
-
-        let asseY = document.createElement('p');
-        asseY.appendChild(document.createTextNode('Seleziona la sorgente da visualizzare sull\'asse y'));
-        asseY.classList.add('chartP');
-        myDiv.appendChild(asseY);
-
-        let selectY = document.createElement('select'); 
-        selectY.name = 'assey'; 
-        selectY.id = 'selectY'; 
-        for(let i = 0; i<sorgenti.length; i++){
-            let option = document.createElement("option");
-            option.text = sorgenti[i];
-            option.value = i;
-            selectY.options.add(option);
-        }
-        myDiv.appendChild(selectY); 
-
-        document.getElementById('selectY').value = 1;
-        configChart(result, 0, 1);
-    }
-    
-    let genericChart = function (data, label, x, y) {
-        const xAxesName = result[2][x];
-        const yAxesName = result[2][y];
-        let buildData = [];
-        for (let i = 0; i < data.length; i++) {
-            buildData.push({x: data[i][x], y: data[i][y]});
-        }
-        let config = [];
-        config.push('scatter');
-        let dataSet = {
-            datasets: [{
-                label: 'data',
-                data: buildData,
-                backgroundColor: 'rgba(189, 232, 255, 0.5)',
-                borderColor:  'rgba(22, 117, 170, 1)'
-            }]
-        };
-        config.push(dataSet);
-        let scales = {
-            xAxes: [{
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: xAxesName
-                }
-            }],
-            yAxes: [{
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: yAxesName
-                }
-            }]
-        };
-        config.push(scales);
-        return config;
-    }
-
-    let SVM_Chart = function (data, label, x, y) {
-        let greenData = [];
-        let redData = [];
-        const xAxesName = result[2][x];
-        const yAxesName = result[2][y];
-        for (let i = 0; i < data.length; i++) {
-            if(label[i]===1)
-                greenData.push({x: data[i][x], y: data[i][y]});
-            else    
-                redData.push({x: data[i][x], y: data[i][y]});
-        }
-        let config = [];
-        config.push('scatter');
-        let dataSet = {
-            datasets: [{
-                label: 'Green Data',          
-                data: greenData,
-                backgroundColor: 'rgba(80, 220, 108, 0.5)',
-                borderColor:  'rgba(27, 115, 45, 1)'
-            },{
-                label: 'Red Data',
-                data: redData,
-                backgroundColor: 'rgba(222, 83, 83, 0.5)',
-                borderColor:  'rgba(216, 18, 18, 1)'
-            }]
-        };
-        config.push(dataSet);
-                        
-        let scales = {
-            xAxes: [{
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: xAxesName
-                }
-            }],
-            yAxes: [{
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: yAxesName 
-                }
-            }]
-        }
-        config.push(scales);
-        return config;
-    }
-    
-    let RL_Chart = function (data, label, x, y) {
-        let pointData = [];
-        const xAxesName = result[2][x];
-        const yAxesName = result[2][y];
-        for (let i = 0; i < data.length; i++) {
-            pointData.push({x: data[i][x], y: data[i][y]});
-        }
-        let lineData = []; 
-        lineData.push({x: data[0][x], y: label[0]});
-        lineData.push({x: data[data.length-1][x], y: label[data.length-1]});
-
-        let config = [];
-        config.push('line');
-        let dataSet = {
-            datasets: [{
-                type: 'scatter',
-                label: 'Data',
-                data: pointData,
-                backgroundColor: 'rgba(189, 232, 255, 0.5)',
-                borderColor:  'rgba(22, 117, 170, 1)',
-                xAxisID: 'x-axis-1'
-            },{
-                type: 'line',
-                label: 'Linear Regression',
-                data: lineData,
-                backgroundColor: 'rgba(222, 83, 83, 0.5)',
-                borderColor:  'rgba(216, 18, 18, 1)',
-                fill: false,
-                pointRadius: 0
-            }]
-        };
-        config.push(dataSet);
-
-        const xValues = data.map(x => x[0]);
-        const minValue = Math.min.apply(null, xValues);
-        const maxValue = Math.max.apply(null, xValues);
-        let scales = {
-            xAxes: [{
-                display: false,
-            }, {
-                id: 'x-axis-1',
-                type: 'linear',
-                display: true,  
-                ticks: {
-                    min: minValue,
-                    max: maxValue,
-                    stepSize: 5
-                },        
-                scaleLabel: {
-                    display: true,
-                    labelString: xAxesName 
-                }
-            }],
-            yAxes: [{
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: yAxesName
-                }
-            }]
-        };
-        config.push(scales);
-        return config;
-    }
-    
-    let configChart = function(result, x, y){
-        const data = result[0];
-        const label = result[1];
-        const xAxesName = result[2][x];
-        const yAxesName = result[2][y];
-        const title = 'correlazione ' + xAxesName + '-' + yAxesName;
-
-        const isNull = (currentValue) => currentValue === 0;
-        let nomodel = label.every(isNull);
-        let chartConfiguration = [];
-        if(nomodel){
-            chartConfiguration = genericChart(data, label, x, y);
-        }
-        else{
-            const isClass = (currentValue) => currentValue === -1 || currentValue === 1;
-            let SVM = label.every(isClass);
-            if(SVM)
-                chartConfiguration = SVM_Chart(data, label, x, y);
-            
-            else
-                chartConfiguration = RL_Chart(data, label, x, y);
-        }
-        let myDiv = document.getElementById('mychart'); 
-        let chart = document.createElement('canvas');
-        chart.id = 'chart';
-        chart.width = '100';
-        chart.height = '100';
-        myDiv.appendChild(chart);
-        const ctx = document.getElementById('chart').getContext('2d');
-        const scatterChart = new Chart(ctx, {
-            type: chartConfiguration[0],
-            data: chartConfiguration[1],
-            options: {
-                title: { 
-                    display: true,
-                    text: title
-                },
-                scales: chartConfiguration[2]
-            }
-        });
-    }
-   
-</script>
+<footer class="page-footer">
+    <div class="footer-copyright">
+        <div class="container">
+            Predire in Grafana
+            <a class="grey-text text-lighten-4 right">by Carbon12</a>
+        </div>
+    </div>
+</footer>
 
 </body>
 </html>

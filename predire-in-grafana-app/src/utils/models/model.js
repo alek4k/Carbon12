@@ -3,8 +3,9 @@
  * Date: 2020-03-28
  *
  * @file Interfaccia per la gestione dei modelli
- * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * Authors:
+ *      @author Carbon12 <carbon.dodici@gmail.com>
+ * @version 1.4.0
  *
  * Changelog: creazione interfaccia
  */

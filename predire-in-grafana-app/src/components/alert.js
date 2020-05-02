@@ -1,12 +1,12 @@
 /**
  * File name: alert.js
- * Date: 2020-03-18
+ * Date: 2020-04-23
  *
- * @file Script principale del programma di addestramento
+ * @file Classe per gestione della pagina degli alert
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
- * Changelog: modifiche effettuate
+ * Changelog: modificato metodo saveAlertsState(String)
  */
 
 import { appEvents } from 'grafana/app/core/core';
@@ -15,6 +15,13 @@ import Dashboard from '../utils/dashboard';
 
 export default class alertCtrl {
     /** @ngInject */
+
+    /**
+     * Costruisce l'oggetto che rappresenta la pagina per gestione degli alert
+     * @param {$location} Object permette la gestione dell'URL della pagina
+     * @param {$scope} Object gestice la comunicazione tra controller e view
+     * @param {backendSrv} Object rappresenta il backend di Grafana
+     */
     constructor($location, $scope, backendSrv) {
         this.$location = $location;
         this.$scope = $scope;
@@ -22,6 +29,9 @@ export default class alertCtrl {
         this.init();
     }
 
+    /**
+     * Acquisisce informazioni sull'alert predefinito e controlla la dashboard
+     */
     init() {
         this.grafana
             .getAlerts()
@@ -37,6 +47,9 @@ export default class alertCtrl {
             });
     }
 
+    /**
+     * Controlla lo stato della dashboard
+     */
     verifyDashboard() {
         this.grafana
             .getFolder('0')
@@ -67,6 +80,10 @@ export default class alertCtrl {
             });
     }
 
+    /**
+     * Acquisisce lo stato degli alert presenti nei pannelli della dasboard
+     * @param {panels} Object rappresenta il contenuto dei pannelli presenti nella dashboard
+     */
     getAlertsState(panels) {
         this.panelsList = [];
         this.isGraph = [];
@@ -77,6 +94,7 @@ export default class alertCtrl {
             this.panelsList.push(panel.title);
             this.isGraph.push(panel.type === 'graph');
             if (panel.alert !== undefined) {
+                // il tipo è graph
                 this.teamsUrl = panel.alert.notifications[0].uid ? this.oldTeamsUrl : '';
                 this.value.push(panel.alert.conditions[0].evaluator.params[0].toString());
                 this.when.push(panel.alert.conditions[0].evaluator.type === 'gt'
@@ -95,6 +113,10 @@ export default class alertCtrl {
         });
     }
 
+    /**
+     * Resetta lo stato dell'alert del pannello relativo all'indice passato
+     * @param {index} Number rappresenta l'indice del pannello sul quale rimuovere l'alert
+     */
     clearAlertsState(index) {
         if (index !== undefined) {
             this.value[index] = '';
@@ -109,6 +131,9 @@ export default class alertCtrl {
         }
     }
 
+    /**
+     * Configura gli alert di tutti i pannelli della dashbaord, escludendo quelli non impostati
+     */
     configAlerts() {
         if(this.teamsUrl) {
             if (!this.oldTeamsUrl) {
@@ -131,6 +156,10 @@ export default class alertCtrl {
         }
     }
 
+    /**
+     * Salva lo stato della configurazione di tutti gli alert della dashboard
+     * @param {alertName} String rappresenta il nome dell'alert
+     */
     saveAlertsState(alertName) {
         this.grafana
             .getDashboard('predire-in-grafana')
@@ -207,6 +236,9 @@ export default class alertCtrl {
             });
     }
 
+    /**
+     *  Reindirizza l'URL della pagina corrente
+     */
     redirect() {
         this.$location.url(this.dashboardExists
             ? '/d/carbon12/predire-in-grafana' : 'plugins/predire-in-grafana-app/page/import');

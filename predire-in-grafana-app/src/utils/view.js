@@ -1,12 +1,12 @@
 /**
  * File name: view.js
- * Date: 2020-04-26
+ * Date: 2020-04-06
  *
- * @file Classe che descrive la visualizzazione grafica del pannello
+ * @file Classe per la visualizzazione del pannello
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
- * Changelog: Inizializzata la struttura della classe View
+ * Changelog: aggiunto metodo setDefaultBackground(Boolean)
  */
 
 export default class View {
@@ -15,7 +15,6 @@ export default class View {
      * @param {type} String rappresenta il tipo di visualizzazione del pannello che si desidera inizializzare
      * @param {title} String rappresenta il titolo del pannello che si desidera inizializzare
      * @param {id} Number rappresenta l'id del pannello che si desidera inizializzare
-     * @param {dataSource} String indica la sorgente rappresentata dal pannello che si desidera inizializzare
      */
     constructor(type, title, id) {
         this.type = type;
@@ -83,10 +82,10 @@ export default class View {
 
     /**
      * Imposta il background del pannello corrente
-     * @param {dafault} Boolean rappresenta la scelta di applicare o meno il background di deafult
-     * nel pannello corrente
+     * @param {dafault} Boolean rappresenta la scelta di applicare o meno il background di deafult nel pannello
      */
     setDefaultBackground(dafault) {
+        // questo background è pensato per facilitare la visualizzazione dell'indicatore dell'SVM
         if (dafault) {
             this.viewSettings.colors = [
                 '#d44a3a',
@@ -108,7 +107,7 @@ export default class View {
 
     /**
      * Ritorna il tipo di visualizzazione del pannello corrente
-     * @returns {String} che rappresenta il tipo di visualizzazione del pannello corrente
+     * @returns {String} rappresenta il tipo di visualizzazione del pannello corrente
      */
     getType() {
         return this.type;
@@ -116,7 +115,7 @@ export default class View {
 
     /**
      * Ritorna il titolo del pannello corrente
-     * @returns {String} che rappresenta il titolo del pannello corrente
+     * @returns {String} rappresenta il titolo del pannello corrente
      */
     getTitle() {
         return this.title;
@@ -124,7 +123,7 @@ export default class View {
 
     /**
      * Ritorna l'id del pannello corrente
-     * @returns {String} che rappresenta l'id del pannello corrente
+     * @returns {Number} rappresenta l'id del pannello corrente
      */
     getId() {
         return this.id;
@@ -132,7 +131,7 @@ export default class View {
 
     /**
      * Ritorna la sorgente dati del pannello corrente
-     * @returns {String} che rappresenta la sorgente dati del pannello corrente
+     * @returns {String} rappresenta la sorgente dati del pannello corrente
      */
     getDataSource() {
         return this.dataSource;
@@ -140,7 +139,7 @@ export default class View {
 
     /**
      * Ritorna la descrizione del pannello corrente
-     * @returns {String} che rappresenta la descrizione del pannello corrente
+     * @returns {String} rappresenta la descrizione del pannello corrente
      */
     getDescription() {
         return this.description;
@@ -148,7 +147,7 @@ export default class View {
 
     /**
      * Genera il JSON della visualizzazione del pannello
-     * @returns {Object} che rappresenta la parte grafica del pannello
+     * @returns {Object} rappresenta la parte grafica del pannello
      */
     getJSON() {
         if (this.type === 'Grafico') {
@@ -158,6 +157,7 @@ export default class View {
             this.viewSettings.title = this.title ?
                 this.title : 'Grafico di Predizione ' + this.id;
         } else {
+            // il tipo è singlestat
             this.viewSettings.gridPos.h = 4;
             this.viewSettings.gridPos.w = 4;
             this.viewSettings.type = 'singlestat';

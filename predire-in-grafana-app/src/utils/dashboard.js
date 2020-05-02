@@ -1,17 +1,22 @@
 /**
  * File name: dashboard.js
- * Date: 2020-03-18
+ * Date: 2020-04-06
  *
- * @file Script principale del programma di addestramento
+ * @file Classe che rappresenta la dashboard
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
- * Changelog: modifiche effettuate
+ * Changelog: modificati metodi removeThresholds(Number) e removeAlert(Number)
  */
 
 export default class Dashboard {
+    /**
+     * Costruisce l'oggetto che rappresenta la dashboard
+     * @param {db} Object appresenta il contenuto della dashbaord passata
+     */
     constructor(db) {
         if (!db) {
+            // impostazioni di base di una dashboard
             this.dashboardSettings = {
                 panels: [],
                 refresh: '5s',
@@ -47,6 +52,11 @@ export default class Dashboard {
         }
     }
 
+    /**
+     * Imposta la soglia del pannello della dashboard corrispondete all'indice passato
+     * @param {thresholds} Object rappresenta le impostazioni della soglia da settare
+     * @param {index} Number rappresenta l'indice del pannello della dashboard al quale verrà settata la soglia
+     */
     setThresholds(thresholds, index) {
         if (this.dashboardSettings.panels[index].type === 'graph') {
             this.dashboardSettings.panels[index].thresholds = thresholds;
@@ -60,12 +70,21 @@ export default class Dashboard {
         }
     }
 
+    /**
+     * Imposta l'alert del pannello della dashboard corrispondete all'indice passato
+     * @param {thresholds} Object rappresenta le impostazioni dell'alert da settare
+     * @param {index} Number rappresenta l'indice del pannello della dashboard al quale verrà settato l'alert
+     */
     setAlert(alert, index) {
         if (this.dashboardSettings.panels[index].type === 'graph') {
             this.dashboardSettings.panels[index].alert = alert;
         }
     }
 
+    /**
+     * Rimuove la soglia del pannello della dashboard corrispondete all'indice passato
+     * @param {index} Number rappresenta l'indice del pannello della dashboard al quale verrà rimossa la soglia
+     */
     removeThresholds(index) {
         if (this.dashboardSettings.panels[index].thresholds !== undefined) {
             delete this.dashboardSettings.panels[index].thresholds;
@@ -75,16 +94,29 @@ export default class Dashboard {
         }
     }
 
+    /**
+     * Rimuove l'alert nel pannello della dashboard corrispondete all'indice passato
+     * @param {index} Number rappresenta l'indice del pannello della dashboard al quale verrà rimosso l'alert
+     */
     removeAlert(index) {
         if (this.dashboardSettings.panels[index].alert !== undefined) {
             delete this.dashboardSettings.panels[index].alert;
         }
     }
 
+    /**
+     * Aggiunge il pannello passato alla dashboard corrente
+     * @param {index} Number rappresenta l'indice del pannello della dashboard al quale verrà rimosso l'alert
+     */
     addPanel(panel) {
         this.dashboardSettings.panels.push(panel.getJSON());
     }
 
+    /**
+     * Salva nelle variabili globali della dashboard le impostazioni passate
+     * @param {panelID} Number rappresenta l'indice del pannello al quale si riferiscono le impostazioni
+     * @param {settings} Object rappresenta le impostazioni da salvare nelle variabili globali della dashboard
+     */
     storeSettings(panelID, settings) {
         this.dashboardSettings.templating.list.push({
             hide: 2, // nascosto
@@ -94,6 +126,10 @@ export default class Dashboard {
         });
     }
 
+    /**
+     * Ritorna il JSON del contenuto della dashboard
+     * @returns {Object} rappresenta il contenuto della dashboard corrente
+     */
     getJSON() {
         return this.dashboardSettings;
     }

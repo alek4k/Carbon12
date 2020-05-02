@@ -1,26 +1,44 @@
 /**
  * File name: target.js
- * Date: 2020-03-18
+ * Date: 2020-04-06
  *
- * @file Script principale del programma di addestramento
+ * @file Classe che rappresenta la selezione delle sorgenti da monitorare con il pannello
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
- * Changelog: modifiche effettuate
+ * Changelog: modificato metodo getJSON()
  */
+
+
 export default class Target {
+    /**
+     * Costruisce l'oggetto che rappresenta la selezione delle sorgenti da monitorare con il pannello
+     * @param {id} Number rappresenta l'id del pannello che si desidera inizializzare
+     */
     constructor(id) {
         this.id = id;
     }
 
+    /**
+     * Imposta l'id del pannello corrente
+     * @param {id} Number rappresenta l'id del pannello corrente
+     */
     setId(id) {
         this.id = id;
     }
 
+    /**
+     * Ritorna l'id del pannello corrente
+     * @returns {Number} che rappresenta l'id del pannello corrente
+     */
     getId() {
         return this.id;
     }
 
+    /**
+     * Genera il JSON della selezione delle sorgenti da monitorare con il pannello
+     * @returns {Object} che rappresenta la selezione delle sorgenti da monitorare con il pannello
+     */
     getJSON() {
         if (this.id !== null && this.id !== undefined) {
             return {

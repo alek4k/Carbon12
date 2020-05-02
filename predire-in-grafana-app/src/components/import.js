@@ -1,17 +1,16 @@
 /**
  * File name: import.js
- * Date: 2020-03-18
+ * Date: 2020-02-25
  *
- * @file Script principale del programma di addestramento
+ * @file Classe che rappresenta la pagina principale di configurazione del plug-in
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
- * Changelog: modifiche effettuate
+ * Changelog: aggiunto metodo saveDashboard()
  */
 
 import { appEvents } from 'grafana/app/core/core';
 
-// importo il template della dashboard per la creazione del pannello
 import Influx from '../utils/influx';
 import GrafanaApiQuery from '../utils/grafana_query';
 import FilePredictor from '../utils/r_predittore';
@@ -21,6 +20,13 @@ import Panel from '../utils/panel';
 
 export default class importCtrl {
     /** @ngInject */
+
+    /**
+     * Costruisce l'oggetto che rappresenta la pagina principale di configurazione del plug-in
+     * @param {$location} Object permette la gestione dell'URL della pagina
+     * @param {$scope} Object gestice la comunicazione tra controller e view
+     * @param {backendSrv} Object rappresenta il backend di Grafana
+     */
     constructor($location, $scope, backendSrv) {
         this.$location = $location;
         this.$scope = $scope;
@@ -31,7 +37,10 @@ export default class importCtrl {
         this.grafana = new GrafanaApiQuery(backendSrv);
     }
 
-    // carico il file del predittore
+    /**
+     * Carica il file del predittore
+     * @param {json} Object rappresenta il contenuto del predittore
+     */
     onUpload(json) {
         // controllo che il JSON inserito abbia la struttura desiderata
         const fPredictor = new FilePredictor(json);
@@ -51,6 +60,9 @@ export default class importCtrl {
         }
     }
 
+    /**
+     * Carica le sorgenti dati disponibili in Grafana
+     */
     loadDataSources() {
         this.availableDataSources = [];
         this.grafana
@@ -65,7 +77,9 @@ export default class importCtrl {
             });
     }
 
-    // imposto la data source selezionata dall'utente
+    /**
+     * Imposta la sorgente dati selezionata dall'utente
+     */
     setDataSource() {
         if (this.dataSource) {
             this.error = '';
@@ -92,7 +106,9 @@ export default class importCtrl {
         }
     }
 
-    // aggiungo la configurazione della data source alla lista delle data sources
+    /**
+     * Aggiunge la configurazione della sorgente dati alla lista delle sorgenti dati di Grafana
+     */
     addDataSource() {
         const configComplete = this.name && this.database && this.host && this.port;
         if (configComplete) {
@@ -108,7 +124,9 @@ export default class importCtrl {
         }
     }
 
-    // imposto la connessione con il database
+    /**
+     * Imposta la connessione con il database
+     */
     connection() {
         // creo la connessione con il database
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
@@ -140,7 +158,10 @@ export default class importCtrl {
         this.step = 3;
     }
 
-    // salvo il predittore e le selezioni dell'utente
+    /**
+     * Salva le proprietà del pannello con l'id uguale a quello passato
+     * @param {panelID} Number rappresenta l'id del pannello di cui sto salvando le proprietà
+     */
     storePanelSettings(panelID) {
         const settings = {
             predittore: this.predictor,
@@ -155,6 +176,10 @@ export default class importCtrl {
         this.dashboard.storeSettings(panelID, settings);
     }
 
+    /**
+     * Crea il annello con l'id uguale a quello passato
+     * @param {panelID} Number rappresenta l'id del pannello da creare
+     */
     panelGenerator(panelID) {
         const builder = new Builder(); // aggiungere: description, background
         const config = {
@@ -173,6 +198,9 @@ export default class importCtrl {
         this.saveDashboard();
     }
 
+    /**
+     * Gestisce la creazione del nuovo pannello
+     */
     createPanel() {
         this.error = '';
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
@@ -201,7 +229,6 @@ export default class importCtrl {
                                         newID = panel.id + 1;
                                     }
                                 });
-                                console.log('');
                                 this.influx.deletePrediction(newID);
                                 this.dashboard = new Dashboard(db.dashboard);
                                 this.panelGenerator(newID);
@@ -217,7 +244,9 @@ export default class importCtrl {
         }
     }
 
-    // salvo la dashboard
+    /**
+     * Salva la dashboard
+     */
     saveDashboard() {
         appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
@@ -226,6 +255,7 @@ export default class importCtrl {
                 // reindirizzo alla pagina che gestisce la predizione
                 this.$location.url('plugins/predire-in-grafana-app/page/predizione');
                 this.$scope.$evalAsync();
+                // eseguo il refresh della pagina per aggiornare il backend di Grafana
                 window.location.href = 'plugins/predire-in-grafana-app/page/predizione';
             });
     }

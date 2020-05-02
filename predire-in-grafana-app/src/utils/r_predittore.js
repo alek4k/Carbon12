@@ -2,9 +2,9 @@
  * File name: r_predittore.js
  * Date: 2020-03-23
  *
- * @file classe per la lettura e scrittura del JSON con il predittore
+ * @file Classe per la lettura del JSON del predittore
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
  * Changelog: modificato costruttore
  */
@@ -25,6 +25,10 @@ const arrayOfKeys = ['header', 'notes', 'data_entry', 'model', 'file_version', '
  * var campo = manage_predittore.getCampo();
  */
 export default class RPredittore {
+    /**
+     * Costruisce l'oggetto per lettura del JSON del predittore
+     * @param {data} Object rappresenta il contenuto del JSON
+     */
     constructor(data) {
         this.sources = [];
         this.jsonContent = data !== null ? data : {};

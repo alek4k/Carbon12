@@ -27,7 +27,7 @@ class InfinitySwag {
 
     /**
      * Imposta il backend
-     * @param {$scope} Object gestice la comunicazione tra controller e view
+     * @param {$scope} Object gestisce la comunicazione tra controller e view
      * @param {backendSrv} Object rappresenta il backend di Grafana
      */
     setBackendSrv($scope, backendSrv) {
@@ -37,7 +37,7 @@ class InfinitySwag {
     }
 
     /**
-     *  Preleva le variabili globali della dasboard e imposta il database
+     *  Preleva le variabili globali della dashboard e imposta il database
      */
     setConfig() {
         this.grafana = new GrafanaApiQuery(this.backendSrv);
@@ -50,7 +50,6 @@ class InfinitySwag {
             });
     }
 
-    
     /**
      *  Crea un'istanza del database per ogni pannello
      */
@@ -69,7 +68,7 @@ class InfinitySwag {
     /**
      * Salva il valore passato nel database relativo all'indice passato
      * @param {info} Number rappresenta il valore da salvare nel database
-     * @param {index} Number rappresenta l'indice del databse su cui salvare il dato
+     * @param {index} Number rappresenta l'indice del database su cui salvare il dato
      */
     dbWrite(info, index) {
         this.db[index].storeValue('predizione' + this.variables[index].name, info);
@@ -102,7 +101,7 @@ class InfinitySwag {
     /**
      * Ritorna la predizione relativa al pannello richiesto
      * @param {index} Number rappresenta l'indice del pannello del quale si vuole ottenere la predizione
-     * @returns {Number} rappresenta la predizione relativa al pannello rischiesto
+     * @returns {Number} rappresenta la predizione relativa al pannello richiesto
      */
     getPrediction(index) {
         const predictor = this.variables[index].query.predittore;
@@ -123,8 +122,8 @@ class InfinitySwag {
     /**
      * Ritorna la predizione utilizzando l'algoritmo SVM
      * @param {predictor} Object rappresenta il contenuto della configurazione del predittore
-     * @param {point} Array rappresenta i valori delle sorgenti monitorate 
-     * @returns {Number} rappresenta la predizionem, ottenuta con l'SVM, relativa al pannello rischiesto
+     * @param {point} Array rappresenta i valori delle sorgenti monitorate
+     * @returns {Number} rappresenta la predizione, ottenuta con l'SVM, relativa al pannello richiesto
      */
     // eslint-disable-next-line class-methods-use-this
     predictSVM(predictor, point) {
@@ -136,8 +135,8 @@ class InfinitySwag {
     /**
      * Ritorna la predizione utilizzando l'algoritmo RL
      * @param {predictor} Object rappresenta il contenuto della configurazione del predittore
-     * @param {point} Array rappresenta i valori delle sorgenti monitorate 
-     * @returns {Number} rappresenta la predizionem, ottenuta con l'RL, relativa al pannello rischiesto
+     * @param {point} Array rappresenta i valori delle sorgenti monitorate
+     * @returns {Number} rappresenta la predizione, ottenuta con l'RL, relativa al pannello richiesto
      */
     // eslint-disable-next-line class-methods-use-this
     predictRL(predictor, point) {

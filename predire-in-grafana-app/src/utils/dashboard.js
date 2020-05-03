@@ -118,12 +118,36 @@ export default class Dashboard {
      * @param {settings} Object rappresenta le impostazioni da salvare nelle variabili globali della dashboard
      */
     storeSettings(panelID, settings) {
+        this.updateSettings();
         this.dashboardSettings.templating.list.push({
             hide: 2, // nascosto
             name: panelID.toString(),
             query: settings,
             type: 'textbox',
         });
+    }
+
+    /**
+     * Aggiorna le variabili globali della dashboard e ritorna se sono state apportate modifiche
+     * @returns {Boolean} rappresenta se sono state apportate modifiche alle variabili globali della dashboard
+     */
+    updateSettings() {
+        const panels = this.dashboardSettings.panels;
+        const variables = this.dashboardSettings.templating.list;
+        // panels.length <= variables.length
+        if (panels.length !== variables.length) {
+            // le variabili globali della dashboard non sono aggiornate
+            const newVariables = [];
+            for (let i = 0, j = 0; panels[j] !== undefined && i < variables.length; ++i) {
+                if (panels[j].id === variables[i].id) {
+                    newVariables.push(variables[i]);
+                    ++j;
+                }
+            }
+            this.dashboardSettings.templating.list = newVariables;
+            return true;
+        }
+        return false;
     }
 
     /**

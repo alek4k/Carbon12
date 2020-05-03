@@ -18,8 +18,7 @@
 
   <div ng-if="ctrl.step === 2" class="gf-form-group">
     <div class="text-success p-l-1">
-      <i class="fa fa-check"></i>
-      {{'JSON importato'}}
+      <i class="fa fa-check"></i>&nbsp;&nbsp;{{'JSON importato'}}
     </div>
 
     <br/>
@@ -35,8 +34,7 @@
     <div class="gf-form-button-row">
       <button type="button" class="btn btn-primary" ng-click="ctrl.setDataSource()">Conferma</button>
       <span ng-if="ctrl.error.includes('selezionare')" class="text-error p-l-1">
-        <i class="fa fa-warning"></i>
-        {{ctrl.error}}
+        <i class="fa fa-warning"></i>&nbsp;&nbsp;{{ctrl.error}}
       </span>
     </div>
 
@@ -65,8 +63,7 @@
     <div class="gf-form-button-row">
       <button type="button" class="btn btn-primary" ng-click="ctrl.addDataSource()">Conferma</button>
       <span ng-if="ctrl.error.includes('configurazione')" class="text-error p-l-1">
-        <i class="fa fa-warning"></i>
-        {{ctrl.error}}
+        <i class="fa fa-warning"></i>&nbsp;&nbsp;{{ctrl.error}}
       </span>
     </div>
 
@@ -79,15 +76,13 @@
 
   <div ng-if="ctrl.step >= 3" class="gf-form-group">
     <div class="text-success p-l-1">
-      <i class="fa fa-check"></i>
-      {{'JSON importato'}}
+      <i class="fa fa-check"></i>&nbsp;&nbsp;{{'JSON importato'}}
     </div>
 
     <br/>
 
     <div class="text-success p-l-1">
-      <i class="fa fa-check"></i>
-      {{'Sorgente dati selezionata'}}
+      <i class="fa fa-check"></i>&nbsp;&nbsp;{{'Sorgente dati selezionata'}}
     </div>
 
     <br/>
@@ -177,8 +172,7 @@
       <div class="gf-form">
         <button class="btn btn-primary" ng-click="ctrl.createPanel()">Crea Pannello</button>
         <span ng-if="ctrl.error" class="text-error p-l-1">
-          <i class="fa fa-warning"></i>
-          {{ctrl.error}}
+          <i class="fa fa-warning"></i>&nbsp;&nbsp;{{ctrl.error}}
         </span>
       </div>
     </div>

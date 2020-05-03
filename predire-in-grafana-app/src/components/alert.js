@@ -124,9 +124,11 @@ export default class alertCtrl {
             this.message[index] = '';
         } else {
             for (let i = 0; i < this.value.length; ++i) {
-                this.value[i] = '';
-                this.when[i] = '';
-                this.message[i] = '';
+                if (this.isRL[i]) {
+                    this.value[i] = '';
+                    this.when[i] = '';
+                    this.message[i] = '';
+                }
             }
         }
     }

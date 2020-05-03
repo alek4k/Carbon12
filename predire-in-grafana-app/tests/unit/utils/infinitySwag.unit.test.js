@@ -62,7 +62,7 @@ describe('Testing method', () => {
         expect(infinitySwag.setConfig).toHaveBeenCalledTimes(1);
     });
 
-    it('setConfig', () => {
+    it.skip('setConfig', () => {
         infinitySwag.setConfig = infinitySwagProto.setConfig;
         infinitySwag.backendSrv = new BackendSrvMock();
         infinitySwag.setInflux = jest.fn();

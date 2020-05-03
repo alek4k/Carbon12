@@ -47,21 +47,21 @@ export default class GrafanaApiQuery {
     }
 
     /**
-     * Ritorna una Promise che rappresenterà la dashboard richiesta ove presente in Grafana
-     * @param {name} String rappresenta il nome della dashboard da ottenere
-     * @returns {Promise} rappresenterà la dashboard richiesta
-     */
-    getDashboard(name) {
-        return this.backendSrv.get('api/dashboards/db/' + name);
-    }
-
-    /**
      * Ritorna una Promise che rappresenterà la cartella richiesta ove presente in Grafana
      * @param {folderId} String rappresenta l'id della cartella da ottenere
      * @returns {Promise} rappresenterà la cartella richiesta
      */
     getFolder(folderId) {
         return this.backendSrv.get('api/search?folderIds=' + folderId);
+    }
+
+    /**
+     * Ritorna una Promise che rappresenterà la dashboard richiesta ove presente in Grafana
+     * @param {name} String rappresenta il nome della dashboard da ottenere
+     * @returns {Promise} rappresenterà la dashboard richiesta
+     */
+    getDashboard(name) {
+        return this.backendSrv.get('api/dashboards/db/' + name);
     }
 
     /**

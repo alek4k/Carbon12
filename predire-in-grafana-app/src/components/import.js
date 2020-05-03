@@ -31,8 +31,6 @@ export default class importCtrl {
         this.$location = $location;
         this.$scope = $scope;
         this.step = 1;
-        this.host = 'http://localhost';
-        this.port = '8086';
         this.influx = null;
         this.grafana = new GrafanaApiQuery(backendSrv);
     }
@@ -65,6 +63,11 @@ export default class importCtrl {
      */
     loadDataSources() {
         this.availableDataSources = [];
+        this.dataSource = '';
+        this.newDataSource = '';
+        this.database = '';
+        this.host = 'http://localhost';
+        this.port = '8086';
         this.grafana
             .getDataSources()
             .then((dataSources) => {
@@ -83,7 +86,6 @@ export default class importCtrl {
     setDataSource() {
         if (this.dataSource) {
             this.error = '';
-            this.newDataSource = '';
             this.grafana
                 .getDataSources()
                 .then((dataSource) => {
@@ -114,7 +116,6 @@ export default class importCtrl {
         const configComplete = this.newDataSource && this.database && this.host && this.port;
         if (configComplete) {
             this.error = '';
-            this.dataSource = '';
             this.grafana
                 .postDataSource(this.newDataSource, this.database, this.host, this.port)
                 .then(() => {
@@ -134,10 +135,13 @@ export default class importCtrl {
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
 
         const sources = this.influx.getSources();
-        // const instances = this.influx.getInstances();
+
         this.availableSources = [];
+        this.sources = [];
         this.availableParams = [];
+        this.params = [];
         this.availableInstances = [];
+        this.instances = [];
         const instances = this.influx.getInstances();
         for (let i = 0, j = 0; i < sources.length; ++i) {
             // itero sul totale delle sorgenti
@@ -157,6 +161,12 @@ export default class importCtrl {
             }
             // se una sorgente non ha istanze rimane availableInstances[x] = [];
         }
+        if (!this.availableSources.length) {
+            this.emptyDataSource = true;
+        } else {
+            this.emptyDataSource = false;
+        }
+
         this.step = 3;
     }
 
@@ -204,11 +214,12 @@ export default class importCtrl {
      * Gestisce la creazione del nuovo pannello
      */
     createPanel() {
-        this.error = '';
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
             if (this.sources[i] === undefined) {
                 this.error = 'La sorgente di '
                     + this.availableDataEntry[i] + ' non è stata selezionata';
+            } else {
+                this.error = '';
             }
         }
         if (!this.error) {

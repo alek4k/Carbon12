@@ -81,28 +81,25 @@ export default class View {
     }
 
     /**
-     * Imposta il background del pannello corrente
-     * @param {dafault} Boolean rappresenta la scelta di applicare o meno il background di deafult nel pannello
+     * Imposta il background di default al pannello corrente
      */
-    setDefaultBackground(dafault) {
+    setDefaultBackground() {
         // questo background è pensato per facilitare la visualizzazione dell'indicatore dell'SVM
-        if (dafault) {
-            this.viewSettings.colors = [
-                '#d44a3a',
-                'rgba(237, 129, 40, 0.89)',
-                '#299c46',
-            ],
-            this.viewSettings.thresholds = '0, 0';
-            this.viewSettings.valueMaps = [{
-                op: '=',
-                text: 'Good &#128077;',
-                value: '1',
-            }, {
-                op: '=',
-                text: 'Bad &#128078;',
-                value: '-1',
-            }];
-        }
+        this.viewSettings.colors = [
+            '#d44a3a',
+            'rgba(237, 129, 40, 0.89)',
+            '#299c46',
+        ];
+        this.viewSettings.thresholds = '0, 0';
+        this.viewSettings.valueMaps = [{
+            op: '=',
+            text: 'Good &#128077;',
+            value: '1',
+        }, {
+            op: '=',
+            text: 'Bad &#128078;',
+            value: '-1',
+        }];
     }
 
     /**
@@ -154,17 +151,16 @@ export default class View {
             this.viewSettings.gridPos.h = 8;
             this.viewSettings.gridPos.w = 12;
             this.viewSettings.type = 'graph';
-            this.viewSettings.title = this.title ?
-                this.title : 'Grafico di Predizione ' + this.id;
+            this.viewSettings.title = this.title
+                ? this.title : 'Grafico di Predizione ' + this.id;
         } else {
             // il tipo è singlestat
             this.viewSettings.gridPos.h = 4;
             this.viewSettings.gridPos.w = 4;
             this.viewSettings.type = 'singlestat';
-            this.viewSettings.title = this.title ?
-                this.title : 'Indicatore di Predizione ' + this.id;
-            this.viewSettings.colorBackground = this.viewSettings.thresholds !== undefined
-                ? true : false;
+            this.viewSettings.title = this.title
+                ? this.title : 'Indicatore di Predizione ' + this.id;
+            this.viewSettings.colorBackground = this.viewSettings.thresholds !== undefined;
         }
         this.viewSettings.description = this.description ? this.description : '';
         this.viewSettings.datasource = this.dataSource;

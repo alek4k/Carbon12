@@ -17,6 +17,15 @@ main {
     flex: 1 0 auto;
 }
 
+form > .row {
+    margin-left: 0!important;
+}
+
+.input-field {
+    margin-left: 0;
+    padding-left: 0!important;
+}
+
 #listaRiepilogo {
     list-style: none;
     font-size: 1.1em;
@@ -76,7 +85,6 @@ main {
 .infoLabel {
     font-size: 0.8rem;
     color: #595858;
-    display: inline-block;
     margin: 0;
 }
 

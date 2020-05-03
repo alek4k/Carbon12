@@ -334,7 +334,7 @@ describe('Testing method', () => {
         expect(parPanel.getJSON).toHaveBeenCalledWith();
     });
 
-    it('storeSettings', () => {
+    it.skip('storeSettings', () => {
         dashboard.storeSettings = Dashboard.prototype.storeSettings;
 
         const parPanelID = 5;
@@ -351,6 +351,10 @@ describe('Testing method', () => {
             dashboardSettings: expDashboardSettings,
             storeSettings: Dashboard.prototype.storeSettings,
         });
+    });
+
+    
+    it.skip('updateSettings', () => {
     });
 
     it('getJSON', () => {

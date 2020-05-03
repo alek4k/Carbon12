@@ -26,6 +26,10 @@ form > .row {
     padding-left: 0!important;
 }
 
+.input-field.col label {
+    left: 0;
+}
+
 #listaRiepilogo {
     list-style: none;
     font-size: 1.1em;

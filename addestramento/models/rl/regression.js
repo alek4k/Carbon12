@@ -1,10 +1,10 @@
-module.exports = class Regression {
+class Regression {
 
     add(xs,ys){this.addObservation({x:[1].concat(xs),y:[ys]})}
     calculate(){return this.calculateCoefficients()}
     predict(xs){return this.hypothesize({x:[1].concat(xs)})}
     push(options){this.addObservation(options)}
-  
+
     /**
     * in y = ax + cb
     * @param data {array} value of x
@@ -26,7 +26,7 @@ module.exports = class Regression {
       //calcola coefficienti
       this.calculate()
     }
-  
+
     toJSON() {
         let json = {}
         json._parametroN = 'numero di dati inseriti'
@@ -37,7 +37,7 @@ module.exports = class Regression {
         json.alpha = this.calculate()
         return json
     }
-  
+
     fromJSON(json) {
       console.log('json reg'+json)
       console.log('N'+json.N)
@@ -48,7 +48,7 @@ module.exports = class Regression {
         this.coefficients = json.alpha
         console.log(this.coefficients)
     }
-  
+
     constructor(options){
       if(!options)
         throw new Error('missing options')
@@ -61,7 +61,7 @@ module.exports = class Regression {
       this.D = options.numX
       this.identity = this.identityMatrix(options.numX)
     }
-  
+
     addObservation(options){
       if(!options)
         throw new Error('missing options')
@@ -72,7 +72,7 @@ module.exports = class Regression {
       // Adding an observation invalidates our coefficients.
       delete this.coefficients
     }
-  
+
     calculateCoefficients(){
       var xTx = this.transposeOfXTimesX
       var xTy = this.transposeOfXTimesY
@@ -80,7 +80,7 @@ module.exports = class Regression {
       this.coefficients = this.multiply(inv, xTy)
       return this.coefficients
     }
-  
+
     hypothesize(options) {
       if(!options)
         throw new Error('missing options')
@@ -96,7 +96,7 @@ module.exports = class Regression {
       }
       return hypothesis
     }
-  
+
     inverse(matrix, identity) {
       var size = matrix.length
       var result = new Array(size)
@@ -106,15 +106,15 @@ module.exports = class Regression {
       for(var i = 0; i < size; i++) result[i].splice(0, size)
       return result
     }
-  
+
     rref(A) {
       var rows = A.length;
       var columns = A[0].length;
-  
+
       var lead = 0;
       for (var k = 0; k < rows; k++) {
           if (columns <= lead) return;
-  
+
           var i = k;
           while (A[i][lead] === 0) {
               i++;
@@ -126,12 +126,12 @@ module.exports = class Regression {
           }
           var irow = A[i], krow = A[k];
           A[i] = krow, A[k] = irow;
-  
+
           var val = A[k][lead];
           for (var j = 0; j < columns; j++) {
               A[k][j] /= val;
           }
-  
+
           for (var i = 0; i < rows; i++) {
               if (i === k) continue;
               val = A[i][lead];
@@ -143,7 +143,7 @@ module.exports = class Regression {
       }
       return A;
     }
-  
+
     multiply(lhs, rhs) {
       var options = { numRows: lhs.length, numColumns: rhs[0].length }
       var streamingProduct = this.rectMatrix(options)
@@ -161,14 +161,14 @@ module.exports = class Regression {
       }
       return streamingProduct
     }
-  
+
     identityMatrix(size){
       var matrix = this.rectMatrix({ numRows: size, numColumns: size })
       for(var i = 0; i < size; i++)
         matrix[i][i] = 1
       return matrix
     }
-  
+
     rectMatrix(options){
       var matrix = new Array(options.numRows)
       for(var r = 0; r < options.numRows; r++) {
@@ -180,12 +180,13 @@ module.exports = class Regression {
       }
       return matrix
     }
-  
+
     addRowAndColumn(product,options){
       for(var c = 0; c < options.lhsColumn.length; c++)
         for(var r = 0; r < options.rhsRow.length; r++)
           product[c][r] += options.lhsColumn[c] * options.rhsRow[r]
     }
-  
-  }
-  
+
+}
+
+module.exports.regression = Regression;

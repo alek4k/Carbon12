@@ -18,13 +18,16 @@
       <button class="btn btn-primary"
         ng-click="ctrl.redirect()">Vai alla Dashboard</button>
     </div>
-
-    <div ng-if="ctrl.dashboardExists && !ctrl.dashboardEmpty" class="gf-form-group">
-      <div class="gf-form-group">
-        <button class="btn btn-primary"
-        ng-click="ctrl.redirect()">Vai alla Dashboard</button>
+    
+    <div ng-if="ctrl.dashboardExists && ctrl.dashboardEmpty" class="gf-form-group">
+      <div class="row">
+        <div class="col-md-10">
+          <p>La dashboard è vuota</p>    
+        </div>
       </div>
-        
+    </div>
+
+    <div ng-if="ctrl.dashboardExists && !ctrl.dashboardEmpty" class="gf-form-group">        
       <div ng-if="ctrl.isRL.indexOf(true) === -1 && ctrl.isGraph.indexOf(true) === -1" class="gf-form-group">
         <div class="row">
           <div class="col-md-10">

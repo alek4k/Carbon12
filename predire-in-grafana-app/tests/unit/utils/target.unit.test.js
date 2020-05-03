@@ -20,7 +20,7 @@ it('Testing constructor', () => {
 describe('Testing method', () => {
     let target = null;
     beforeEach(() => {
-        target = new Target();
+        target = new (function testTarget() { })();
     });
 
     afterEach(() => {
@@ -28,23 +28,42 @@ describe('Testing method', () => {
     });
 
     it('setId', () => {
-        const newId = 2;
-        target.setId(newId);
-        expect(target.id).toEqual(newId);
+        target.setId = Target.prototype.setId;
+
+        const parId = 2;
+        target.setId(parId);
+
+        expect(target).toEqual({
+            setId: Target.prototype.setId,
+            id: parId,
+        });
     });
 
     it('getId', () => {
-        const testId = 3;
-        target.id = testId;
-        expect(target.getId()).toEqual(testId);
+        target.getId = Target.prototype.getId;
+        target.id = 3;
+        const expId = target.id;
+
+        expect(target.getId()).toEqual(expId);
+        expect(target).toEqual({
+            getId: Target.prototype.getId,
+            id: expId,
+        });
     });
 
     describe('getJSON', () => {
+        beforeEach(() => {
+            target.getJSON = Target.prototype.getJSON;
+        });
+
         it('when id has been set', () => {
             target.id = 7;
+            const expId = target.id;
+
+
             expect(target.getJSON()).toEqual({
-                refId: 'Predizione' + target.id,
-                measurement: 'predizione' + target.id,
+                refId: 'Predizione' + expId,
+                measurement: 'predizione' + expId,
                 policy: 'default',
                 resultFormat: 'time_series',
                 orderByTime: 'ASC',
@@ -71,11 +90,17 @@ describe('Testing method', () => {
                     ],
                 }],
             });
+            expect(target).toEqual({
+                getJSON: Target.prototype.getJSON,
+                id: expId,
+            });
         });
 
         it('when id has not been set', () => {
-            console.log(target.id);
             expect(target.getJSON()).toEqual(undefined);
+            expect(target).toEqual({
+                getJSON: Target.prototype.getJSON,
+            });
         });
     });
 });

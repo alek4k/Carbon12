@@ -10,7 +10,7 @@
  */
 
 const Model = require('./model');
-const SVM = require('./svm/svm');
+const SVM = require('./svm/svm').svm;
 
 class SvmAdapter extends Model {
     constructor() {

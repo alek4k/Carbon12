@@ -318,7 +318,7 @@ let RL_Chart = function (data, label, x, y) {
     return config;
 };
 
-let configChart = function(result, x, y){
+let configChart = function(result, x, y) {
     const data = result[0];
     const label = result[1];
     const xAxesName = result[2][x];
@@ -328,17 +328,16 @@ let configChart = function(result, x, y){
     const isNull = (currentValue) => currentValue === 0;
     let nomodel = label.every(isNull);
     let chartConfiguration = [];
-    if(nomodel){
+    if (nomodel) {
         chartConfiguration = genericChart(data, label, x, y);
-    }
-    else{
+    } else {
         const isClass = (currentValue) => currentValue === -1 || currentValue === 1;
         let SVM = label.every(isClass);
-        if(SVM)
+        if (SVM) {
             chartConfiguration = SVM_Chart(data, label, x, y);
-
-        else
+        } else {
             chartConfiguration = RL_Chart(data, label, x, y);
+        }
     }
     let myDiv = document.getElementById('mychart');
     let chart = document.createElement('canvas');
@@ -356,6 +355,7 @@ let configChart = function(result, x, y){
                 text: title,
             },
             scales: chartConfiguration[2],
+            responsive: true,
         },
     });
 };

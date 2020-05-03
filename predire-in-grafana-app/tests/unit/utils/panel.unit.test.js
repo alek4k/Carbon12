@@ -17,16 +17,15 @@ jest.mock('../../../src/utils/view');
 jest.mock('../../../src/utils/target');
 
 it('Testing constructor', () => {
-    const parTarget = new Target();
-    const parView = new View();
-    const panel = new Panel(parTarget, parView);
-    expect(panel).toEqual({ target: parTarget, view: parView });
+    const panel = new Panel(new Target(), new View());
+
+    expect(panel).toEqual({ target: new Target(), view: new View() });
 });
 
 describe('Testing method', () => {
     let panel = null;
     beforeEach(() => {
-        panel = new Panel();
+        panel = new (function testPanel() { })();
     });
 
     afterEach(() => {
@@ -34,12 +33,20 @@ describe('Testing method', () => {
     });
 
     it('getJSON', () => {
+        panel.getJSON = Panel.prototype.getJSON;
+
         const view = new View();
         const target = new Target();
-        panel.target = target;
         panel.view = view;
+        panel.target = target;
+
         const expectedJSON = view.getJSON();
         expectedJSON.targets = [target.getJSON()];
         expect(panel.getJSON()).toEqual(expectedJSON);
+        expect(panel).toEqual({
+            getJSON: Panel.prototype.getJSON,
+            view: new View(),
+            target: new Target(),
+        });
     });
 });

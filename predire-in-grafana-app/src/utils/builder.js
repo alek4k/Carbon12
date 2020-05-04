@@ -33,7 +33,9 @@ export default class Builder {
         const view = new View(config.type, config.title, config.id);
         view.setDataSource(config.dataSource);
         view.setDescription(config.description);
-        view.setDefaultBackground(config.model === 'SVM');
+        if (config.model === 'SVM') {
+            view.setDefaultBackground();
+        }
         return view;
     }
 }

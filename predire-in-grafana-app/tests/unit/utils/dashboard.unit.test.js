@@ -147,8 +147,8 @@ describe('Testing method', () => {
                 thresholds: parThresholds,
             };
             expect(dashboard).toEqual({
-                dashboardSettings: expDashboardSettings,
                 setThresholds: Dashboard.prototype.setThresholds,
+                dashboardSettings: expDashboardSettings,
             });
         });
 
@@ -172,8 +172,8 @@ describe('Testing method', () => {
                     colorBackground: true,
                 };
                 expect(dashboard).toEqual({
-                    dashboardSettings: expDashboardSettings,
                     setThresholds: Dashboard.prototype.setThresholds,
+                    dashboardSettings: expDashboardSettings,
                 });
             });
 
@@ -196,8 +196,8 @@ describe('Testing method', () => {
                     colorBackground: true,
                 };
                 expect(dashboard).toEqual({
-                    dashboardSettings: expDashboardSettings,
                     setThresholds: Dashboard.prototype.setThresholds,
+                    dashboardSettings: expDashboardSettings,
                 });
             });
         });
@@ -217,8 +217,8 @@ describe('Testing method', () => {
                 alert: parAlert,
             };
             expect(dashboard).toEqual({
-                dashboardSettings: expDashboardSettings,
                 setAlert: Dashboard.prototype.setAlert,
+                dashboardSettings: expDashboardSettings,
             });
         });
 
@@ -234,8 +234,8 @@ describe('Testing method', () => {
                 type: 'notGraph',
             };
             expect(dashboard).toEqual({
-                dashboardSettings: expDashboardSettings,
                 setAlert: Dashboard.prototype.setAlert,
+                dashboardSettings: expDashboardSettings,
             });
         });
     });
@@ -251,8 +251,8 @@ describe('Testing method', () => {
 
                 expDashboardSettings.panels = [{ type: 'singlestat', colorBackground: false }];
                 expect(dashboard).toEqual({
-                    dashboardSettings: expDashboardSettings,
                     removeThresholds: Dashboard.prototype.removeThresholds,
+                    dashboardSettings: expDashboardSettings,
                 });
             });
 
@@ -265,8 +265,8 @@ describe('Testing method', () => {
 
                 expDashboardSettings.panels = [{ type: 'notSinglestat' }];
                 expect(dashboard).toEqual({
-                    dashboardSettings: expDashboardSettings,
                     removeThresholds: Dashboard.prototype.removeThresholds,
+                    dashboardSettings: expDashboardSettings,
                 });
             });
         });
@@ -280,8 +280,8 @@ describe('Testing method', () => {
 
             expDashboardSettings.panels = [{ thresholds: undefined }];
             expect(dashboard).toEqual({
-                dashboardSettings: expDashboardSettings,
                 removeThresholds: Dashboard.prototype.removeThresholds,
+                dashboardSettings: expDashboardSettings,
             });
         });
     });
@@ -296,8 +296,8 @@ describe('Testing method', () => {
 
             expDashboardSettings.panels = [{}];
             expect(dashboard).toEqual({
-                dashboardSettings: expDashboardSettings,
                 removeAlert: Dashboard.prototype.removeAlert,
+                dashboardSettings: expDashboardSettings,
             });
         });
 
@@ -310,8 +310,8 @@ describe('Testing method', () => {
 
             expDashboardSettings.panels = [{ alert: undefined }];
             expect(dashboard).toEqual({
-                dashboardSettings: expDashboardSettings,
                 removeAlert: Dashboard.prototype.removeAlert,
+                dashboardSettings: expDashboardSettings,
             });
         });
     });
@@ -326,21 +326,25 @@ describe('Testing method', () => {
         dashboard.addPanel(parPanel);
 
         expDashboardSettings.panels = ['testGetJSON'];
-        expect(dashboard).toEqual({
-            dashboardSettings: expDashboardSettings,
-            addPanel: Dashboard.prototype.addPanel,
-        });
         expect(parPanel.getJSON).toHaveBeenCalledTimes(1);
         expect(parPanel.getJSON).toHaveBeenCalledWith();
+        expect(dashboard).toEqual({
+            addPanel: Dashboard.prototype.addPanel,
+            dashboardSettings: expDashboardSettings,
+        });
     });
 
-    it.skip('storeSettings', () => {
+    it('storeSettings', () => {
         dashboard.storeSettings = Dashboard.prototype.storeSettings;
+        const updateSettingsMock = jest.fn();
+        dashboard.updateSettings = updateSettingsMock;
 
         const parPanelID = 5;
         const parSettings = 'testSettings';
         dashboard.storeSettings(parPanelID, parSettings);
 
+        expect(updateSettingsMock).toHaveBeenCalledTimes(1);
+        expect(updateSettingsMock).toHaveBeenCalledWith();
         expDashboardSettings.templating.list = [{
             hide: 2, // nascosto
             name: parPanelID.toString(),
@@ -348,13 +352,55 @@ describe('Testing method', () => {
             type: 'textbox',
         }];
         expect(dashboard).toEqual({
-            dashboardSettings: expDashboardSettings,
             storeSettings: Dashboard.prototype.storeSettings,
+            updateSettings: updateSettingsMock,
+            dashboardSettings: expDashboardSettings,
         });
     });
 
-    
-    it.skip('updateSettings', () => {
+    describe('updateSettings', () => {
+        beforeEach(() => {
+            dashboard.updateSettings = Dashboard.prototype.updateSettings;
+        });
+
+        it('with panel.length equal variable.length', () => {
+            const returnValue = dashboard.updateSettings();
+
+            expect(returnValue).toEqual(false);
+            expect(dashboard).toEqual({
+                updateSettings: Dashboard.prototype.updateSettings,
+                dashboardSettings: expDashboardSettings,
+            });
+        });
+
+
+        it('with panel.length not equal variable.length', () => {
+            expect(dashboard.dashboardSettings.panels).toEqual([]);
+            expect(dashboard.dashboardSettings.templating.list).toEqual([]);
+            dashboard.dashboardSettings.panels.push({ id: 1 });
+            dashboard.dashboardSettings.panels.push({ id: 2 });
+            dashboard.dashboardSettings.panels.push({ id: 3 });
+            dashboard.dashboardSettings.panels.push({ id: 4 });
+            dashboard.dashboardSettings.templating.list.push({ id: 1 });
+            dashboard.dashboardSettings.templating.list.push({ id: 3 });
+            dashboard.dashboardSettings.templating.list.push({ id: 4 });
+            dashboard.dashboardSettings.templating.list.push({ id: 2 });
+            dashboard.dashboardSettings.templating.list.push({ id: 5 });
+
+            const returnValue = dashboard.updateSettings();
+
+            expDashboardSettings.panels.push({ id: 1 });
+            expDashboardSettings.panels.push({ id: 2 });
+            expDashboardSettings.panels.push({ id: 3 });
+            expDashboardSettings.panels.push({ id: 4 });
+            expDashboardSettings.templating.list.push({ id: 1 });
+            expDashboardSettings.templating.list.push({ id: 2 });
+            expect(returnValue).toEqual(true);
+            expect(dashboard).toEqual({
+                updateSettings: Dashboard.prototype.updateSettings,
+                dashboardSettings: expDashboardSettings,
+            });
+        });
     });
 
     it('getJSON', () => {
@@ -364,9 +410,8 @@ describe('Testing method', () => {
 
         expect(returnValue).toEqual(expDashboardSettings);
         expect(dashboard).toEqual({
-            dashboardSettings: expDashboardSettings,
             getJSON: Dashboard.prototype.getJSON,
+            dashboardSettings: expDashboardSettings,
         });
     });
-
 });

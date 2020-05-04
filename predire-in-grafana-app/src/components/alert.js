@@ -26,6 +26,7 @@ export default class alertCtrl {
         this.$location = $location;
         this.$scope = $scope;
         this.grafana = new GrafanaApiQuery(backendSrv);
+        this.step = 1;
         this.init();
     }
 
@@ -152,6 +153,8 @@ export default class alertCtrl {
                         this.saveAlertsState('predire-in-grafana-alert');
                         this.$scope.$evalAsync();
                     });
+            } else {
+                this.saveAlertsState('predire-in-grafana-alert');
             }
         } else {
             this.saveAlertsState('');

@@ -94,8 +94,34 @@
             <button class="btn btn-primary" ng-click="ctrl.configAlerts()">Conferma</button>
           </div>
           <div class="gf-form">
-            <button class="btn btn-danger" ng-click="ctrl.clearAlertsState()">
+            <button class="btn btn-danger" ng-click="ctrl.step = 2">
               <i class="fa fa-trash"></i>&nbsp;&nbsp;Elimina Tutto</button>
+          </div>
+        </div>
+
+        <div ng-if="ctrl.step === 2" class="modal-backdrop in"></div>
+        <div ng-if="ctrl.step === 2" class="modal hide modal--narrow confirm-modal in" style="display: block;">
+          <div class="modal-body">
+            <div class="modal-header">
+              <h2 class="modal-header-title">
+                <i class="fa fa-exclamation"></i>
+                <span class="p-l-1">Conferma di cancellazione</span>
+              </h2>
+              <a class="modal-header-close" ng-click="ctrl.step = 1">
+                <i class="fa fa-remove"></i>
+              </a>
+            </div>
+            <div class="modal-content text-center">
+              <div class="confirm-modal-text">
+                Sei sicuro di voler rimuovere tutti gli alert?
+              </div>
+              <div class="confirm-modal-buttons">
+                <button type="button" class="btn btn-primary"
+                  ng-click="ctrl.clearAlertsState(); ctrl.configAlerts(); ctrl.step = 1">Si</button>
+                <button type="button" class="btn btn-danger"
+                  ng-click="ctrl.step = 1">Annulla</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

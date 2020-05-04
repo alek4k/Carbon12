@@ -9,9 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-export const urlMock = jest.fn(() => {
-    return undefined;
-});
+export const urlMock = jest.fn(() => undefined);
 
 const locationMock = jest.fn().mockImplementation(() => ({
     url: urlMock,

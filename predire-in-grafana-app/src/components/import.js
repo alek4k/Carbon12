@@ -193,7 +193,6 @@ export default class importCtrl {
      * @param {panelID} Number rappresenta l'id del pannello da creare
      */
     panelGenerator(panelID) {
-        const builder = new Builder(); // aggiungere: description, background
         const config = {
             id: panelID,
             type: this.view,
@@ -202,8 +201,9 @@ export default class importCtrl {
             model: this.model,
             dataSource: this.dataSource ? this.dataSource : this.newDataSource,
         };
-        const target = builder.buildTarget(config);
-        const view = builder.buildView(config);
+        const builder = new Builder(config); // aggiungere: description, background
+        const target = builder.buildTarget();
+        const view = builder.buildView();
         const panel = new Panel(target, view);
         this.storePanelSettings(panelID);
         this.dashboard.addPanel(panel);

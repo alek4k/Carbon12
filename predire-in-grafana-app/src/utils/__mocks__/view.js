@@ -57,9 +57,15 @@ export const getJSONMock = jest.fn(() => {
     }
     return dashboard;
 });
+export const setDataSourceMock = jest.fn();
+export const setDescriptionMock = jest.fn();
+export const setDefaultBackgroundMock = jest.fn();
 
 const viewMock = jest.fn().mockImplementation(() => ({
     getJSON: getJSONMock,
+    setDataSource: setDataSourceMock,
+    setDescription: setDescriptionMock,
+    setDefaultBackground: setDefaultBackgroundMock,
 }));
 
 export default viewMock;

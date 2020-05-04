@@ -46,8 +46,8 @@ export default class Influx extends DBConnection {
      */
     getLastValue(source, instance, param) {
         const query = instance
-            ? `q=select ${param} from ${source} where 
-                instance='${instance}' order by time desc limit 1`
+            ? `q=select ${param} from ${source} where `
+            + `instance='${instance}' order by time desc limit 1`
             : `q=select ${param} from ${source} order by time desc limit 1`;
         let result;
         $.ajax({

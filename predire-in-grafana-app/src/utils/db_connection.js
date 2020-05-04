@@ -8,7 +8,7 @@
  *
  * Changelog: aggiunto campo dato per il tracciamento delle predizioni salvate
  */
-class DBConnection {
+export default class DBConnection {
     /**
      * Costruisce l'oggetto che rappresenta il database
      * @param {host} String rappresenta l'host del database
@@ -28,5 +28,3 @@ class DBConnection {
         this.predictions = [];
     }
 }
-
-module.exports = DBConnection;

@@ -12,184 +12,624 @@
 import { ajaxMock } from 'jquery';
 
 import Influx from '../../../src/utils/influx';
+import DBConnection from '../../../src/utils/db_connection';
 
-describe('Testing constructor', () => {
-    it('with correct values', () => {
-        const parHost = 'localhost';
-        const parPort = 1234;
-        const parDatabase = 'telegraf';
-        const influx = new Influx(parHost, parPort, parDatabase);
-        expect(influx).toEqual({
-            host: parHost,
-            port: parPort,
-            database: parDatabase,
-            predictions: [],
-        });
-    });
+jest.mock('../../../src/utils/db_connection');
 
-    describe('with incorrect values', () => {
-        it('for host param', () => {
-            const parHost = null;
-            const parPort = 1234;
-            const parDatabase = 'telegraf';
-            // eslint-disable-next-line no-new
-            expect(() => { new Influx(parHost, parPort, parDatabase); })
-                .toThrow(new Error('Incorrect values'));
-        });
-
-        it('for port param', () => {
-            const parHost = 'localhost';
-            const parPort = undefined;
-            const parDatabase = 'telegraf';
-            // eslint-disable-next-line no-new
-            expect(() => { new Influx(parHost, parPort, parDatabase); })
-                .toThrow(new Error('Incorrect values'));
-        });
-
-        it('for database param', () => {
-            const parHost = 'localhost';
-            const parPort = 1234;
-            const parDatabase = undefined;
-            // eslint-disable-next-line no-new
-            expect(() => { new Influx(parHost, parPort, parDatabase); })
-                .toThrow(new Error('Incorrect values'));
-        });
-
-        it('for all params', () => {
-            // eslint-disable-next-line no-new
-            expect(() => { new Influx(undefined, undefined, undefined); })
-                .toThrow(new Error('Incorrect values'));
-        });
+it('Testing constructor', () => {
+    const parHost = 'localhost';
+    const parPort = 1234;
+    const parDatabase = 'telegraf';
+    const influx = new Influx(parHost, parPort, parDatabase);
+    expect(DBConnection).toHaveBeenCalledTimes(1);
+    expect(DBConnection).toHaveBeenCalledWith(parHost, parPort, parDatabase);
+    expect(influx).toEqual({
     });
 });
 
 describe('Testing method', () => {
     let influx = null;
+    let oldHost;
+    let oldPort;
+    let oldDatabase;
+    let data = null;
+
     beforeEach(() => {
         influx = new (function testInflux() { })();
         influx.host = 'localhost';
         influx.port = 8080;
         influx.database = 'telegraf';
+        oldHost = 'localhost';
+        oldPort = 8080;
+        oldDatabase = 'telegraf';
 
-    });
+        data = {
+            results: [
+                {
+                    statement_id: 0,
+                    series: [
+                        {
+                            name: 'CPU',
+                            columns: [
+                                'fieldKey',
+                                'fieldType',
+                            ],
+                            values: [
+                                [
+                                    'usage_guest',
+                                    'float',
+                                ],
+                            ],
+                        }, {
+                            name: 'predizioneCPU',
+                            columns: [
+                                'fieldKey',
+                                'fieldType',
+                            ],
+                            values: [
+                                [
+                                    'usage_guest',
+                                    'float',
+                                ],
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
 
-    afterEach(() => {
-        influx = null;
         ajaxMock.mockClear();
     });
 
-    it('query', () => {
-        influx.query = Influx.prototype.query;
+    describe('query', () => {
+        beforeEach(() => {
+            influx.query = Influx.prototype.query;
+        });
 
-        const query = 'q=show field keys on telegraf';
-        influx.query(query);
-        expect(ajaxMock).toHaveBeenCalledTimes(1);
-        expect(ajaxMock.mock.calls[0][0]).toMatchObject({
-            url: `${influx.host}:${influx.port}/query?db=${influx.database}`,
-            data: query,
+        it('success', () => {
+            ajaxMock.mockImplementationOnce((req) => {
+                req.success(data);
+            });
+
+            const parQuery = 'q=show field keys on telegraf';
+            const returnValue = influx.query(parQuery);
+
+            expect(returnValue).not.toEqual(undefined);
+            expect(returnValue).toEqual(data.results[0].series[0].values);
+            expect(ajaxMock).toHaveBeenCalledTimes(1);
+            expect(ajaxMock).toHaveBeenCalledWith({
+                async: false,
+                url: `${oldHost}:${oldPort}/query?db=${oldDatabase}`,
+                type: 'GET',
+                contentType: 'application/octet-stream',
+                data: parQuery,
+                processData: false,
+                success: expect.any(Function),
+                error: expect.any(Function),
+            });
+            expect(influx).toEqual({
+                host: oldHost,
+                port: oldPort,
+                database: oldDatabase,
+                query: Influx.prototype.query,
+            });
+        });
+
+        it('error', () => {
+            ajaxMock.mockImplementationOnce((req) => {
+                req.error();
+            });
+
+            const parQuery = 'q=show field keys on telegraf';
+            const returnValue = influx.query(parQuery);
+
+            expect(returnValue).toEqual(undefined);
+            expect(ajaxMock).toHaveBeenCalledTimes(1);
+            expect(ajaxMock).toHaveBeenCalledWith({
+                async: false,
+                url: `${oldHost}:${oldPort}/query?db=${oldDatabase}`,
+                type: 'GET',
+                contentType: 'application/octet-stream',
+                data: parQuery,
+                processData: false,
+                success: expect.any(Function),
+                error: expect.any(Function),
+            });
+            expect(influx).toEqual({
+                host: oldHost,
+                port: oldPort,
+                database: oldDatabase,
+                query: Influx.prototype.query,
+            });
         });
     });
+
 
     describe('getLastValue', () => {
-        it('with instance', () => {
+        beforeEach(() => {
             influx.getLastValue = Influx.prototype.getLastValue;
+        });
 
-            const parSource = 'TestSource';
-            const parInstance = 'TestInstance';
-            const parParam = 'TestParam';
-            const query = `q=select ${parParam} from ${parSource} where 
-                instance='${parInstance}' order by time desc limit 1`;
-            influx.getLastValue(parSource, parInstance, parParam);
+        describe('with instance', () => {
+            it('success', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.success(data);
+                });
 
-            expect(ajaxMock).toHaveBeenCalledTimes(1);
-            expect(ajaxMock.mock.calls[0][0]).toMatchObject({
-                url: `${influx.host}:${influx.port}/query?db=${influx.database}`,
-                data: query,
+                const parSource = 'testSource';
+                const parInstance = 'testInstance';
+                const parParam = 'testParam';
+                const returnValue = influx.getLastValue(parSource, parInstance, parParam);
+
+                expect(returnValue).not.toEqual(undefined);
+                expect(returnValue).toEqual(data.results[0].series[0].values[0][1]);
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?db=${oldDatabase}`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=select ${parParam} from ${parSource} where `
+                        + `instance='${parInstance}' order by time desc limit 1`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    getLastValue: Influx.prototype.getLastValue,
+                });
+            });
+
+            it('error', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.error();
+                });
+
+                const parSource = 'testSource';
+                const parInstance = 'testInstance';
+                const parParam = 'testParam';
+                const returnValue = influx.getLastValue(parSource, parInstance, parParam);
+
+                expect(returnValue).toEqual(undefined);
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?db=${oldDatabase}`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=select ${parParam} from ${parSource} where `
+                        + `instance='${parInstance}' order by time desc limit 1`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    getLastValue: Influx.prototype.getLastValue,
+                });
             });
         });
 
-        it('without instance', () => {
-            influx.getLastValue = Influx.prototype.getLastValue;
+        describe('without instance', () => {
+            it('success', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.success(data);
+                });
 
-            const parSource = 'TestSource';
-            const parParam = 'TestParam';
-            const query = `q=select ${parParam} from ${parSource} order by time desc limit 1`;
-            influx.getLastValue(parSource, undefined, parParam);
+                const parSource = 'testSource';
+                const parInstance = undefined;
+                const parParam = 'testParam';
+                const returnValue = influx.getLastValue(parSource, parInstance, parParam);
 
-            expect(ajaxMock).toHaveBeenCalledTimes(1);
-            expect(ajaxMock.mock.calls[0][0]).toMatchObject({
-                url: `${influx.host}:${influx.port}/query?db=${influx.database}`,
-                data: query,
+                expect(returnValue).not.toEqual(undefined);
+                expect(returnValue).toEqual(data.results[0].series[0].values[0][1]);
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?db=${oldDatabase}`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=select ${parParam} from ${parSource} order by time desc limit 1`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    getLastValue: Influx.prototype.getLastValue,
+                });
+            });
+
+            it('error', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.error();
+                });
+
+                const parSource = 'testSource';
+                const parInstance = undefined;
+                const parParam = 'testParam';
+                const returnValue = influx.getLastValue(parSource, parInstance, parParam);
+
+                expect(returnValue).toEqual(undefined);
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?db=${oldDatabase}`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=select ${parParam} from ${parSource} order by time desc limit 1`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    getLastValue: Influx.prototype.getLastValue,
+                });
             });
         });
     });
 
-    it('getSources', () => {
-        influx.getSources = Influx.prototype.getSources;
+    describe('getSources', () => {
+        beforeEach(() => {
+            influx.getSources = Influx.prototype.getSources;
+        });
 
-        const query = `q=show field keys on ${influx.database}`;
-        influx.getSources();
-        expect(ajaxMock).toHaveBeenCalledTimes(1);
-        expect(ajaxMock.mock.calls[0][0]).toMatchObject({
-            url: `${influx.host}:${influx.port}/query?`,
-            data: query,
+        describe('with data.results[0].series defined', () => {
+            it('success', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.success(data);
+                });
+
+                const returnValue = influx.getSources();
+
+                expect(returnValue).not.toEqual([]);
+                expect(returnValue).toEqual([data.results[0].series[0]]);
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=show field keys on ${oldDatabase}`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    getSources: Influx.prototype.getSources,
+                    predictions: [data.results[0].series[1].name.substr(10)],
+                });
+            });
+
+            it('error', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.error();
+                });
+
+                const returnValue = influx.getSources();
+
+                expect(returnValue).toEqual([]);
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=show field keys on ${oldDatabase}`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    getSources: Influx.prototype.getSources,
+                });
+            });
+        });
+
+        describe('with data.results[0].series defined', () => {
+            beforeEach(() => {
+                data.results[0].series = undefined;
+            });
+
+            it('success', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.success(data);
+                });
+
+                const returnValue = influx.getSources();
+
+                expect(returnValue).toEqual([]);
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=show field keys on ${oldDatabase}`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    getSources: Influx.prototype.getSources,
+                    predictions: [],
+                });
+            });
+
+            it('error', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.error();
+                });
+
+                const returnValue = influx.getSources();
+
+                expect(returnValue).toEqual([]);
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=show field keys on ${oldDatabase}`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    getSources: Influx.prototype.getSources,
+                });
+            });
         });
     });
 
-    it('getInstances', () => {
-        influx.getInstances = Influx.prototype.getInstances;
+    describe('getInstances', () => {
+        beforeEach(() => {
+            influx.getInstances = Influx.prototype.getInstances;
+        });
 
-        const query = `q=show tag values on "${influx.database}" with key = "instance"`;
-        influx.getInstances();
-        expect(ajaxMock).toHaveBeenCalledTimes(1);
-        expect(ajaxMock.mock.calls[0][0]).toMatchObject({
-            url: `${influx.host}:${influx.port}/query?`,
-            data: query,
+        it('success', () => {
+            ajaxMock.mockImplementationOnce((req) => {
+                req.success(data);
+            });
+
+            const returnValue = influx.getInstances();
+
+            expect(returnValue).not.toEqual(undefined);
+            expect(returnValue).toEqual(data.results[0].series);
+            expect(ajaxMock).toHaveBeenCalledTimes(1);
+            expect(ajaxMock).toHaveBeenCalledWith({
+                async: false,
+                url: `${oldHost}:${oldPort}/query?`,
+                type: 'GET',
+                contentType: 'application/octet-stream',
+                data: `q=show tag values on "${oldDatabase}" with key = "instance"`,
+                processData: false,
+                success: expect.any(Function),
+                error: expect.any(Function),
+            });
+            expect(influx).toEqual({
+                host: oldHost,
+                port: oldPort,
+                database: oldDatabase,
+                getInstances: Influx.prototype.getInstances,
+            });
+        });
+
+        it('error', () => {
+            ajaxMock.mockImplementationOnce((req) => {
+                req.error();
+            });
+
+            const returnValue = influx.getInstances();
+
+            expect(returnValue).toEqual(undefined);
+            expect(ajaxMock).toHaveBeenCalledTimes(1);
+            expect(ajaxMock).toHaveBeenCalledWith({
+                async: false,
+                url: `${oldHost}:${oldPort}/query?`,
+                type: 'GET',
+                contentType: 'application/octet-stream',
+                data: `q=show tag values on "${oldDatabase}" with key = "instance"`,
+                processData: false,
+                success: expect.any(Function),
+                error: expect.any(Function),
+            });
+            expect(influx).toEqual({
+                host: oldHost,
+                port: oldPort,
+                database: oldDatabase,
+                getInstances: Influx.prototype.getInstances,
+            });
         });
     });
 
-    it('storeValue', () => {
-        influx.storeValue = Influx.prototype.storeValue;
+    describe('storeValue', () => {
+        beforeEach(() => {
+            influx.storeValue = Influx.prototype.storeValue;
+        });
 
-        const parMeasurement = 'TestCPU';
-        const parValue = 'TestValue';
-        const query = `${parMeasurement} value=${parValue}`;
-        influx.storeValue(parMeasurement, parValue);
-        expect(ajaxMock).toHaveBeenCalledTimes(1);
-        expect(ajaxMock.mock.calls[0][0]).toMatchObject({
-            url: `${influx.host}:${influx.port}/write?db=${influx.database}`,
-            data: query,
+        it('success', () => {
+            ajaxMock.mockImplementationOnce((req) => {
+                req.success(data);
+            });
+
+            const parMeasurement = 'TestMeasurement';
+            const parValue = 'TestValue';
+            influx.storeValue(parMeasurement, parValue);
+
+            expect(ajaxMock).toHaveBeenCalledTimes(1);
+            expect(ajaxMock).toHaveBeenCalledWith({
+                async: false,
+                url: `${oldHost}:${oldPort}/write?db=${oldDatabase}`,
+                type: 'POST',
+                contentType: 'application/octet-stream',
+                data: `${parMeasurement} value=${parValue}`,
+                processData: false,
+                success: expect.any(Function),
+                error: expect.any(Function),
+            });
+            expect(influx).toEqual({
+                host: oldHost,
+                port: oldPort,
+                database: oldDatabase,
+                storeValue: Influx.prototype.storeValue,
+            });
+        });
+
+        it('error', () => {
+            ajaxMock.mockImplementationOnce((req) => {
+                req.error();
+            });
+
+            const parMeasurement = 'TestMeasurement';
+            const parValue = 'TestValue';
+            influx.storeValue(parMeasurement, parValue);
+
+            expect(ajaxMock).toHaveBeenCalledTimes(1);
+            expect(ajaxMock).toHaveBeenCalledWith({
+                async: false,
+                url: `${oldHost}:${oldPort}/write?db=${oldDatabase}`,
+                type: 'POST',
+                contentType: 'application/octet-stream',
+                data: `${parMeasurement} value=${parValue}`,
+                processData: false,
+                success: expect.any(Function),
+                error: expect.any(Function),
+            });
+            expect(influx).toEqual({
+                host: oldHost,
+                port: oldPort,
+                database: oldDatabase,
+                storeValue: Influx.prototype.storeValue,
+            });
         });
     });
 
-    it('deletePrediction', () => {
-        influx.deletePrediction = Influx.prototype.deletePrediction;
-        influx.predictions = [1, 2];
-
-        const parPrediction = influx.predictions[0];
-        const query = `q=drop measurement predizione${parPrediction}`;
-        influx.deletePrediction(parPrediction);
-        expect(ajaxMock).toHaveBeenCalledTimes(1);
-        expect(ajaxMock.mock.calls[0][0]).toMatchObject({
-            url: `${influx.host}:${influx.port}/query?db=${influx.database}`,
-            data: query,
+    describe('deletePrediction', () => {
+        beforeEach(() => {
+            influx.deletePrediction = Influx.prototype.deletePrediction;
+            influx.predictions = [1, 2];
         });
-        expect(influx.predictions).toEqual([1, 2]);
+
+        describe('with a prediction inside influx.predictions', () => {
+            it('success', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.success(data);
+                });
+
+                const parPrediction = influx.predictions[0];
+                influx.deletePrediction(parPrediction);
+
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?db=${oldDatabase}`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=drop measurement predizione${parPrediction}`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    deletePrediction: Influx.prototype.deletePrediction,
+                    predictions: [2],
+                });
+            });
+
+            it('error', () => {
+                ajaxMock.mockImplementationOnce((req) => {
+                    req.error();
+                });
+
+                const parPrediction = influx.predictions[0];
+                influx.deletePrediction(parPrediction);
+
+                expect(ajaxMock).toHaveBeenCalledTimes(1);
+                expect(ajaxMock).toHaveBeenCalledWith({
+                    async: false,
+                    url: `${oldHost}:${oldPort}/query?db=${oldDatabase}`,
+                    type: 'GET',
+                    contentType: 'application/octet-stream',
+                    data: `q=drop measurement predizione${parPrediction}`,
+                    processData: false,
+                    success: expect.any(Function),
+                    error: expect.any(Function),
+                });
+                expect(influx).toEqual({
+                    host: oldHost,
+                    port: oldPort,
+                    database: oldDatabase,
+                    deletePrediction: Influx.prototype.deletePrediction,
+                    predictions: [1, 2],
+                });
+            });
+        });
+
+        it('with a prediction not inside influx.predictions', () => {
+            ajaxMock.mockImplementationOnce((req) => {
+                req.error();
+            });
+
+            const parPrediction = 3;
+            influx.deletePrediction(parPrediction);
+
+            expect(ajaxMock).toHaveBeenCalledTimes(0);
+            expect(influx).toEqual({
+                host: oldHost,
+                port: oldPort,
+                database: oldDatabase,
+                deletePrediction: Influx.prototype.deletePrediction,
+                predictions: [1, 2],
+            });
+        });
     });
 
     it('deleteAllPredictions', () => {
         influx.deleteAllPredictions = Influx.prototype.deleteAllPredictions;
-        influx.deletePrediction = jest.fn(() => { });
+        const fDeletePrediction = jest.fn(() => { });
+        influx.deletePrediction = fDeletePrediction;
         influx.predictions = [1, 2];
 
-
         influx.deleteAllPredictions();
+
         expect(influx.deletePrediction).toHaveBeenCalledTimes(influx.predictions.length);
         for (let i = 0; i < influx.predictions.length; i++) {
-            console.log(influx.deletePrediction);
             expect(influx.deletePrediction)
                 .toHaveBeenCalledWith(influx.predictions[i]);
         }
-        expect(influx.predictions).toEqual([1, 2]);
+        expect(influx).toEqual({
+            host: oldHost,
+            port: oldPort,
+            database: oldDatabase,
+            deleteAllPredictions: Influx.prototype.deleteAllPredictions,
+            deletePrediction: fDeletePrediction,
+            predictions: [1, 2],
+        });
     });
 });

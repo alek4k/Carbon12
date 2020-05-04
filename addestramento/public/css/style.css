@@ -181,3 +181,8 @@ blockquote {
     background-color: #1675AA;
     padding-top: 0;
 }
+
+#chart {
+    max-width: 60%;
+    margin: 0 auto;
+}

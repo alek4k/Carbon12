@@ -9,10 +9,10 @@
  * Changelog: creazione classe
  */
 
-const Model = require('./model');
-const SVM = require('./svm/svm');
+import Model from './model';
+import SVM from './svm/svm';
 
-class SvmAdapter extends Model {
+export default class SvmAdapter extends Model {
     constructor() {
         super();
         this.svm = new SVM();
@@ -49,5 +49,3 @@ class SvmAdapter extends Model {
         return this.svm.predictClass(point);
     }
 }
-
-module.exports = SvmAdapter;

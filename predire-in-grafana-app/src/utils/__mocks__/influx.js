@@ -10,7 +10,7 @@
  */
 
 export const storeValueMock = jest.fn();
-export const getLastValueMock = jest.fn(() => [0, 0]);
+export const getLastValueMock = jest.fn();
 
 const Influx = jest.fn().mockImplementation(() => ({
     storeValue: storeValueMock,

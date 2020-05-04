@@ -13,7 +13,7 @@ import GrafanaApiQuery from './grafana_query';
 import Influx from './influx';
 import RL from './models/RL_Adapter';
 import SVM from './models/SVM_Adapter';
-import Dashboard from '../utils/dashboard';
+import Dashboard from './dashboard';
 
 class InfinitySwag {
     /**
@@ -42,25 +42,20 @@ class InfinitySwag {
      */
     setConfig() {
         this.grafana = new GrafanaApiQuery(this.backendSrv);
-        this.grafana
-            .getDashboard('predire-in-grafana')
-            .then((dash) => {
-                const dashboard = new Dashboard(dash.dashboard);
-                if (dashboard.updateSettings()) {
-                    this.variables = dashboard.getJSON().templating.list;
-                    this.grafana
-                        .postDashboard(dashboard.getJSON())
-                        .then(() => {
-                            this.setInflux();
-                            this.$scope.$evalAsync();
-                        });
-
-                } else {
-                    this.variables = dashboard.getJSON().templating.list;
+        this.grafana.getDashboard('predire-in-grafana').then((dash) => {
+            const dashboard = new Dashboard(dash.dashboard);
+            if (dashboard.updateSettings()) {
+                this.variables = dashboard.getJSON().templating.list;
+                this.grafana.postDashboard(dashboard.getJSON()).then(() => {
                     this.setInflux();
-                }
-                this.$scope.$evalAsync();
-            });
+                    this.$scope.$evalAsync();
+                });
+            } else {
+                this.variables = dashboard.getJSON().templating.list;
+                this.setInflux();
+            }
+            this.$scope.$evalAsync();
+        });
     }
 
     /**

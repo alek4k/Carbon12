@@ -9,12 +9,12 @@
  * Changelog: Inizializzata la struttura della classe View
  */
 
-export const getDashboardMock = jest.fn();
-export const postDashboardMock = jest.fn();
+export const getJSONMock = jest.fn();
+export const updateSettingsMock = jest.fn();
 
-const GrafanaApiQuery = jest.fn().mockImplementation(() => ({
-    getDashboard: getDashboardMock,
-    postDashboard: postDashboardMock,
+const Dashboard = jest.fn().mockImplementation(() => ({
+    getJSON: getJSONMock,
+    updateSettings: updateSettingsMock,
 }));
 
-export default GrafanaApiQuery;
+export default Dashboard;

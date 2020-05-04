@@ -9,8 +9,10 @@
  * Changelog: modifiche effettuate
  */
 
+export const $evalAsyncMock = jest.fn();
+
 const ScopeMock = jest.fn().mockImplementation(() => ({
-    $evalAsync: jest.fn(),
+    $evalAsync: $evalAsyncMock,
 }));
 
 export default ScopeMock;

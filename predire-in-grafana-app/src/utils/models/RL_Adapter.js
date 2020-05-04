@@ -9,10 +9,10 @@
  * Changelog: creazione classe
  */
 
-const Model = require('./model');
-const Regression = require('./rl/regression');
+import Model from './model';
+import Regression from './rl/regression';
 
-class RlAdapter extends Model {
+export default class RlAdapter extends Model {
     constructor(options) {
         super();
         this.regression = new Regression(options);
@@ -46,5 +46,3 @@ class RlAdapter extends Model {
         return this.regression.predict(point);
     }
 }
-
-module.exports = RlAdapter;

@@ -17,6 +17,19 @@ main {
     flex: 1 0 auto;
 }
 
+form > .row {
+    margin-left: 0!important;
+}
+
+.input-field {
+    margin-left: 0;
+    padding-left: 0!important;
+}
+
+.input-field.col label {
+    left: 0;
+}
+
 #listaRiepilogo {
     list-style: none;
     font-size: 1.1em;
@@ -32,6 +45,10 @@ main {
 
 .hidden {
     display: none;
+}
+
+.hiddendiv {
+    width: 0!important;
 }
 
 .btn {
@@ -76,7 +93,6 @@ main {
 .infoLabel {
     font-size: 0.8rem;
     color: #595858;
-    display: inline-block;
     margin: 0;
 }
 

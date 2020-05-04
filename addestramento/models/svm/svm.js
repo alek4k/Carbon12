@@ -506,7 +506,7 @@ SVM.prototype = {
             }
             w[j] = s;
         }
-        
+
         return { w, b: this.b };
     },
 
@@ -908,4 +908,4 @@ SVM.prototype = {
     },
 };
 
-module.exports = SVM;
+module.exports.svm = SVM;

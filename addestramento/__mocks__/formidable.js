@@ -9,10 +9,9 @@
  * Changelog: modifiche effettuate
  */
 
-
-const formidable = {
+const formidable = jest.fn().mockImplementation(() => ({
     IncomingForm: function form() {
-        this.parse=function parse() {
+        this.parse = function parse() {
             return {
                 on(str, f) {
                     if (str === 'field') {
@@ -21,8 +20,9 @@ const formidable = {
                         f();
                     }
                 },
-            }
-        },
+            };
+        };
     },
-};
+}));
+
 module.exports = formidable;

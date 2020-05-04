@@ -1,16 +1,16 @@
 /**
- * File name: validity_json.test.js
+ * File name: validity_csv.test.js
  * Date: 2020-03-18
  *
- * @file Test metodo validityJson()
+ * @file Test metodo validityCsv()
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version X.Y.Z
  *
  * Changelog: modifiche effettuate
  */
-
 const fs = require('fs');
 const Server = require('../../server');
+const CSVr = require('../../fileManager/csv_reader.js');
 const RPredittore = require('../../fileManager/r_predittore.js');
 
 let server = null;
@@ -20,14 +20,28 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+    server.server.close();
     server = null;
 });
 
-test('Error messagge: the structure of file.json is not correct, title is not correct', () => {
-    const managePredittore = new RPredittore(JSON.parse(
+test('This test will not send a messagge because the structure of file.csv is correct', () => {
+    const csvReader = new CSVr('./tests/files/dati_test.csv', null);
+    expect(server.validityCsv(csvReader)).toEqual('');
+});
+
+test('This test will not send a messagge because the structure of file.csv is not correct', () => {
+    const csvReader = new CSVr('./tests/files/dati_test_DatiMancanti.csv', null);
+    csvReader.setLabelsColumn(2);
+    expect(server.validityCsv(csvReader)).toEqual(
+        'Valori attesi nel campo Labels del file csv mancanti',
+    );
+});
+
+test('Error messagge: the structure of file.json is not correct, title is not correct', async () => {
+    const managePredittore = await new RPredittore(JSON.parse(
         fs.readFileSync('./tests/files/predittore_test_NotValidStructure1.json').toString(),
     ));
-    expect(server.validityJson(managePredittore, ['A', 'B'])).toEqual('Struttura json non valida');
+    await expect(server.validityJson(managePredittore, ['A', 'B'])).toEqual('Struttura json non valida');
 });
 
 test('Error messagge: the structure of file.json is not correct, arrayOfKeys error', () => {

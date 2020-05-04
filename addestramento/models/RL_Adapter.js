@@ -10,7 +10,7 @@
  */
 
 const Model = require('./model');
-const Regression = require('./rl/regression');
+const Regression = require('./rl/regression').regression;
 
 class RlAdapter extends Model {
     constructor(options) {

@@ -55,3 +55,29 @@ test('It should response that managePredittore has the expected configuration', 
     managePredittore.setConfiguration(configuration);
     expect(managePredittore.jsonContent.configuration).toEqual(configuration);
 });
+
+test('Test if save function return correctly JSON', () => {
+    const valore = {
+        header: {
+            title: 'Carbon12 Predire in Grafana',
+            plugin_version: 'b.3.0',
+            train_version: 'b.3.0',
+        },
+        data_entry: { source0: 'A', source1: 'B' },
+        model: 'SVM',
+        file_version: 1,
+        notes: 'sample text',
+        configuration: {
+            _parametroN: 'numero di dati inseriti',
+            N: 89,
+            _parametroD: 'numero di sorgenti analizzate',
+            D: 2,
+            _parametroAlpha: 'coefficienti della retta risultante',
+            alpha: [[2.432], [3.456]],
+        },
+    };
+    managePredittore.jsonContent = valore;
+    const result = JSON.stringify(valore, null, 4);
+    // eslint-disable-next-line no-multi-str
+    expect(managePredittore.save()).toBe(result);
+});

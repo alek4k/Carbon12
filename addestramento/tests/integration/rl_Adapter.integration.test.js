@@ -14,6 +14,21 @@ const RLAdapter = require('../../models/RL_Adapter');
 const rlAdapter = new RLAdapter({ numX: 3, numY: 1 });
 
 test('It should return JSON file with RL configuration', () => {
+    const j = {};
+    j.N = 7;
+    j.D = 3;
+    j.alpha = [[1921.8840693868697], [0.4748198607372416], [-0.14483769841581307]];
+    rlAdapter.fromJSON(j);
+    expect(rlAdapter.regression.N).toEqual(7);
+    expect(rlAdapter.regression.D).toEqual(3);
+    expect(rlAdapter.regression.coefficients).toEqual([
+        [1921.8840693868697],
+        [0.4748198607372416],
+        [-0.14483769841581307],
+    ]);
+});
+
+test('It should return JSON file with RL configuration', () => {
     const data = [
         [9098, 5492],
         [9133, 5540],

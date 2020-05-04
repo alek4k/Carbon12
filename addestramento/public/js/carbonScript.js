@@ -46,8 +46,8 @@ $(document).ready(function() {
         let name = $(this).val();
         form_data.append('columnName', document.getElementById('columnNames').value);
         $.ajax({
-            url: "/loadCsv",
-            method: "POST",
+            url: '/loadCsv',
+            method: 'POST',
             data: form_data,
             contentType: false,
             cache: false,
@@ -258,7 +258,7 @@ let RL_Chart = function (data, label, x, y) {
     const xAxesName = result[2][x];
     const yAxesName = result[2][y];
     for (let i = 0; i < data.length; i++) {
-        pointData.push({x: data[i][x], y: data[i][y]});
+        pointData.push({ x: data[i][x], y: data[i][y] });
     }
     let lineData = [];
     lineData.push({ x: data[0][x], y: label[0] });
@@ -273,8 +273,8 @@ let RL_Chart = function (data, label, x, y) {
             data: pointData,
             backgroundColor: 'rgba(189, 232, 255, 0.5)',
             borderColor: 'rgba(22, 117, 170, 1)',
-            xAxisID: 'x-axis-1'
-        },{
+            xAxisID: 'x-axis-1',
+        }, {
             type: 'line',
             label: 'Linear Regression',
             data: lineData,
@@ -318,7 +318,7 @@ let RL_Chart = function (data, label, x, y) {
     return config;
 };
 
-let configChart = function(result, x, y){
+let configChart = function(result, x, y) {
     const data = result[0];
     const label = result[1];
     const xAxesName = result[2][x];
@@ -328,17 +328,16 @@ let configChart = function(result, x, y){
     const isNull = (currentValue) => currentValue === 0;
     let nomodel = label.every(isNull);
     let chartConfiguration = [];
-    if(nomodel){
+    if (nomodel) {
         chartConfiguration = genericChart(data, label, x, y);
-    }
-    else{
+    } else {
         const isClass = (currentValue) => currentValue === -1 || currentValue === 1;
         let SVM = label.every(isClass);
-        if(SVM)
+        if (SVM) {
             chartConfiguration = SVM_Chart(data, label, x, y);
-
-        else
+        } else {
             chartConfiguration = RL_Chart(data, label, x, y);
+        }
     }
     let myDiv = document.getElementById('mychart');
     let chart = document.createElement('canvas');
@@ -356,6 +355,7 @@ let configChart = function(result, x, y){
                 text: title,
             },
             scales: chartConfiguration[2],
+            responsive: true,
         },
     });
 };

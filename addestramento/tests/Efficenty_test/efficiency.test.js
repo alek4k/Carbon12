@@ -19,14 +19,7 @@ test('Efficenty tests', () => {
 
     const t0 = performance.now();
 
-    /*superagent
-        .post('localhost:8080/fileupload')
-        .send('./tests/files/dati_test.csv') // sends a JSON post body
-        .set('X-API-Key', 'foobar')
-        .set('accept', 'json')
-        .end((err, res) => {
-            server.uploadForm(res, req);
-        });*/
+    server.startServer();
 
     const t1 = performance.now();
     console.log('Call to function took ' + (t1 - t0) + ' milliseconds.');

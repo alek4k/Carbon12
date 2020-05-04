@@ -4,13 +4,14 @@
     <title>Pagina di addestramento</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link rel="icon" type="image/png" href="/images/logomini.png">
+    <link rel="icon" type="image/png" href="/images/logomini.png"/>
     <meta name="language" content="italian it"/>
     <meta name="author" content="Carbon12"/>
     <meta name="title" content="Addestramento - Predire in Grafana"/>
     <meta name="description" content="Pagina di addestramento dei modelli di machine learning"/>
-    <link href="/css/materialize.min.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link href="/css/materialize.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/solid.min.css" rel="stylesheet" type="text/css" />
     <script src="/js/Chart.min.js"></script>
     <script src="/js/jquery-3.5.0.min.js"></script>
     <script src="/js/materialize.min.js"></script>
@@ -23,7 +24,7 @@
 <div class="container">
     <div class="row center-align" id="header">
         <div class="col s12 m3 l2 auto-margin">
-            <img class="responsive-img" id="logo" src="/images/C.png" alt="logo"/>
+            <img class="responsive-img" id="logo" src="/images/logo.png" alt="logo"/>
         </div>
         <div class="col s12 m9 l10">
             <h1>Predire in Grafana</h1>
@@ -41,34 +42,38 @@
             <div class="card-panel">
                 <p class='error'><%= error2 %></p>
                 <form action="fileupload" method="post" enctype="multipart/form-data">
-                    <p class="fieldTitle">Seleziona il file coi dati di addestramento (formato CSV):</p>
-                    <p class="infoLabel"><span class="fa fa-info-circle icon" aria-hidden="true"></span>
-                        In fondo a questa pagina potrai visualizzare un grafico con la disposizione dei tuoi dati.</p>
-                    <div class="file-field input-field">
-                        <div class="btn">
-                            <span>CSV</span>
-                            <input type="file" id="trainFile" accept=".csv" name="trainFile" required>
-                        </div>
-                        <div class="file-path-wrapper">
-                            <input class="file-path validate col s12 m8 l6 xl4" type="text">
+                    <div class="row">
+                        <p class="fieldTitle">Seleziona il file coi dati di addestramento (formato CSV):</p>
+                        <p class="infoLabel"><span class="fa fa-info-circle icon" aria-hidden="true"></span>
+                            In fondo a questa pagina potrai visualizzare un grafico con la disposizione dei tuoi dati.</p>
+                        <div class="file-field input-field no-margin-bottom col s12 m8 l6 xl4">
+                            <div class="btn">
+                                <span>CSV</span>
+                                <input type="file" id="trainFile" accept=".csv" name="trainFile" required>
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                            </div>
                         </div>
                     </div>
                     <div class="row no-margin-bottom hidden" id="titleBlockLabelCsv">
                         <div class="input-field col s6 m4 l3 xl2 no-margin" id="blockLabelCsv">
                         </div>
                     </div>
-                    <p class="fieldTitle">Seleziona il file con la configurazione del modello (formato JSON):</p>
-                    <p class="infoLabel"><span class="fa fa-info-circle icon" aria-hidden="true"></span>
-                        Se desideri aggiornare il modello,
-                        inserisci il file JSON con la configurazione ottenuto nel precedente allenamento.
-                    </p>
-                    <div class="file-field input-field">
-                        <div class="btn">
-                            <span>JSON</span>
-                            <input type="file" id="configFile" accept=".json" name="configFile">
-                        </div>
-                        <div class="file-path-wrapper">
-                            <input class="file-path validate col s12 m8 l6 xl4" type="text">
+                    <div class="row">
+                        <p class="fieldTitle">Seleziona il file con la configurazione del modello (formato JSON):</p>
+                        <p class="infoLabel"><span class="fa fa-info-circle icon" aria-hidden="true"></span>
+                            Se desideri aggiornare il modello,
+                            inserisci il file JSON con la configurazione ottenuto nel precedente allenamento.
+                        </p>
+                        <div class="file-field input-field no-margin-bottom col s12 m8 l6 xl4">
+                            <div class="btn">
+                                <span>JSON</span>
+                                <input type="file" id="configFile" accept=".json" name="configFile">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                            </div>
                         </div>
                     </div>
                     <p class="fieldTitle">Seleziona il modello da addestrare</p>

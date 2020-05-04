@@ -9,6 +9,7 @@
  * Changelog: aggiunto metodo saveDashboard()
  */
 
+// eslint-disable-next-line import/no-unresolved
 import { appEvents } from 'grafana/app/core/core';
 
 import Influx from '../utils/influx';
@@ -24,7 +25,7 @@ export default class importCtrl {
     /**
      * Costruisce l'oggetto che rappresenta la pagina principale di configurazione del plug-in
      * @param {$location} Object permette la gestione dell'URL della pagina
-     * @param {$scope} Object gestice la comunicazione tra controller e view
+     * @param {$scope} Object gestisce la comunicazione tra controller e view
      * @param {backendSrv} Object rappresenta il backend di Grafana
      */
     constructor($location, $scope, backendSrv) {
@@ -189,7 +190,7 @@ export default class importCtrl {
     }
 
     /**
-     * Crea il annello con l'id uguale a quello passato
+     * Crea il pannello con l'id uguale a quello passato
      * @param {panelID} Number rappresenta l'id del pannello da creare
      */
     panelGenerator(panelID) {

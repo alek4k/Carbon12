@@ -12,7 +12,7 @@ export default class DBConnection {
     /**
      * Costruisce l'oggetto che rappresenta il database
      * @param {host} String rappresenta l'host del database
-     * @param {port} Number appresenta la porta del database
+     * @param {port} Number rappresenta la porta del database
      * @param {database} String rappresenta il nome del database
      */
     constructor(host, port, database) {

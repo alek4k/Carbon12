@@ -39,7 +39,7 @@ export default class RlAdapter extends Model {
 
     /**
     * Predice il punto passato
-    * @param {point} Array rappresenta i valori delle sorgenti monitorate 
+    * @param {point} Array rappresenta i valori delle sorgenti monitorate
     * @return {Number} rappresenta la predizione associata al punto passato
     */
     predict(point) {

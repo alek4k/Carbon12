@@ -9,6 +9,7 @@
  * Changelog: modificato metodo buildView(Object)
  */
 
+/* eslint-disable import/named */
 import Builder from '../../../src/utils/builder';
 import Target from '../../../src/utils/target';
 import View, { setDataSourceMock, setDescriptionMock, setDefaultBackgroundMock }

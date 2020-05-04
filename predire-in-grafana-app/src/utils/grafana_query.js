@@ -2,7 +2,7 @@
  * File name: grafana_query.js
  * Date: 2020-03-19
  *
- * @file Classe che gestisce la comunicazione con il backend di Grafana 
+ * @file Classe che gestisce la comunicazione con il backend di Grafana
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version 1.4.0
  *
@@ -66,7 +66,7 @@ export default class GrafanaApiQuery {
 
     /**
      * Aggiunge una dashboard a Grafana e ne ritorna l'esito con una Promise
-     * @param {dashboard} Object rappresenta il contenuto della dashbaord da salvare
+     * @param {dashboard} Object rappresenta il contenuto della dashboard da salvare
      * @returns {Promise} rappresenterà la dashboard aggiunta in Grafana
      */
     postDashboard(dashboard) {
@@ -87,7 +87,7 @@ export default class GrafanaApiQuery {
 
     /**
      * Aggiunge un alert a Grafana e ne ritorna l'esito con una Promise
-     * @param {teamsUrl} String rappresenta l'URL del WebHook di Microsft Teams da settare nell'alert
+     * @param {teamsUrl} String rappresenta l'URL del WebHook di Microsoft Teams da settare nell'alert
      * @returns {Promise} rappresenterà l'alert aggiunto in Grafana
      */
     postAlert(teamsUrl) {
@@ -103,7 +103,7 @@ export default class GrafanaApiQuery {
 
     /**
      * Modifica un alert in Grafana e ne ritorna l'esito con una Promise
-     * @param {teamsUrl} String rappresenta l'URL del WebHook di Microsft Teams da settare nell'alert
+     * @param {teamsUrl} String rappresenta l'URL del WebHook di Microsoft Teams da settare nell'alert
      * @returns {Promise} rappresenterà l'alert aggiornato
      */
     updateAlert(teamsUrl) {

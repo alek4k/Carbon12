@@ -9,11 +9,13 @@
  * Changelog: modifiche effettuate
  */
 
+/* eslint-disable import/named */
 import InfinitySwag from '../../../src/utils/infinitySwag';
 import BackendSrvMock from '../../../__mocks__/backendSrvMock';
 import ScopeMock, { $evalAsyncMock } from '../../../__mocks__/scopeMock';
 import Influx, { getLastValueMock } from '../../../src/utils/influx';
-import GrafanaApiQuery, { getDashboardMock, postDashboardMock } from '../../../src/utils/grafana_query';
+import GrafanaApiQuery, { getDashboardMock, postDashboardMock }
+    from '../../../src/utils/grafana_query';
 import Dashboard, { getJSONMock, updateSettingsMock } from '../../../src/utils/dashboard';
 import SVM, { fromJSONMock as fromJSONMockSVM, predictClassMock as predictClassMockSVM }
     from '../../../src/utils/models/SVM_Adapter';

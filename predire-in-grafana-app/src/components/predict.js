@@ -9,17 +9,18 @@
  * Changelog: modificato metodo resetButtonsState(String)
  */
 
+// eslint-disable-next-line import/no-unresolved
 import { appEvents } from 'grafana/app/core/core';
 import InfinitySwag from '../utils/infinitySwag';
 import GrafanaApiQuery from '../utils/grafana_query';
 
 export default class predictCtrl {
     /** @ngInject */
-    
+
     /**
      * Costruisce l'oggetto che rappresenta la pagina per gestione della predizione
      * @param {$location} Object permette la gestione dell'URL della pagina
-     * @param {$scope} Object gestice la comunicazione tra controller e view
+     * @param {$scope} Object gestisce la comunicazione tra controller e view
      * @param {backendSrv} Object rappresenta il backend di Grafana
      */
     constructor($location, $scope, backendSrv) {
@@ -71,21 +72,23 @@ export default class predictCtrl {
      * Ripristina lo stato dei pulsanti che gestiscono la previsione secondo la proprietà passata
      * @param {onStatus} String rappresenta lo stato dei pulsanti che verranno coinvolti nel ripristino
      */
+    // eslint-disable-next-line class-methods-use-this
     resetButtonsState(onStatus) {
         const toRemove = [];
         for (let i = 0; i < localStorage.length; ++i) {
             const localItem = localStorage.key(i);
             if (localItem.startsWith('btn')) {
-                switch(onStatus) {
-                    case undefined: 
-                        if (localStorage.getItem(localItem) !== 'no') {
-                            toRemove.push(localItem);
-                            InfinitySwag.stopPrediction(parseInt(localItem.substr(3), 10));
-                        }
-                    default:
-                        if (localStorage.getItem(localItem) == 'no') {
-                            toRemove.push(localItem);
-                        }
+                switch (onStatus) {
+                case undefined:
+                    if (localStorage.getItem(localItem) !== 'no') {
+                        toRemove.push(localItem);
+                        InfinitySwag.stopPrediction(parseInt(localItem.substr(3), 10));
+                    }
+                    break;
+                default:
+                    if (localStorage.getItem(localItem) === 'no') {
+                        toRemove.push(localItem);
+                    }
                 }
             }
         }
@@ -94,10 +97,9 @@ export default class predictCtrl {
         });
     }
 
-    
     /**
-     * Acquisice lo stato della previsione dei pannelli presenti nella dasboard
-     * @param {panels} Object rappresenta i pannelli presenti nella dasboard
+     * Acquisisce lo stato della previsione dei pannelli presenti nella dashboard
+     * @param {panels} Object rappresenta i pannelli presenti nella dashboard
      */
     getPanelsState(panels) {
         this.started = [];

@@ -12,7 +12,7 @@
 export default class Dashboard {
     /**
      * Costruisce l'oggetto che rappresenta la dashboard
-     * @param {db} Object appresenta il contenuto della dashbaord passata
+     * @param {db} Object rappresenta il contenuto della dashboard passata
      */
     constructor(db) {
         if (!db) {

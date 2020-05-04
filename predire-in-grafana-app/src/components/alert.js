@@ -9,6 +9,7 @@
  * Changelog: modificato metodo saveAlertsState(String)
  */
 
+// eslint-disable-next-line import/no-unresolved
 import { appEvents } from 'grafana/app/core/core';
 import GrafanaApiQuery from '../utils/grafana_query';
 import Dashboard from '../utils/dashboard';
@@ -19,7 +20,7 @@ export default class alertCtrl {
     /**
      * Costruisce l'oggetto che rappresenta la pagina per gestione degli alert
      * @param {$location} Object permette la gestione dell'URL della pagina
-     * @param {$scope} Object gestice la comunicazione tra controller e view
+     * @param {$scope} Object gestisce la comunicazione tra controller e view
      * @param {backendSrv} Object rappresenta il backend di Grafana
      */
     constructor($location, $scope, backendSrv) {
@@ -82,7 +83,7 @@ export default class alertCtrl {
     }
 
     /**
-     * Acquisisce lo stato degli alert presenti nei pannelli della dasboard
+     * Acquisisce lo stato degli alert presenti nei pannelli della dashboard
      * @param {panels} Object rappresenta il contenuto dei pannelli presenti nella dashboard
      */
     getAlertsState(panels) {
@@ -99,8 +100,7 @@ export default class alertCtrl {
                 this.teamsUrl = panel.alert.notifications[0].uid ? this.oldTeamsUrl : '';
                 this.value.push(panel.alert.conditions[0].evaluator.params[0].toString());
                 this.when.push(panel.alert.conditions[0].evaluator.type === 'gt'
-                    ? 'superiore' : 'inferiore'
-                );
+                    ? 'superiore' : 'inferiore');
                 this.message.push(panel.alert.message);
             } else if (panel.type === 'singlestat' && panel.thresholds !== undefined) {
                 this.value.push(panel.thresholds.substr(0, panel.thresholds.indexOf(',')));
@@ -135,10 +135,10 @@ export default class alertCtrl {
     }
 
     /**
-     * Configura gli alert di tutti i pannelli della dashbaord, escludendo quelli non impostati
+     * Configura gli alert di tutti i pannelli della dashboard, escludendo quelli non impostati
      */
     configAlerts() {
-        if(this.teamsUrl) {
+        if (this.teamsUrl) {
             if (!this.oldTeamsUrl) {
                 this.grafana
                     .postAlert(this.teamsUrl)
@@ -174,56 +174,54 @@ export default class alertCtrl {
                 for (let i = 0; i < this.panelsList.length && !error; ++i) {
                     try {
                         parseFloat(this.value[i]);
-                    } catch {
+                    } catch (err) {
                         this.value[i] = '';
                     }
                     if ((!this.value[i] && this.when[i]) || (this.value[i] && !this.when[i])) {
                         error = true;
-                        appEvents.emit('alert-error', ["L'altert di " + '"'
+                        appEvents.emit('alert-error', ['L\'alert di "'
                             + this.panelsList[i] + '" è incompleto', '']);
+                    } else if (this.value[i] && this.when[i]) {
+                        dashboard.setThresholds([{
+                            colorMode: 'critical',
+                            fill: true,
+                            line: true,
+                            op: (this.when[i] === 'superiore') ? 'gt' : 'lt',
+                            value: parseFloat(this.value[i]),
+                        }], i);
+                        dashboard.setAlert({
+                            conditions: [{
+                                evaluator: {
+                                    params: [
+                                        parseFloat(this.value[i]),
+                                    ],
+                                    type: (this.when[i] === 'superiore') ? 'gt' : 'lt',
+                                },
+                                query: {
+                                    params: [
+                                        dashboard.getJSON().panels[i].targets[0].refId,
+                                        '1s',
+                                        'now',
+                                    ],
+                                },
+                                reducer: {
+                                    params: [],
+                                    type: 'last',
+                                },
+                                type: 'query',
+                            }],
+                            executionErrorState: 'keep_state',
+                            frequency: '1s',
+                            message: this.message[i],
+                            name: this.panelsList[i] + ' alert',
+                            noDataState: 'keep_state',
+                            notifications: [{
+                                uid: alertName,
+                            }],
+                        }, i);
                     } else {
-                        if (this.value[i] && this.when[i]) {
-                            dashboard.setThresholds([{
-                                colorMode: 'critical',
-                                fill: true,
-                                line: true,
-                                op: (this.when[i] === 'superiore') ? 'gt' : 'lt',
-                                value: parseFloat(this.value[i]),
-                            }], i);
-                            dashboard.setAlert({
-                                conditions: [{
-                                    evaluator: {
-                                        params: [
-                                            parseFloat(this.value[i]),
-                                        ],
-                                        type: (this.when[i] === 'superiore') ? 'gt' : 'lt',
-                                    },
-                                    query: {
-                                        params: [
-                                            dashboard.getJSON().panels[i].targets[0].refId,
-                                            '1s',
-                                            'now',
-                                        ]
-                                    },
-                                    reducer: {
-                                        params: [],
-                                        type: 'last',
-                                    },
-                                    type: 'query'
-                                }],
-                                executionErrorState: 'keep_state',
-                                frequency: '1s',
-                                message: this.message[i],
-                                name: this.panelsList[i] + ' alert',
-                                noDataState: 'keep_state',
-                                notifications: [{
-                                    uid: alertName,
-                                }],
-                            }, i);
-                        } else {
-                            dashboard.removeThresholds(i);
-                            dashboard.removeAlert(i);
-                        }
+                        dashboard.removeThresholds(i);
+                        dashboard.removeAlert(i);
                     }
                 }
                 if (!error) {
@@ -232,7 +230,7 @@ export default class alertCtrl {
                         .then(() => {
                             appEvents.emit('alert-success', ['Salvataggio completato', '']);
                             this.$scope.$evalAsync();
-                    });
+                        });
                 }
                 this.$scope.$evalAsync();
             });

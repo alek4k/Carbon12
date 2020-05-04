@@ -3,8 +3,7 @@
  * Date: 2020-03-28
  *
  * @file Interfaccia per la gestione dei modelli
- * Authors:
- *      @author Carbon12 <carbon.dodici@gmail.com>
+ * @author Carbon12 <carbon.dodici@gmail.com>
  * @version 1.4.0
  *
  * Changelog: creazione interfaccia
@@ -36,4 +35,4 @@ class Model {
     }
 }
 
-module.exports = Model;
+export default Model;

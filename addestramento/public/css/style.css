@@ -47,10 +47,6 @@ form > .row {
     display: none;
 }
 
-.hiddendiv {
-    width: 0!important;
-}
-
 .btn {
     background-color: #1675AA;
 }

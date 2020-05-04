@@ -198,27 +198,24 @@ export default class alertCtrl {
                                         ],
                                         type: (this.when[i] === 'superiore') ? 'gt' : 'lt',
                                     },
-                                    operator: {
-                                        type: 'and',
-                                    },
                                     query: {
                                         params: [
                                             dashboard.getJSON().panels[i].targets[0].refId,
-                                            '1m',
+                                            '1s',
                                             'now',
                                         ]
                                     },
                                     reducer: {
                                         params: [],
-                                        type: 'avg',
+                                        type: 'last',
                                     },
                                     type: 'query'
                                 }],
-                                executionErrorState: 'alerting',
-                                frequency: '30s',
+                                executionErrorState: 'keep_state',
+                                frequency: '1s',
                                 message: this.message[i],
                                 name: this.panelsList[i] + ' alert',
-                                noDataState: 'alerting',
+                                noDataState: 'keep_state',
                                 notifications: [{
                                     uid: alertName,
                                 }],

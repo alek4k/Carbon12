@@ -100,11 +100,11 @@
         </div>
 
         <div ng-if="ctrl.step === 2" class="modal-backdrop in"></div>
-        <div ng-if="ctrl.step === 2" class="modal hide modal--narrow confirm-modal in" style="display: block;">
+        <div ng-if="ctrl.step === 2" class="modal hide modal--narrow confirm-modal in show">
           <div class="modal-body">
             <div class="modal-header">
               <h2 class="modal-header-title">
-                <i class="fa fa-exclamation"></i>
+                <i class="fa fa-trash"></i>
                 <span class="p-l-1">Conferma di cancellazione</span>
               </h2>
               <a class="modal-header-close" ng-click="ctrl.step = 1">

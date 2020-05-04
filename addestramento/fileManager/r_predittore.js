@@ -104,11 +104,9 @@ class RPredittore {
         if (this.jsonContent.data_entry) {
             this.sources = [];
             const dataEntry = this.jsonContent.data_entry;
-            for (const source in dataEntry) {
-                if ({}.hasOwnProperty.call(dataEntry, source)) {
-                    this.sources.push(dataEntry[source]);
-                }
-            }
+            Object.keys(dataEntry).forEach((key) => {
+                this.sources.push(dataEntry[key]);
+            });
         }
         return this.sources;
     }

@@ -11,6 +11,6 @@
 
 module.exports = {
     moduleNameMapper: {
-        'grafana/app/core/core': '../../__mocks__/eventsMock',
+        'grafana/app/core/core': '<rootDir>/__mocks__/eventsMock',
     },
 };

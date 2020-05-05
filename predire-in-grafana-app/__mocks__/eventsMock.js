@@ -9,10 +9,10 @@
  * Changelog: modifiche effettuate
  */
 
-export const evalAsyncMock = jest.fn();
+export const emitMock = jest.fn();
 
-const ScopeMock = jest.fn().mockImplementation(() => ({
-    $evalAsync: evalAsyncMock,
-}));
+const EventsMock = {
+    emit: emitMock,
+};
 
-export default ScopeMock;
+export { EventsMock as appEvents };

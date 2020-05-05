@@ -6,7 +6,7 @@
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version 1.4.0
  *
- * Changelog: sostituito babel/preset-env con @babel/preset-env 
+ * Changelog: sostituito babel/preset-env con @babel/preset-env
  */
 
 module.exports = {

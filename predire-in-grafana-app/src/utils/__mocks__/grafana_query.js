@@ -11,10 +11,12 @@
 
 export const getDashboardMock = jest.fn();
 export const postDashboardMock = jest.fn();
+export const getFolderMock = jest.fn();
 
 const GrafanaApiQuery = jest.fn().mockImplementation(() => ({
     getDashboard: getDashboardMock,
     postDashboard: postDashboardMock,
+    getFolder: getFolderMock,
 }));
 
 export default GrafanaApiQuery;

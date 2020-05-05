@@ -132,9 +132,7 @@ export default class predictCtrl {
      */
     timeToMilliseconds(index) {
         if (this.time[index]) {
-            try {
-                parseFloat(this.time[index]);
-            } catch (err) {
+            if (Number.isNaN(parseFloat(this.time[index]))) {
                 return 0.0;
             }
             if (this.timeUnit[index] === 'secondi') {

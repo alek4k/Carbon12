@@ -12,7 +12,7 @@
 /* eslint-disable import/named */
 import InfinitySwag from '../../../src/utils/infinitySwag';
 import BackendSrvMock from '../../../__mocks__/backendSrvMock';
-import ScopeMock, { $evalAsyncMock } from '../../../__mocks__/scopeMock';
+import ScopeMock, { evalAsyncMock } from '../../../__mocks__/scopeMock';
 import Influx, { getLastValueMock } from '../../../src/utils/influx';
 import GrafanaApiQuery, { getDashboardMock, postDashboardMock }
     from '../../../src/utils/grafana_query';
@@ -193,8 +193,8 @@ describe('Testing method', () => {
             expect(postThenMock).toHaveBeenCalledWith(expect.any(Function));
             expect(fSetInflux).toHaveBeenCalledTimes(1);
             expect(fSetInflux).toHaveBeenCalledWith();
-            expect($evalAsyncMock).toHaveBeenCalledTimes(2);
-            expect($evalAsyncMock).toHaveBeenCalledWith();
+            expect(evalAsyncMock).toHaveBeenCalledTimes(2);
+            expect(evalAsyncMock).toHaveBeenCalledWith();
             expect(infinitySwag).toEqual({
                 $scope: new ScopeMock(),
                 backendSrv: new BackendSrvMock(),
@@ -235,8 +235,8 @@ describe('Testing method', () => {
             expect(getJSONMock).toHaveBeenCalledWith();
             expect(fSetInflux).toHaveBeenCalledTimes(1);
             expect(fSetInflux).toHaveBeenCalledWith();
-            expect($evalAsyncMock).toHaveBeenCalledTimes(1);
-            expect($evalAsyncMock).toHaveBeenCalledWith();
+            expect(evalAsyncMock).toHaveBeenCalledTimes(1);
+            expect(evalAsyncMock).toHaveBeenCalledWith();
             expect(infinitySwag).toEqual({
                 $scope: new ScopeMock(),
                 backendSrv: new BackendSrvMock(),

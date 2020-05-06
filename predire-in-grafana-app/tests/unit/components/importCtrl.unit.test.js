@@ -153,7 +153,7 @@ describe('Testing method', () => {
         });
     });
 
-    describe.only('loadDataSources', () => {
+    describe('loadDataSources', () => {
         beforeEach(() => {
             imp.loadDataSources = ImportCtrl.prototype.loadDataSources;
             imp.grafana = new GrafanaAPI();
@@ -222,7 +222,7 @@ describe('Testing method', () => {
         });
     });
 
-    it.only('saveDashboard', () => {
+    it('saveDashboard', () => {
         imp.saveDashboard = ImportCtrl.prototype.saveDashboard;
 
         imp.grafana = new GrafanaAPI();

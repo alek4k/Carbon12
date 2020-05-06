@@ -9,15 +9,6 @@
  * Changelog: aggiunto metodo saveDashboard()
  */
 
-<<<<<<< HEAD
-// import { appEvents } from 'grafana/app/core/core';
-
-// importo il template della dashboard per la creazione del pannello
-import defaultDashboard from '../dashboards/default.json';
-import Influx from '../utils/influx';
-import GrafanaApiQuery from '../utils/grafana_query';
-import FilePredictor from '../utils/r_predittore';
-=======
 // eslint-disable-next-line import/no-unresolved
 import { appEvents } from 'grafana/app/core/core';
 
@@ -27,7 +18,6 @@ import FilePredictor from '../utils/r_predittore';
 import Builder from '../utils/builder';
 import Dashboard from '../utils/dashboard';
 import Panel from '../utils/panel';
->>>>>>> origin/plugin
 
 export default class importCtrl {
     /** @ngInject */
@@ -40,19 +30,10 @@ export default class importCtrl {
      */
     constructor($location, $scope, backendSrv) {
         this.$location = $location;
-<<<<<<< HEAD
-=======
         this.$scope = $scope;
->>>>>>> origin/plugin
         this.step = 1;
         this.influx = null;
         this.grafana = new GrafanaApiQuery(backendSrv);
-<<<<<<< HEAD
-        this.dashboard = {};
-        this.predictor = {};
-        this.panelName = '';
-=======
->>>>>>> origin/plugin
     }
 
     /**
@@ -74,11 +55,7 @@ export default class importCtrl {
             this.loadDataSources();
         } else {
             this.error = 'Il JSON inserito non è un predittore';
-<<<<<<< HEAD
-            // appEvents.emit('alert-error', ['Predittore non valido', '']);
-=======
             appEvents.emit('alert-error', ['Predittore non valido', '']);
->>>>>>> origin/plugin
         }
     }
 
@@ -159,9 +136,6 @@ export default class importCtrl {
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
 
         const sources = this.influx.getSources();
-<<<<<<< HEAD
-        // const instances = this.influx.getInstances();
-=======
 
         this.availableSources = [];
         this.sources = [];
@@ -169,7 +143,6 @@ export default class importCtrl {
         this.params = [];
         this.availableInstances = [];
         this.instances = [];
->>>>>>> origin/plugin
         const instances = this.influx.getInstances();
         for (let i = 0, j = 0; i < sources.length; ++i) {
             // itero sul totale delle sorgenti
@@ -238,35 +211,9 @@ export default class importCtrl {
         this.saveDashboard();
     }
 
-<<<<<<< HEAD
-    // imposto la visualizzazione selezionata dall'utente
-    setView(lastPanel) {
-        const panelID = this.dashboard.panels[lastPanel].id;
-        if (this.view === 'Grafico') {
-            this.dashboard.panels[lastPanel].gridPos.h = 8;
-            this.dashboard.panels[lastPanel].gridPos.w = 12;
-            this.dashboard.panels[lastPanel].type = 'graph';
-            this.dashboard.panels[lastPanel].title = this.panelName
-                ? this.panelName : 'Grafico di Predizione ' + panelID;       
-            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di: ${this.sources}`;
-        } else {
-            this.dashboard.panels[lastPanel].gridPos.h = 4;
-            this.dashboard.panels[lastPanel].gridPos.w = 4;
-            this.dashboard.panels[lastPanel].type = 'singlestat';
-            this.dashboard.panels[lastPanel].thresholds = '0, 0.5';
-            this.dashboard.panels[lastPanel].title = this.panelName
-                ? this.panelName : 'Indicatore di Predizione ' + panelID;
-            this.dashboard.panels[lastPanel].description = `Indicatore relativo alla predizione di ${this.sources}`;
-            this.dashboard.panels[lastPanel].colorBackground = 'true';
-        }
-    }
-
-    // creo il pannello
-=======
     /**
      * Gestisce la creazione del nuovo pannello
      */
->>>>>>> origin/plugin
     createPanel() {
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
             if (this.sources[i] === undefined) {
@@ -315,7 +262,7 @@ export default class importCtrl {
      * Salva la dashboard
      */
     saveDashboard() {
-        // appEvents.emit('alert-success', ['Pannello creato', '']);
+        appEvents.emit('alert-success', ['Pannello creato', '']);
         this.grafana
             .postDashboard(this.dashboard.getJSON())
             .then(() => {

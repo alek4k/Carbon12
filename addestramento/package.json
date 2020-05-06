@@ -5,8 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "jest",
-    "testcoverage": "jest --verbose --coverage",
-    "testwatch": "jest --watchAll"
+    "testcoverage": "jest --verbose --coverage"
   },
   "author": "Carbon12",
   "license": "ISC",
@@ -17,7 +16,7 @@
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "formidable": "^1.2.2",
-    "mime": "^2.4.4",
+    "mime": "^2.4.5",
     "mime-types": "^2.1.26",
     "ml-modules": "^0.1.0",
     "nconf": "^0.10.0",
@@ -31,6 +30,8 @@
     "eslint-plugin-import": "^2.20.1",
     "form-data": "latest",
     "jest": "^25.1.0",
+    "mock-express-request": "^0.2.2",
+    "mock-express-response": "^0.2.2",
     "node-fetch": "^2.6.0",
     "os-utils": "0.0.14",
     "stream-equal": "^1.1.1",

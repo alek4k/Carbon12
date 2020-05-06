@@ -1,28 +1,32 @@
 {
     "header": {
         "title": "Carbon12 Predire in Grafana",
-        "plugin_version": "b.3.0",
-        "train_version": "b.3.0"
+        "plugin_version": "1.4.0",
+        "train_version": "1.4.0"
     },
     "data_entry": {
-        "source0": "win_mem.mean",
-        "source1": "win_cpu.mean"
+        "source0": "win_disk(N)",
+        "source1": "win_cpu(%)"
     },
-    "model": "SVM",
-    "file_version": 0,
-    "notes": "a",
+    "model": "RL",
+    "file_version": 1,
+    "notes": "ewretry",
     "configuration": {
         "_parametroN": "numero di dati inseriti",
-        "N": 89,
+        "N": 173,
         "_parametroD": "numero di sorgenti analizzate",
-        "D": 2,
-        "_parametroB": "bias: coefficiente additivo del calcolo della SVM",
-        "b": 0.9708355353474154,
-        "kernelType": "linear",
-        "_parametroW": "weights: coefficienti moltiplicativi del calcolo della SVM",
-        "w": [
-            -0.10107961908834229,
-            0.07841076814914594
+        "D": 3,
+        "_parametroAlpha": "coefficienti della retta risultante",
+        "alpha": [
+            [
+                6.72021871330432
+            ],
+            [
+                0.0008612940201266767
+            ],
+            [
+                -0.1904313412355103
+            ]
         ]
     }
 }

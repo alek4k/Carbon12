@@ -11,14 +11,16 @@
 
 const fs = require('fs');
 const parse = require('csv-parse/lib/sync');
+const dataReader = require('./dataReader.js').datareader;
 
-module.exports = class csvReader {
+class CsvReader extends dataReader {
     /**
      * @param {string} path Percorso da cui viene caricato il file.
      * @param {object} options Le opzioni passate al lettore di csv. Vedi: https://csv.js.org/parse/options/
      */
 
     constructor(path, options) {
+        super();
         const input = fs.readFileSync(path, 'utf8');
         let readOptions = options;
         // opzioni di default per csv
@@ -39,70 +41,22 @@ module.exports = class csvReader {
             // columns contiene un vettore di stringhe, ogni stringa è un nome di una colonna del csv
             this.columns = Object.keys(this.records[0]);
         }
+        this.labelsColumn = null;
     }
 
     /**
-     * @returns {Boolean} Ritorna true se la prima colonna ha etichetta Time e l'ultima Labels
+     * @returns {Array} Ritorna un vettore contenente tutte le intestazioni delle colonne del CSV.
      */
-    checkStructure() {
-        const columnsLength = this.columns.length - 1;
-        return this.columns[0] === 'Time' && this.columns[columnsLength] === 'Labels';
+    autoGetColumns() {
+        return this.columns;
     }
 
     /**
-     *
-     * @return dati per il grafico
+     * @param int columnValue indice della colonna con le labels
+     * imposta il valore della colonna che contiene le labels
      */
-    getDataGraph() {
-        // seleziona tutte le colonne, eccetto quella delle data entry(Series), delle Labels e quella vuota che mette grafana
-        const dataColumns = [];
-        this.columns.forEach((element) => {
-            if ((!(element === 'Labels')) && (!(element === 'Time'))) {
-                dataColumns.push(element);
-            }
-        });
-
-        const res = [];
-        let i = 0;
-        this.records.forEach((row) => {
-            const validRow = [];
-            let c = 0;
-            for (const key in row) {
-                if (dataColumns.includes(key)) {
-                    // per ogni riga del csv, prendo i valori nelle colonne che sono specificate in columns
-                    // in validRow alla fine del ciclo sarà presente la riga corrente con solo le colonne valide
-                    let count = 0;
-                    let ji = 0;
-                    for (ji; ji < row[key].length; ji++) {
-                        if (row[key].charAt(ji) === '.') {
-                            count++;
-                        }
-                    }
-                    if (count > 1) {
-                        let st = row[key];
-                        for (let dot = 1; dot <= count; dot++) {
-                            st = st.replace('.', '');
-                        }
-                        validRow[c++] = st;
-                    } else {
-                        validRow[c++] = row[key];
-                    }
-                }
-            }
-            res[i++] = validRow;
-        });
-        // converte i valori ottenuti nel giusto formato
-        for (let k = 0; k < res.length; k++) {
-            // converte i valori in float
-            for (let j = 0; j < res[k].length; j++) {
-                if (res[k][j] === 'null') {
-                    res[k][j] = 0;
-                } else {
-                    res[k][j] = parseFloat(res[k][j]) / 1000000;
-                }
-            }
-        }
-        return res;
+    setLabelsColumn(columnValue) {
+        this.labelsColumn = this.columns[columnValue];
     }
 
     /**
@@ -140,12 +94,11 @@ module.exports = class csvReader {
         // seleziona tutte le colonne, eccetto quella delle data entry(Series), delle Labels e quella vuota che mette grafana
         const dataColumns = [];
         this.columns.forEach((element) => {
-            if ((!(element === 'Labels')) && (!(element === 'Time'))) {
+            if (!(element === this.labelsColumn)) {
                 dataColumns.push(element);
             }
         });
         const res = this.getData(dataColumns);
-
         // converte i valori ottenuti nel giusto formato
         for (let i = 0; i < res.length; i++) {
             // converte i valori in float
@@ -153,12 +106,15 @@ module.exports = class csvReader {
                 if (res[i][j] === 'null') {
                     res[i][j] = 0;
                 } else {
+                    res[i][j] = res[i][j].replace(',', '.');
                     res[i][j] = parseFloat(res[i][j]);
+                    res[i][j] = Math.round(res[i][j] * 1e8) / 1e8;
                 }
             }
         }
         return res;
     }
+
 
     /**
      * @returns {Array} Ritorna un vettore contenente le Labels
@@ -167,7 +123,7 @@ module.exports = class csvReader {
     autoGetLabel() {
         // usa getData per ottenere la colonna delle Labels
         const labCol = [];
-        labCol[0] = 'Labels';
+        labCol[0] = this.labelsColumn;
         const res = this.getData(labCol);
 
         // converte le Label da String a int
@@ -183,7 +139,7 @@ module.exports = class csvReader {
     getDataSource() {
         const res = [];
         this.columns.forEach((element) => {
-            if (!(element === 'Labels' || element === 'Time')) {
+            if (!(element === this.labelsColumn)) {
                 res.push(element);
             }
         });
@@ -196,4 +152,6 @@ module.exports = class csvReader {
     countSource() {
         return this.getDataSource().length;
     }
-};
+}
+
+module.exports.csvreader = CsvReader;

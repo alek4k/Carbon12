@@ -9,8 +9,8 @@
  * Changelog: creazione classe
  */
 
-const Model = require('./model');
-const SVM = require('./svm/svm');
+const Model = require('./model').model;
+const SVM = require('./svm/svm').svm;
 
 class SvmAdapter extends Model {
     constructor() {
@@ -32,4 +32,4 @@ class SvmAdapter extends Model {
     }
 }
 
-module.exports = SvmAdapter;
+module.exports.svmadapter = SvmAdapter;

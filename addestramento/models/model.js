@@ -35,4 +35,4 @@ class Model {
     }
 }
 
-module.exports = Model;
+module.exports.model = Model;

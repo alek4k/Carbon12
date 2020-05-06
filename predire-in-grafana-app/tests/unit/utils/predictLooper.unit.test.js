@@ -10,7 +10,7 @@
  */
 
 /* eslint-disable import/named */
-import predictLooper from '../../../src/utils/predictLooper';
+import PredictLooper from '../../../src/utils/predictLooper';
 import BackendSrvMock from '../../../__mocks__/backendSrvMock';
 import ScopeMock, { evalAsyncMock } from '../../../__mocks__/scopeMock';
 import Influx, { getLastValueMock } from '../../../src/utils/influx';
@@ -29,7 +29,7 @@ jest.mock('../../../src/utils/models/RL_Adapter');
 jest.mock('../../../src/utils/dashboard');
 
 it('Testing exported object', () => {
-    expect(predictLooper).toEqual({
+    expect(PredictLooper).toEqual({
         $scope: null,
         backendSrv: null,
         db: [],
@@ -38,7 +38,7 @@ it('Testing exported object', () => {
 });
 
 describe('Testing method', () => {
-    const predictLooperProto = Object.getPrototypeOf(predictLooper);
+    const predictLooperProto = Object.getPrototypeOf(PredictLooper);
     let predictLooper = null;
     let dash = null;
     beforeEach(() => {

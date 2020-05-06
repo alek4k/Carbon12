@@ -10,19 +10,158 @@
  */
 
 import fs from 'fs';
-import ImportCtrl from '../../src/components/import';
-import GrafanaAPI from '../../src/utils/grafana_query';
-import BackendSrvMock, { getMock, postMock } from '../../__mocks__/backendSrvMock';
-import ScopeMock from '../../__mocks__/scopeMock';
-import R_Predictor from '../../src/utils/r_predittore';
+import ImportCtrl from '../../../src/components/import';
+import GrafanaAPI from '../../../src/utils/grafana_query';
+import BackendSrvMock, { getMock, postMock } from '../../../__mocks__/backendSrvMock';
+import ScopeMock from '../../../__mocks__/scopeMock';
+import { appEvents, emitMock } from 'grafana/app/core/core'; 
+import RPredittore, {
+    validityMock, getConfigurationMock, getNotesMock,
+    getModelMock, getDataEntryMock
+}
+    from '../../../src/utils/r_predittore';
+
+jest.mock('../../../src/utils/r_predittore');
+jest.mock('../../../src/utils/grafana_query');
 
 beforeEach(() => {
-    // Clear all instances
-    getMock.mockClear();
-    postMock.mockClear();
-    BackendSrvMock.mockClear();
+    jest.clearAllMocks();
 });
 
+it.only('Testing constructor', () => {
+    const parLocation = '';
+    const parScope = new ScopeMock();
+    const parBackendSrv = new BackendSrvMock();
+    const imp = new ImportCtrl(parLocation, parScope, parBackendSrv);
+
+    expect(GrafanaAPI).toHaveBeenCalledTimes(1);
+    expect(GrafanaAPI).toHaveBeenCalledWith(new BackendSrvMock());
+    expect(imp).toEqual({
+        $location: '',
+        $scope: new ScopeMock(),
+        step: 1,
+        influx: null,
+        grafana: new GrafanaAPI(),
+    });
+});
+
+describe.only('Testing method', () => {
+    let imp;
+    beforeEach(() => {
+        imp = new (function testImpor() { })();
+    });
+
+    describe('onUpload', () => {
+        const parJson = { jsonTest: 'test' };
+        beforeEach(() => {
+            imp.onUpload = ImportCtrl.prototype.onUpload;
+        });
+
+        describe('when fPredictor.validity() return true', () => {
+            beforeEach(() => {
+                validityMock.mockReturnValueOnce(true);
+                getConfigurationMock.mockReturnValueOnce('getConfigurationMock');
+                getNotesMock.mockReturnValueOnce('getNotesMock');
+                getDataEntryMock.mockReturnValueOnce('getDataEntryMock');
+            });
+
+            it('with model equal SVM', () => {
+                const mockLDS = jest.fn();
+                imp.loadDataSources = mockLDS;
+                getModelMock.mockReturnValueOnce('SVM');
+
+                imp.onUpload(parJson);
+
+                expect(RPredittore).toHaveBeenCalledTimes(1);
+                expect(RPredittore).toHaveBeenCalledWith(parJson);
+                expect(validityMock).toHaveBeenCalledTimes(1);
+                expect(validityMock).toHaveBeenCalledWith();
+                expect(getConfigurationMock).toHaveBeenCalledTimes(1);
+                expect(getConfigurationMock).toHaveBeenCalledWith();
+                expect(getNotesMock).toHaveBeenCalledTimes(1);
+                expect(getNotesMock).toHaveBeenCalledWith();
+                expect(getModelMock).toHaveBeenCalledTimes(1);
+                expect(getModelMock).toHaveBeenCalledWith();
+                expect(getDataEntryMock).toHaveBeenCalledTimes(1);
+                expect(getDataEntryMock).toHaveBeenCalledWith();
+                expect(imp.loadDataSources).toHaveBeenCalledTimes(1);
+                expect(imp.loadDataSources).toHaveBeenCalledWith();
+                expect(imp).toEqual({
+                    onUpload: ImportCtrl.prototype.onUpload,
+                    loadDataSources: mockLDS,
+                    error: '',
+                    predictor: 'getConfigurationMock',
+                    notes: 'getNotesMock',
+                    model: 'SVM',
+                    view: 'Indicatore',
+                    availableDataEntry: 'getDataEntryMock',
+                });
+            });
+
+            it('with model not equal SVM', () => {
+                const mockLDS = jest.fn();
+                imp.loadDataSources = mockLDS;
+                getModelMock.mockReturnValueOnce('altro');
+
+                imp.onUpload(parJson);
+
+                expect(RPredittore).toHaveBeenCalledTimes(1);
+                expect(RPredittore).toHaveBeenCalledWith(parJson);
+                expect(validityMock).toHaveBeenCalledTimes(1);
+                expect(validityMock).toHaveBeenCalledWith();
+                expect(getConfigurationMock).toHaveBeenCalledTimes(1);
+                expect(getConfigurationMock).toHaveBeenCalledWith();
+                expect(getNotesMock).toHaveBeenCalledTimes(1);
+                expect(getNotesMock).toHaveBeenCalledWith();
+                expect(getModelMock).toHaveBeenCalledTimes(1);
+                expect(getModelMock).toHaveBeenCalledWith();
+                expect(getDataEntryMock).toHaveBeenCalledTimes(1);
+                expect(getDataEntryMock).toHaveBeenCalledWith();
+                expect(imp.loadDataSources).toHaveBeenCalledTimes(1);
+                expect(imp.loadDataSources).toHaveBeenCalledWith();
+                expect(imp).toEqual({
+                    onUpload: ImportCtrl.prototype.onUpload,
+                    loadDataSources: mockLDS,
+                    error: '',
+                    predictor: 'getConfigurationMock',
+                    notes: 'getNotesMock',
+                    model: 'altro',
+                    view: 'Grafico',
+                    availableDataEntry: 'getDataEntryMock',
+                });
+            });
+        });
+
+        it('when fPredictor.validity() return false', () => {
+            validityMock.mockReturnValueOnce(false);
+
+            imp.onUpload(parJson);
+
+            expect(RPredittore).toHaveBeenCalledTimes(1);
+            expect(RPredittore).toHaveBeenCalledWith(parJson);
+            expect(validityMock).toHaveBeenCalledTimes(1);
+            expect(validityMock).toHaveBeenCalledWith();
+            expect(getConfigurationMock).toHaveBeenCalledTimes(0);
+            expect(getNotesMock).toHaveBeenCalledTimes(0);
+            expect(getModelMock).toHaveBeenCalledTimes(0);
+            expect(getDataEntryMock).toHaveBeenCalledTimes(0);
+            expect(emitMock).toHaveBeenCalledTimes(1);
+            expect(emitMock).toHaveBeenCalledWith('alert-error', ['Predittore non valido', '']);
+            expect(imp).toEqual({
+                onUpload: ImportCtrl.prototype.onUpload,
+                error: 'Il JSON inserito non è un predittore',
+            });
+        });
+    });
+
+    describe('loadDataSources', () => {
+        beforeEach(() => {
+            imp.loadDataSources = ImportCtrl.prototype.loadDataSources;
+        });
+    });
+
+
+});
 test('Test the onUpload function error.', async () => {
     const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(

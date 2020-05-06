@@ -1,20 +1,28 @@
 /**
  * File name: config.js
- * Date: 2020-03-18
+ * Date: 2020-02-25
  *
- * @file Script principale del programma di addestramento
+ * @file Classe che rappresenta la pagina iniziale di configurazione del plug-in
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
- * Changelog: modifiche effettuate
+ * Changelog: modificato metodo redirect()
  */
 
 export default class PredireInGrafanaAppConfigCtrl {
     /** @ngInject */
+
+    /**
+     * Costruisce l'oggetto che rappresenta la pagina iniziale di configurazione del plug-in
+     * @param {$location} Object permette la gestione dell'URL della pagina
+     */
     constructor($location) {
         this.$location = $location;
     }
 
+    /**
+     * Reindirizza l'URL della pagina corrente alla pagina import
+     */
     redirect() {
         this.$location.url('plugins/predire-in-grafana-app/page/import');
     }

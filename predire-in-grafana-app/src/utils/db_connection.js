@@ -1,22 +1,24 @@
 /**
  * File name: db_connection.js
- * Date: 2020-03-18
+ * Date: 2020-03-20
  *
- * @file Script principale del programma di addestramento
+ * @file Classe che rappresenta la connessione al database
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
- * Changelog: modifiche effettuate
+ * Changelog: aggiunto campo dato per il tracciamento delle predizioni salvate
  */
-
-class DBConnection {
+export default class DBConnection {
+    /**
+     * Costruisce l'oggetto che rappresenta il database
+     * @param {host} String rappresenta l'host del database
+     * @param {port} Number rappresenta la porta del database
+     * @param {database} String rappresenta il nome del database
+     */
     constructor(host, port, database) {
-        if (host === undefined ||
-            port === undefined ||
-            database === undefined ||
-            host === '' ||
-            port === undefined ||
-            host === '') {
+        if (typeof host !== 'string'
+        || typeof port !== 'number'
+        || typeof database !== 'string') {
             throw new Error('Incorrect values');
         }
 
@@ -26,5 +28,3 @@ class DBConnection {
         this.predictions = [];
     }
 }
-
-module.exports = DBConnection;

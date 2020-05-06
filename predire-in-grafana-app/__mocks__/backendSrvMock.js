@@ -50,7 +50,7 @@ export const getMock = jest.fn((url) => {
             reject();
         });
     }
-    if (url === 'api/dashboards/db/predire-in-grafana') {
+    if (url === 'api/dashboards/db/TestName') {
         return new Promise((resolve, reject) => {
             resolve({
                 dashboard: {
@@ -74,6 +74,12 @@ export const getMock = jest.fn((url) => {
             reject();
         });
     }
+    if (url === 'api/alert-notifications') {
+        return new Promise((resolve, reject) => {
+            resolve();
+            reject();
+        });
+    }
     console.log('Unhandled get in backendSrvMock:');
     console.log('Url: ' + url);
     return undefined;
@@ -93,7 +99,33 @@ export const postMock = jest.fn((url, data) => {
             reject();
         });
     }
+    if (url === 'api/dashboards/db') {
+        return new Promise((resolve, reject) => {
+            resolve();
+            reject();
+        });
+    }
+    if (url === 'api/alert-notifications') {
+        return new Promise((resolve, reject) => {
+            resolve();
+            reject();
+        });
+    }
     console.log('Unhandled post in backendSrvMock:');
+    console.log('Url: ' + url);
+    console.log('Data:');
+    console.log(data);
+    return undefined;
+});
+
+export const putMock = jest.fn((url, data) => {
+    if (url === 'api/alert-notifications/uid/predire-in-grafana-alert') {
+        return new Promise((resolve, reject) => {
+            resolve();
+            reject();
+        });
+    }
+    console.log('Unhandled put in backendSrvMock:');
     console.log('Url: ' + url);
     console.log('Data:');
     console.log(data);
@@ -103,6 +135,7 @@ export const postMock = jest.fn((url, data) => {
 const backendSrvMock = jest.fn().mockImplementation(() => ({
     get: getMock,
     post: postMock,
+    put: putMock,
 }));
 
 export default backendSrvMock;

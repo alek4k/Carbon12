@@ -1,22 +1,20 @@
 /**
  * File name: influx.js
- * Date: 2020-03-18
+ * Date: 2020-03-20
  *
- * @file Script principale del programma di addestramento
+ * @file Classe che rappresenta il database Influx
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
- * Changelog: modifiche effettuate
+ * Changelog: aggiunto metodo deleteAllPredictions()
  */
 
-
-/* eslint-disable import/no-unresolved */
 import $ from 'jquery';
 import DBConnection from './db_connection';
 
 export default class Influx extends DBConnection {
     /**
-     *  Ritora il risultato di una query
+     * Ritorna il risultato di una query
      * @param {query} String rappresenta la query per il database
      * @returns {Array} Array che contiene i risultati della query
      */
@@ -40,15 +38,17 @@ export default class Influx extends DBConnection {
     }
 
     /**
-     *  Ritorna l'ultimo valore raccolto nel database per la sorgente ed il parametro specificati
+     * Ritorna l'ultimo valore raccolto nel database per la sorgente, l'istanza ed il parametro specificati
      * @param {source} String rappresenta la sorgente
+     * @param {instance} String rappresenta l'istanza
      * @param {param} String rappresenta il parametro
      * @returns {Number} Number che contiene l'ultimo valore memorizzato
      */
     getLastValue(source, instance, param) {
-        const query = instance ?
-            `q=select ${param} from ${source} where instance='${instance}' order by time desc limit 1` :
-            `q=select ${param} from ${source} order by time desc limit 1`;
+        const query = instance
+            ? `q=select ${param} from ${source} where `
+            + `instance='${instance}' order by time desc limit 1`
+            : `q=select ${param} from ${source} order by time desc limit 1`;
         let result;
         $.ajax({
             async: false,
@@ -68,7 +68,7 @@ export default class Influx extends DBConnection {
     }
 
     /**
-     *  Ritorna le datasources monitorate
+     * Ritorna le datasources monitorate
      * @returns {Array} Array contenente i nomi delle datasources monitorate
      */
     getSources() {
@@ -82,10 +82,11 @@ export default class Influx extends DBConnection {
             data: query,
             processData: false,
             success: (data) => {
-                const sources = data.results[0].series;
+                const sources = data.results[0].series !== undefined ? data.results[0].series : [];
                 this.predictions = [];
                 sources.forEach((source) => {
                     if (!source.name.startsWith('predizione')) {
+                        // filtro le sorgenti 'predizioneN'
                         result.push(source);
                     } else {
                         this.predictions.push(source.name.substr(10));
@@ -100,7 +101,7 @@ export default class Influx extends DBConnection {
     }
 
     /**
-     *  Ritorna i parametri disponibili per le datasources
+     * Ritorna i parametri disponibili per le datasources
      * @returns {Array} Array contenente i nomi delle datasources monitorate
      */
     getInstances() {
@@ -124,9 +125,9 @@ export default class Influx extends DBConnection {
     }
 
     /**
-     *  Scrive sul database il valore passato nel relativo measurement
-     * @param {measurement} String che rappresenta il measurement su cui salvare il dato
-     * @param {value} Number che rappresenta il valore da salvare sul database
+     * Scrive sul database il valore passato nel relativo measurement
+     * @param {measurement} String rappresenta il measurement su cui salvare il dato
+     * @param {value} Number rappresenta il valore da salvare sul database
      */
     storeValue(measurement, value) {
         const query = `${measurement} value=${value}`;
@@ -146,31 +147,38 @@ export default class Influx extends DBConnection {
         });
     }
 
-    deleteMeasurement(measurement) {
-        if (measurement.startsWith('predizione')) {
-            const toRemove = parseInt(measurement.substr(10), 10);
-            this.predictions.splice(this.predictions.indexOf(toRemove), 1);
+    /**
+     * Elimina dal database la predizione il cui numero è uguale a quello passato
+     * @param {prediction} Number rappresenta il numero della predizione da eliminare
+     */
+    deletePrediction(prediction) {
+        const query = `q=drop measurement predizione${prediction}`;
+        if (this.predictions.indexOf(prediction) >= 0) {
+            $.ajax({
+                async: false,
+                url: `${this.host}:${this.port}/query?db=${this.database}`,
+                type: 'GET',
+                contentType: 'application/octet-stream',
+                data: query,
+                processData: false,
+                success: () => {
+                    this.predictions.splice(this.predictions.indexOf(prediction), 1);
+                    console.log('Measurement was dropped.');
+                },
+                error: (test, status, exception) => {
+                    console.log(`Error: ${exception}`);
+                },
+            });
         }
-        const query = `q=drop measurement ${measurement}`;
-        $.ajax({
-            async: false,
-            url: `${this.host}:${this.port}/query?db=${this.database}`,
-            type: 'GET',
-            contentType: 'application/octet-stream',
-            data: query,
-            processData: false,
-            success: () => {
-                console.log('Measurement was dropped.');
-            },
-            error: (test, status, exception) => {
-                console.log(`Error: ${exception}`);
-            },
-        });
     }
 
-    deletePredictions() {
-        while (this.predictions.length) {
-            this.deleteMeasurement('predizione' + this.predictions[0]);
+    /**
+     * Elimina dal database tutte le predizioni
+     */
+    deleteAllPredictions() {
+        const oldPred = this.predictions;
+        for (let i = 0; i < oldPred.length; i++) {
+            this.deletePrediction(oldPred[i]);
         }
     }
 }

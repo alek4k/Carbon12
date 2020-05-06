@@ -12,41 +12,39 @@
   <div ng-if="ctrl.step === 1" class="gf-form-group">
     <form class="gf-form">
       <label class="btn btn-primary" for="dashupload">Carica file JSON</label>
-      <dash-upload class="hide" on-upload="ctrl.onUpload(dash)" />
+      <dash-upload class="hide" on-upload="ctrl.onUpload(dash)"/>
     </form>
   </div>
 
   <div ng-if="ctrl.step === 2" class="gf-form-group">
     <div class="text-success p-l-1">
-      <i class="fa fa-check"></i>
-      {{'JSON importato'}}
+      <i class="fa fa-check"></i>&nbsp;&nbsp;{{'JSON importato'}}
     </div>
 
-    <br />
-    <br />
+    <br/>
+    <br/>
 
     <p>Seleziona una sorgente dati</p>
     <div class="gf-form-inline">
       <label class="gf-form-label width-8">Sorgente dati:</label>
       <div class="gf-form-select-wrapper">
-        <select class="gf-form-input" ng-model="ctrl.dataSource" ng-options="ds for ds in ctrl.availableDataSources" />
+        <select class="gf-form-input" ng-model="ctrl.dataSource" ng-options="ds for ds in ctrl.availableDataSources"/>
       </div>
     </div>
     <div class="gf-form-button-row">
-      <button type="button" class="btn btn-primary" ng-click="ctrl.setDataSource(ctrl.dataSource)">Conferma</button>
+      <button type="button" class="btn btn-primary" ng-click="ctrl.setDataSource()">Conferma</button>
       <span ng-if="ctrl.error.includes('selezionare')" class="text-error p-l-1">
-        <i class="fa fa-warning"></i>
-        {{ctrl.error}}
+        <i class="fa fa-warning"></i>&nbsp;&nbsp;{{ctrl.error}}
       </span>
     </div>
 
-    <br />
-    <br />
+    <br/>
+    <br/>
 
     <p>O configurane una</p>
     <div class="gf-form">
       <label class="gf-form-label width-6">Nome:</label>
-      <input type="text" class="gf-form-input width-12" ng-model="ctrl.name">
+      <input type="text" class="gf-form-input width-12" ng-model="ctrl.newDataSource">
     </div>
     <div class="gf-form">
       <span class="gf-form-label width-6">Database:</span>
@@ -65,27 +63,34 @@
     <div class="gf-form-button-row">
       <button type="button" class="btn btn-primary" ng-click="ctrl.addDataSource()">Conferma</button>
       <span ng-if="ctrl.error.includes('configurazione')" class="text-error p-l-1">
-        <i class="fa fa-warning"></i>
-        {{ctrl.error}}
+        <i class="fa fa-warning"></i>&nbsp;&nbsp;{{ctrl.error}}
       </span>
+    </div>
+
+    <br/>
+
+    <div class="gf-form-button-row">
+      <button type="button" class="btn btn-danger" ng-click="ctrl.step = 1">Indietro</button>
     </div>
   </div>
 
   <div ng-if="ctrl.step >= 3" class="gf-form-group">
     <div class="text-success p-l-1">
-      <i class="fa fa-check"></i>
-      {{'JSON importato'}}
+      <i class="fa fa-check"></i>&nbsp;&nbsp;{{'JSON importato'}}
     </div>
 
-    <br />
+    <br/>
 
-    <div class="text-success p-l-1">
-      <i class="fa fa-check"></i>
-      {{'Sorgente dati selezionata'}}
+    <div ng-if="!ctrl.emptyDataSource"  class="text-success p-l-1">
+      <i class="fa fa-check"></i>&nbsp;&nbsp;{{'Sorgente dati selezionata'}}
     </div>
 
-    <br />
-    <br />
+    <div ng-if="ctrl.emptyDataSource" class="text-error p-l-1">
+      <i class="fa fa-close"></i>&nbsp;&nbsp;{{'Sorgente dati vuota'}}
+    </div>
+
+    <br/>
+    <br/>
 
     <div class="gf-form-group">
       <button ng-if="ctrl.step === 3" type="button" class="btn btn-secondary"
@@ -100,7 +105,7 @@
     <div class="gf-form-group">
       <div class="gf-form">
         <label class="gf-form-label width-8">Modello:</label>
-        <input type="text" class="gf-form-input width-4" readonly ng-model="ctrl.model" />
+        <input type="text" class="gf-form-input width-4" readonly ng-model="ctrl.model"/>
       </div>
     </div>
 
@@ -121,7 +126,7 @@
                           ][0];
                           ctrl.params[$index] = ctrl.availableParams[
                             ctrl.availableSources.indexOf(ctrl.sources[$index])
-                          ][0]" />
+                          ][0]"/>
                   </div>
                 </div>
                 <div ng-if="!ctrl.sources[$index] || ctrl.instances[$index]" class="gf-form">
@@ -130,7 +135,7 @@
                     <select class="gf-form-input" ng-model="ctrl.instances[$index]"
                     ng-options="i for i in ctrl.availableInstances[
                           ctrl.availableSources.indexOf(ctrl.sources[$index])
-                        ]" />
+                        ]"/>
                   </div>
                 </div>
                 <div class="gf-form">
@@ -139,7 +144,7 @@
                     <select class="gf-form-input" ng-model="ctrl.params[$index]"
                       ng-options="p for p in ctrl.availableParams[
                           ctrl.availableSources.indexOf(ctrl.sources[$index])
-                        ]" />
+                        ]"/>
                   </div>
                 </div>
               </div>
@@ -149,18 +154,16 @@
       </ol>
     </section>
 
-    <br />
+    <br/>
 
     <div class="gf-form-group">
       <div class="gf-form">
         <label class="gf-form-label width-8">Visualizzazione:</label>
         <div class="gf-form-select-wrapper">
-          <select class="gf-form-input" ng-model="ctrl.view" ng-options="v for v in ['Grafico','Indicatore']" />
+          <select class="gf-form-input" ng-model="ctrl.view" ng-options="v for v in ['Grafico','Indicatore']"/>
         </div>
       </div>
     </div>
-
-    <br />
 
     <div class="gf-form-inline">
       <div class="gf-form">
@@ -171,11 +174,16 @@
           placeholder="Indicatore di Predizione" ng-model="ctrl.panelName">
       </div>
       <div class="gf-form">
-        <button class="btn btn-success" ng-click="ctrl.createPanel()">Crea Pannello</button>
+        <button class="btn btn-primary" ng-click="ctrl.createPanel()">Crea Pannello</button>
         <span ng-if="ctrl.error" class="text-error p-l-1">
-          <i class="fa fa-warning"></i>
-          {{ctrl.error}}
+          <i class="fa fa-warning"></i>&nbsp;&nbsp;{{ctrl.error}}
         </span>
       </div>
+    </div>
+
+    <br/>
+
+    <div class="gf-form-button-row">
+      <button type="button" class="btn btn-danger" ng-click="ctrl.loadDataSources()">Indietro</button>
     </div>
   </div>

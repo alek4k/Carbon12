@@ -14,6 +14,7 @@ import { performance } from 'perf_hooks';
 import fs from 'fs';
 import ImportCtrl from '../../src/components/import';
 import BackendSrvMock, { getMock, postMock } from '../../__mocks__/backendSrvMock';
+import ScopeMock from '../../__mocks__/scopeMock';
 import LocationMock from '../../__mocks__/locationMock';
 
 beforeEach(() => {
@@ -57,13 +58,13 @@ afterEach(() => {
     console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
 });
 
-test('Efficenty tests import.js with already existing datasource', async () => {
-    const importCtrl = new ImportCtrl(new LocationMock(), new BackendSrvMock());
+test('Efficiency tests import.js with already existing datasource', async () => {
+    const importCtrl = new ImportCtrl(new LocationMock(), new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(fs.readFileSync('./tests/files/predittore_test.json').toString());
     const t0 = performance.now();
 
     await importCtrl.onUpload(jsonTest);
-    // controllo come se l'utente segliesse una data source già presente
+    // controllo come se l'utente scegliesse una data source già presente
     importCtrl.dataSource = importCtrl.availableDataSources[0];
     await importCtrl.setDataSource(importCtrl.dataSource);
     importCtrl.sources = ['CPU', 'RAM'];
@@ -77,13 +78,13 @@ test('Efficenty tests import.js with already existing datasource', async () => {
     console.log('Call to function took ' + (t1 - t0) + ' milliseconds.');
 });
 
-test('Efficenty tests import.js with new datasource', async () => {
-    const importCtrl = new ImportCtrl(new LocationMock(), new BackendSrvMock());
+test('Efficiency tests import.js with new datasource', async () => {
+    const importCtrl = new ImportCtrl(new LocationMock(), new ScopeMock(), new BackendSrvMock());
     const jsonTest = JSON.parse(fs.readFileSync('./tests/files/predittore_test.json').toString());
     const t0 = performance.now();
 
     await importCtrl.onUpload(jsonTest);
-    // controllo come se l'utente segliesse una data source già presente
+    // controllo come se l'utente scegliesse una data source già presente
     importCtrl.name = 'TestDS';
     importCtrl.database = 'telegraf';
     importCtrl.port = '8086';

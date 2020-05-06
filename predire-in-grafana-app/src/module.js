@@ -1,20 +1,22 @@
 /**
  * File name: module.js
- * Date: 2020-03-18
+ * Date: 2020-02-25
  *
- * @file Script principale del programma di addestramento
+ * @file Entry point del plug-in
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
- * Changelog: modifiche effettuate
+ * Changelog: aggiunto alertCtrl
  */
 
 import PredireInGrafanaAppConfigCtrl from './components/config';
 import importCtrl from './components/import';
 import predictCtrl from './components/predict';
+import alertCtrl from './components/alert';
 
 export {
     PredireInGrafanaAppConfigCtrl as ConfigCtrl,
-    predictCtrl,
     importCtrl,
+    predictCtrl,
+    alertCtrl,
 };

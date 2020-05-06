@@ -1,7 +1,7 @@
 {
   "name": "predire-in-grafana-app",
   "private": false,
-  "version": "0.0.1",
+  "version": "1.4.0",
   "description": "Carbon12 plug-in di predizione",
   "scripts": {
     "build": "grafana-toolkit plugin:build",

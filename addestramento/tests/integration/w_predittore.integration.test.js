@@ -9,7 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-const WPredittore = require('../../fileManager/w_predittore.js');
+const WPredittore = require('../../fileManager/w_predittore').wpredittore;
 
 const managePredittore = new WPredittore();
 

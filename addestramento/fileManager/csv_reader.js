@@ -11,9 +11,9 @@
 
 const fs = require('fs');
 const parse = require('csv-parse/lib/sync');
-const dataReader = require('./dataReader.js');
+const dataReader = require('./dataReader.js').datareader;
 
-module.exports = class csvReader extends dataReader {
+class CsvReader extends dataReader {
     /**
      * @param {string} path Percorso da cui viene caricato il file.
      * @param {object} options Le opzioni passate al lettore di csv. Vedi: https://csv.js.org/parse/options/
@@ -152,4 +152,6 @@ module.exports = class csvReader extends dataReader {
     countSource() {
         return this.getDataSource().length;
     }
-};
+}
+
+module.exports.csvreader = CsvReader;

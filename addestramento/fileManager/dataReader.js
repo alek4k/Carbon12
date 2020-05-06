@@ -58,4 +58,4 @@ class DataReader {
     }
 }
 
-module.exports = DataReader;
+module.exports.datareader = DataReader;

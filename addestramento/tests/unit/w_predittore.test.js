@@ -9,7 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-const WPredittore = require('../../fileManager/w_predittore.js');
+const WPredittore = require('../../fileManager/w_predittore').wpredittore;
 
 describe('Testing constructor', () => {
     test('Testing constructor', () => {
@@ -35,6 +35,14 @@ describe('Testing method', () => {
     test('It should response that managePredittore has the expected header', () => {
         managePredittore.setHeader = WPredittore.prototype.setHeader;
         managePredittore.setHeader('b.3.0', 'b.3.0', 'Carbon12 Predire in Grafana');
+        expect(managePredittore.jsonContent.header.title).toEqual('Carbon12 Predire in Grafana');
+        expect(managePredittore.jsonContent.header.plugin_version).toEqual('b.3.0');
+        expect(managePredittore.jsonContent.header.train_version).toEqual('b.3.0');
+    });
+
+    test('It should response that managePredittore has the expected header', () => {
+        managePredittore.setHeader = WPredittore.prototype.setHeader;
+        managePredittore.setHeader('b.3.0', 'b.3.0', null);
         expect(managePredittore.jsonContent.header.title).toEqual('Carbon12 Predire in Grafana');
         expect(managePredittore.jsonContent.header.plugin_version).toEqual('b.3.0');
         expect(managePredittore.jsonContent.header.train_version).toEqual('b.3.0');

@@ -8,9 +8,9 @@
  *
  * Changelog: modifiche effettuate
  */
-const CSVr = require('../../fileManager/csv_reader.js');
+const CsvReader = require('../../fileManager/csv_reader').csvreader;
 
-let csvReader = null;
+let csvreader = null;
 
 describe('Testing constructor', () => {
     test('Testing constructor with path and data', () => {
@@ -21,7 +21,7 @@ describe('Testing constructor', () => {
             columns: true,
             skip_empty_lines: true,
         };
-        const rCSV = new CSVr(path, option);
+        const rCSV = new CsvReader(path, option);
         expect(rCSV).toEqual({
             records: [
                 {
@@ -82,7 +82,7 @@ describe('Testing constructor', () => {
 
     test('Testing constructor without option', () => {
         const path = './tests/files/dati_test.csv';
-        const rCSV = new CSVr(path, null);
+        const rCSV = new CsvReader(path, null);
         expect(rCSV).toEqual({
             records: [
                 {
@@ -143,7 +143,7 @@ describe('Testing constructor', () => {
 
     test('Testing constructor with records.length = 0', () => {
         const path = './tests/files/dati_test_NotValidStructure.csv';
-        const rCSV = new CSVr(path, null);
+        const rCSV = new CsvReader(path, null);
         expect(rCSV).toEqual({
             records: [],
             labelsColumn: null,
@@ -153,8 +153,8 @@ describe('Testing constructor', () => {
 
 describe('Testing method', () => {
     beforeEach(() => {
-        csvReader = new (function testCSVreader() {})();
-        csvReader.records= [
+        csvreader = new (function testCSVreader() {})();
+        csvreader.records = [
             {
                 A: 'null',
                 B: '36350749646',
@@ -206,41 +206,41 @@ describe('Testing method', () => {
                 Labels: '-1',
             },
         ];
-        csvReader.columns = ['A', 'B', 'Labels'];
-        csvReader.labelsColumn = 'Labels';
+        csvreader.columns = ['A', 'B', 'Labels'];
+        csvreader.labelsColumn = 'Labels';
     });
 
     afterEach(() => {
-        csvReader = null;
+        csvreader = null;
     });
 
     test('It should response a vector with CSV\'s columns intersections', () => {
-        csvReader.autoGetColumns = CSVr.prototype.autoGetColumns;
-        expect(csvReader.autoGetColumns()).toEqual(['A', 'B', 'Labels']);
+        csvreader.autoGetColumns = CsvReader.prototype.autoGetColumns;
+        expect(csvreader.autoGetColumns()).toEqual(['A', 'B', 'Labels']);
     });
 
     test('It should test that LabelsColumn is setted', () => {
-        csvReader.setLabelsColumn = CSVr.prototype.setLabelsColumn;
-        csvReader.setLabelsColumn(2);
-        expect(csvReader.labelsColumn).toEqual('Labels');
+        csvreader.setLabelsColumn = CsvReader.prototype.setLabelsColumn;
+        csvreader.setLabelsColumn(2);
+        expect(csvreader.labelsColumn).toEqual('Labels');
     });
 
     test('It should response that columns==null', () => {
-        csvReader.getData = CSVr.prototype.getData;
-        expect(csvReader.getData(null)).toEqual(null);
+        csvreader.getData = CsvReader.prototype.getData;
+        expect(csvreader.getData(null)).toEqual(null);
     });
 
     test('It should response that function getData of file.csv work correctly', () => {
-        csvReader.getData = CSVr.prototype.getData;
-        expect(csvReader.getData(['Labels'])).toEqual([
+        csvreader.getData = CsvReader.prototype.getData;
+        expect(csvreader.getData(['Labels'])).toEqual([
             ['-1'], ['-1'], ['1'], ['-1'], ['1'], ['1'], ['1'], ['-1'], ['-1'], ['-1']]);
     });
 
     test('It should response that file.csv data were read correctly', () => {
-        csvReader.autoGetData = CSVr.prototype.autoGetData;
-        csvReader.getData = function f() {
+        csvreader.autoGetData = CsvReader.prototype.autoGetData;
+        csvreader.getData = function f() {
             const result = [
-                ['0', '36350749646'],
+                ['null', '36350749646'],
                 ['0.02222222', '36350877193'],
                 ['577764938556921', '3638583724267630'],
                 ['5.8', '3640000000000000'],
@@ -265,29 +265,29 @@ describe('Testing method', () => {
             [0, 3638583724267630],
             [0.06666815, 27500000000000000],
         ];
-        expect(csvReader.autoGetData()).toEqual(data);
+        expect(csvreader.autoGetData()).toEqual(data);
     });
 
     test('It should response that file.csv has the expected label', () => {
-        csvReader.autoGetLabel = CSVr.prototype.autoGetLabel;
-        csvReader.getData = function f() {
+        csvreader.autoGetLabel = CsvReader.prototype.autoGetLabel;
+        csvreader.getData = function f() {
             const result = ['-1', '-1', '1', '-1', '1', '1', '1', '-1', '-1', '-1'];
             return result;
         };
-        expect(csvReader.autoGetLabel()).toEqual([-1, -1, 1, -1, 1, 1, 1, -1, -1, -1]);
+        expect(csvreader.autoGetLabel()).toEqual([-1, -1, 1, -1, 1, 1, 1, -1, -1, -1]);
     });
 
     test('It should response that file.csv has the expected source', () => {
-        csvReader.getDataSource = CSVr.prototype.getDataSource;
-        expect(csvReader.getDataSource()).toEqual(['A', 'B']);
+        csvreader.getDataSource = CsvReader.prototype.getDataSource;
+        expect(csvreader.getDataSource()).toEqual(['A', 'B']);
     });
 
     test('It should response that file.csv has the expected count of source', () => {
-        csvReader.countSource = CSVr.prototype.countSource;
-        csvReader.getDataSource = function f() {
+        csvreader.countSource = CsvReader.prototype.countSource;
+        csvreader.getDataSource = function f() {
             const result = ['A', 'B'];
             return result;
         };
-        expect(csvReader.countSource()).toEqual(2);
+        expect(csvreader.countSource()).toEqual(2);
     });
 });

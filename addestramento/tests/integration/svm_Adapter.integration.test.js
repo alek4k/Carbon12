@@ -9,9 +9,8 @@
  * Changelog: modifiche effettuate
  */
 
-const SvmAdapter = require('../../models/SVM_Adapter');
+const SvmAdapter = require('../../models/SVM_Adapter').svmadapter;
 
-jest.unmock('../../models/svm/svm.js');
 const svmAdapter = new SvmAdapter();
 
 test('It should return JSON file with RL configuration', () => {
@@ -69,4 +68,3 @@ test('It should return JSON file with SVM configuration', () => {
     }
     expect(result).toEqual(k);
 });
-// https://jestjs.io/docs/en/expect#expectarraycontainingarray

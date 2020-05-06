@@ -10,7 +10,7 @@
  */
 
 const fs = require('fs');
-const RPredittore = require('../../fileManager/r_predittore.js');
+const RPredittore = require('../../fileManager/r_predittore').rpredittore;
 
 const managePredittore = new RPredittore(JSON.parse(
     fs.readFileSync('./tests/files/predittore_test.json').toString(),

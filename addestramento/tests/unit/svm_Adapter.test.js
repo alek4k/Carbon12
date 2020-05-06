@@ -9,11 +9,11 @@
  * Changelog: modifiche effettuate
  */
 
-const SvmAdapter = require('../../models/SVM_Adapter');
+const SvmAdapter = require('../../models/SVM_Adapter').svmadapter;
+const Svm = require('../../models/svm/svm').svm;
 const fJMock = require('../../models/svm/svm').fromJSONMOCK;
 const tJMock = require('../../models/svm/svm').toJSONMOCK;
 const tMock = require('../../models/svm/svm').trainMOCK;
-const Svm = require('../../models/svm/svm').svm;
 
 jest.mock('../../models/svm/svm.js');
 
@@ -100,4 +100,3 @@ describe('Testing method', () => {
         expect(tMock).toHaveBeenCalledTimes(1);
     });
 });
-// https://jestjs.io/docs/en/expect#expectarraycontainingarray

@@ -9,7 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-const RLAdapter = require('../../models/RL_Adapter');
+const RLAdapter = require('../../models/RL_Adapter').rladapter;
 
 const rlAdapter = new RLAdapter({ numX: 3, numY: 1 });
 

@@ -9,12 +9,11 @@
  * Changelog: modifiche effettuate
  */
 
-const RLAdapter = require('../../models/RL_Adapter');
+const RLAdapter = require('../../models/RL_Adapter').rladapter;
+const Regression = require('../../models/rl/regression').regression;
 const fJMock = require('../../models/rl/regression').fromJSONMOCK;
 const tJMock = require('../../models/rl/regression').toJSONMOCK;
 const tMock = require('../../models/rl/regression').trainMOCK;
-// const rgM = require('../../models/rl/regression').rgMOCK;
-const Reg = require('../../models/rl/regression').regression;
 
 jest.mock('../../models/rl/regression.js');
 
@@ -22,7 +21,7 @@ describe('Testing constructor', () => {
     test('Testing constructor', () => {
         const p = { numX: 1 };
         const rlAdapter = new RLAdapter(p);
-        const k = new Reg();
+        const k = new Regression();
         expect(rlAdapter).toEqual({
             regression: k,
         });
@@ -33,10 +32,8 @@ describe('Testing method', () => {
     let rlAdapter = null;
 
     beforeEach(() => {
-        // rgM.mockClear();
-        // jest.unmock('rgM');
         rlAdapter = new (function costruttore() {})();
-        rlAdapter.regression = new Reg();
+        rlAdapter.regression = new Regression();
         fJMock.mockClear();
         tMock.mockClear();
     });
@@ -84,7 +81,6 @@ describe('Testing method', () => {
         ];
 
         expect(rlAdapter.train()).toEqual(k);
-
         expect(tMock).toHaveBeenCalledTimes(1);
     });
 });

@@ -9,12 +9,14 @@
  * Changelog: modifiche effettuate
  */
 
-const superagent = require('superagent');
+// const superagent = require('superagent');
 const performance = require('perf_hooks').performance;
 const os = require('os');
 const Server = require('../../server');
 
-test('Efficenty tests', () => {
+jest.unmock('nconf');
+
+test('Efficenty tests', async () => {
     const server = new Server();
 
     const t0 = performance.now();

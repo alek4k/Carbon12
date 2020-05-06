@@ -9,7 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-const Model = require('../../models/model');
+const Model = require('../../models/model').model;
 
 test('It should response a error message because fromJSON must be implemented', () => {
     Model.prototype.fromJSON = false;

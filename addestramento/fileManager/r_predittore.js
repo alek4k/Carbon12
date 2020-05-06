@@ -145,4 +145,4 @@ class RPredittore {
     }
 }
 
-module.exports = RPredittore;
+module.exports.rpredittore = RPredittore;

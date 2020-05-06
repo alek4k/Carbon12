@@ -4,7 +4,7 @@
  *
  * @file Classe per la gestione del server
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
  * Changelog: gestione file di configurazione
  */
@@ -15,11 +15,11 @@ const path = require('path');
 const mime = require('mime');
 const express = require('express');
 const nconf = require('nconf');
-const RPredittore = require('./fileManager/r_predittore');
-const WPredittore = require('./fileManager/w_predittore');
-const CSVr = require('./fileManager/csv_reader.js');
-const SvmAdapter = require('./models/SVM_Adapter');
-const RlAdapter = require('./models/RL_Adapter');
+const RPredittore = require('./fileManager/r_predittore').rpredittore;
+const WPredittore = require('./fileManager/w_predittore').wpredittore;
+const CsvReader = require('./fileManager/csv_reader.js').csvreader;
+const SvmAdapter = require('./models/SVM_Adapter').svmadapter;
+const RlAdapter = require('./models/RL_Adapter').rladapter;
 
 module.exports = class Server {
     constructor() {
@@ -69,6 +69,7 @@ module.exports = class Server {
                 console.log('Error: wrong versions');
                 return 'Versione file di addestramento non compatibile';
             }
+            console.log(nconf.get);
             // controllare che le data entry coincidano con quelle nel csv
             const dataSourceJson = managePredittore.getDataEntry();
             if (dataSourceJson.length !== dataSourceCsv.length || dataSourceJson.every(
@@ -220,7 +221,7 @@ module.exports = class Server {
         let result = null;
         form.on('file', (fields, file) => {
             const pathTrainFile = file.path;
-            this.csvReader = new CSVr(pathTrainFile, null);
+            this.csvReader = new CsvReader(pathTrainFile, null);
             result = this.csvReader.autoGetColumns();
         });
 

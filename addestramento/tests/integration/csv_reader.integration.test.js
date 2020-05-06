@@ -8,12 +8,12 @@
  *
  * Changelog: modifiche effettuate
  */
-const CSVr = require('../../fileManager/csv_reader.js');
+const CsvReader = require('../../fileManager/csv_reader').csvreader;
 
 let csvReader = null;
 
 beforeEach(() => {
-    csvReader = new CSVr('./tests/files/dati_test.csv', null);
+    csvReader = new CsvReader('./tests/files/dati_test.csv', null);
     csvReader.setLabelsColumn(2);
 });
 

@@ -9,12 +9,11 @@
  * Changelog: modifiche effettuate
  */
 
-import fs from 'fs';
-import ImportCtrl from '../../../src/components/import';
-import GrafanaAPI from '../../../src/utils/grafana_query';
-import BackendSrvMock, { getMock, postMock } from '../../../__mocks__/backendSrvMock';
-import ScopeMock from '../../../__mocks__/scopeMock';
 import { appEvents, emitMock } from 'grafana/app/core/core'; 
+import ImportCtrl from '../../../src/components/import';
+import GrafanaAPI, { getDataSourcesMock, postDashboardMock } from '../../../src/utils/grafana_query';
+import BackendSrvMock, { getMock, postMock } from '../../../__mocks__/backendSrvMock';
+import ScopeMock, {evalAsyncMock} from '../../../__mocks__/scopeMock';
 import RPredittore, {
     validityMock, getConfigurationMock, getNotesMock,
     getModelMock, getDataEntryMock
@@ -28,7 +27,7 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 
-it.only('Testing constructor', () => {
+it('Testing constructor', () => {
     const parLocation = '';
     const parScope = new ScopeMock();
     const parBackendSrv = new BackendSrvMock();
@@ -45,10 +44,10 @@ it.only('Testing constructor', () => {
     });
 });
 
-describe.only('Testing method', () => {
+describe('Testing method', () => {
     let imp;
     beforeEach(() => {
-        imp = new (function testImpor() { })();
+        imp = new (function testImport() { })();
     });
 
     describe('onUpload', () => {
@@ -154,117 +153,115 @@ describe.only('Testing method', () => {
         });
     });
 
-    describe('loadDataSources', () => {
+    describe.only('loadDataSources', () => {
         beforeEach(() => {
             imp.loadDataSources = ImportCtrl.prototype.loadDataSources;
+            imp.grafana = new GrafanaAPI();
+            imp.$scope = new ScopeMock();
+            getDataSourcesMock.mockReturnValueOnce({
+                then: (fun) => {
+                    const dataSources = [{ name: 'a' }, { name: 'b' }];
+                    fun(dataSources);
+                },
+            });
+        });
+
+        it('with step equal 2', () => {
+            imp.step = 2;
+
+            imp.loadDataSources();
+
+            expect(getDataSourcesMock).toHaveBeenCalledTimes(1);
+            expect(getDataSourcesMock).toHaveBeenCalledWith();
+            expect(evalAsyncMock).toHaveBeenCalledTimes(1);
+            expect(evalAsyncMock).toHaveBeenCalledWith();
+            expect(imp).toEqual({
+                loadDataSources: ImportCtrl.prototype.loadDataSources,
+                availableDataSources: ['a', 'b'],
+                dataSource: '',
+                newDataSource: '',
+                database: '',
+                host: 'http://localhost',
+                port: '8086',
+                grafana: new GrafanaAPI(),      
+                step: 3,
+                $scope: new ScopeMock(),
+            });
+        });
+
+        it('with step not equal 2', () => {
+            imp.step = 0;
+
+            imp.loadDataSources();
+
+            expect(getDataSourcesMock).toHaveBeenCalledTimes(1);
+            expect(getDataSourcesMock).toHaveBeenCalledWith();
+            expect(evalAsyncMock).toHaveBeenCalledTimes(1);
+            expect(evalAsyncMock).toHaveBeenCalledWith();
+            expect(imp).toEqual({
+                loadDataSources: ImportCtrl.prototype.loadDataSources,
+                availableDataSources: ['a', 'b'],
+                dataSource: '',
+                newDataSource: '',
+                database: '',
+                host: 'http://localhost',
+                port: '8086',
+                grafana: new GrafanaAPI(),
+                step: 2,
+                $scope: new ScopeMock(),
+            });
         });
     });
 
-
-});
-test('Test the onUpload function error.', async () => {
-    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
-    const jsonTest = JSON.parse(
-        fs.readFileSync('./tests/files/predittore_test_NotValidStructure.json').toString(),
-    );
-    await importCtrl.onUpload(jsonTest);
-    expect(importCtrl.error).toEqual('Il JSON inserito non è un predittore');
-});
-
-
-test('Test that onUpload() set correct params inside importCtrl.', async () => {
-    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
-    const jsonTest = JSON.parse(
-        fs.readFileSync('./tests/files/predittore_test.json').toString(),
-    );
-    await importCtrl.onUpload(jsonTest);
-    const predictor = new R_Predictor(jsonTest);
-    expect(importCtrl.predictor).toEqual(predictor.getConfiguration());
-    expect(importCtrl.notes).toEqual(predictor.getNotes());
-    expect(importCtrl.model).toEqual(predictor.getModel());
-    expect(importCtrl.view).toEqual((predictor.getModel() === 'SVM') ? 'Indicatore' : 'Grafico');
-    expect(importCtrl.availableDataEntry).toEqual(predictor.getDataEntry());
-    const ads = [];
-    await (new GrafanaAPI(new BackendSrvMock())).getDataSources()
-        .then((dataSources) => {
-            dataSources.forEach((dataSource) => {
-                ads.push(dataSource.name);
-            });
-        });
-    expect(importCtrl.availableDataSources).toEqual(ads);
-    expect(importCtrl.step).toEqual(2);
-    expect(importCtrl.error).toEqual('');
-});
-
-test('Test that database, host and port are correctly set inside setDataSource().', async () => {
-    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
-    const jsonTest = JSON.parse(
-        fs.readFileSync('./tests/files/predittore_test.json').toString(),
-    );
-    await importCtrl.onUpload(jsonTest);
-    importCtrl.dataSource = importCtrl.availableDataSources[0];
-    await importCtrl.setDataSource();
-
-    let database = '';
-    let host = '';
-    let port = '';
-    await (new GrafanaAPI(new BackendSrvMock())).getDataSources()
-        .then((dataSource) => {
-            let found = false;
-            for (let i = 0; dataSource[i] !== undefined && !found; ++i) {
-                if (dataSource[i].name === importCtrl.dataSource) {
-                    found = true;
-                    const endOfHost = dataSource[i].url.lastIndexOf(':');
-                    database = dataSource[i].database;
-                    host = dataSource[i].url.substring(0, endOfHost);
-                    port = dataSource[i].url.substring(endOfHost + 1);
-                }
-            }
+    describe('createPanel', () => {
+        beforeEach(() => {
+            imp.createPanel = ImportCtrl.prototype.createPanel;
         });
 
-    expect(importCtrl.database).toEqual(database);
-    expect(importCtrl.host).toEqual(host);
-    expect(importCtrl.port).toEqual(port);
-    expect(importCtrl.error).toEqual('');
-});
+        describe('when sources element are all defined', () => {
+        });
+    });
 
-test('Test that setDataSource() raises an error if no datasource is selected.', async () => {
-    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
-    const jsonTest = JSON.parse(
-        fs.readFileSync('./tests/files/predittore_test.json').toString(),
-    );
-    await importCtrl.onUpload(jsonTest);
-    await importCtrl.setDataSource();
+    it.only('saveDashboard', () => {
+        imp.saveDashboard = ImportCtrl.prototype.saveDashboard;
 
-    expect(importCtrl.error).toEqual('È necessario selezionare una sorgente dati');
-});
+        imp.grafana = new GrafanaAPI();
+        postDashboardMock.mockReturnValueOnce({
+            then: (fun) => {
+                fun();
+            },
+        });
+        const mockGetJson = jest.fn().mockReturnValueOnce('test');
+        imp.dashboard = { getJSON: mockGetJson };
+        const mockLocationUrl = jest.fn();
+        imp.$location = { url: mockLocationUrl };
+        imp.$scope = new ScopeMock();
+        const mockAssign = jest.fn();
+        delete window.location;
+        window.location = { assign: mockAssign };
 
-test('Test addDataSource() works.', async () => {
-    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
-    const jsonTest = JSON.parse(
-        fs.readFileSync('./tests/files/predittore_test.json').toString(),
-    );
-    await importCtrl.onUpload(jsonTest);
-    importCtrl.newDataSource = 'AddDSTest';
-    importCtrl.database = 'telegraf';
-    importCtrl.host = 'http://test';
-    importCtrl.port = '8086';
-    await importCtrl.addDataSource();
+        imp.saveDashboard();
 
-
-    expect(importCtrl.database).toEqual(importCtrl.database);
-    expect(importCtrl.host).toEqual(importCtrl.host);
-    expect(importCtrl.port).toEqual(importCtrl.port);
-    expect(importCtrl.error).toEqual('');
-});
-
-test('Test that addDataSource() raises an error if datasource\'s configuration is incorrect.', async () => {
-    const importCtrl = new ImportCtrl('', new ScopeMock(), new BackendSrvMock());
-    const jsonTest = JSON.parse(
-        fs.readFileSync('./tests/files/predittore_test.json').toString(),
-    );
-    await importCtrl.onUpload(jsonTest);
-    await importCtrl.addDataSource();
-
-    expect(importCtrl.error).toEqual('La configurazione non è completa');
+        expect(emitMock).toHaveBeenCalledTimes(1);
+        expect(emitMock).toHaveBeenCalledWith('alert-success', ['Pannello creato', '']);
+        expect(postDashboardMock).toHaveBeenCalledTimes(1);
+        expect(postDashboardMock).toHaveBeenCalledWith('test');
+        expect(mockGetJson).toHaveBeenCalledTimes(1);
+        expect(mockGetJson).toHaveBeenCalledWith();
+        expect(mockLocationUrl).toHaveBeenCalledTimes(1);
+        expect(mockLocationUrl)
+            .toHaveBeenCalledWith('plugins/predire-in-grafana-app/page/predizione');
+        expect(evalAsyncMock).toHaveBeenCalledTimes(1);
+        expect(mockGetJson).toHaveBeenCalledWith();
+        expect(window.location.assign).toHaveBeenCalledTimes(1);
+        expect(window.location.assign)
+            .toHaveBeenCalledWith('plugins/predire-in-grafana-app/page/predizione');
+        expect(imp).toEqual({
+            saveDashboard: ImportCtrl.prototype.saveDashboard,
+            grafana: new GrafanaAPI(),
+            dashboard: { getJSON: mockGetJson },
+            $location: { url: mockLocationUrl },
+            $scope: new ScopeMock(),
+        });
+    });
 });

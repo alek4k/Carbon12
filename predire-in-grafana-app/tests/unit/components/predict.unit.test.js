@@ -14,11 +14,11 @@ import GrafanaApiQueryMock, { getDashboardMock, getFolderMock }
     from '../../../src/utils/grafana_query';
 import BackendSrvMock from '../../../__mocks__/backendSrvMock';
 import ScopeMock, { evalAsyncMock } from '../../../__mocks__/scopeMock';
-import infinitySwag from '../../../src/utils/infinitySwag';
+import predictLooper from '../../../src/utils/predictLooper';
 import { appEvents, emitMock } from 'grafana/app/core/core';
 
 jest.mock('../../../src/utils/grafana_query');
-jest.mock('../../../src/utils/infinitySwag');
+jest.mock('../../../src/utils/predictLooper');
 jest.mock('grafana/app/core/core');
 
 afterEach(() => {
@@ -126,8 +126,8 @@ describe('Testing method', () => {
                 expect(getDashboardMock).toHaveBeenCalledWith('predire-in-grafana');
                 expect(mockResetButtonState).toHaveBeenCalledTimes(1);
                 expect(mockResetButtonState).toHaveBeenCalledWith('no');
-                expect(infinitySwag.setBackendSrv).toHaveBeenCalledTimes(1);
-                expect(infinitySwag.setBackendSrv)
+                expect(predictLooper.setBackendSrv).toHaveBeenCalledTimes(1);
+                expect(predictLooper.setBackendSrv)
                     .toHaveBeenCalledWith(new ScopeMock(), new BackendSrvMock());
                 expect(evalAsyncMock).toHaveBeenCalledTimes(2);
                 expect(evalAsyncMock).toHaveBeenCalledWith();
@@ -191,7 +191,7 @@ describe('Testing method', () => {
                 btn2: 'altro',
                 key3: 'altro',
             });
-            expect(infinitySwag.stopPrediction).toHaveBeenCalledTimes(0);
+            expect(predictLooper.stopPrediction).toHaveBeenCalledTimes(0);
             expect(predict).toEqual({
                 resetButtonsState: PredictCtrl.prototype.resetButtonsState,
             });
@@ -205,8 +205,8 @@ describe('Testing method', () => {
                 btn1: 'no',
                 key3: 'altro',
             });
-            expect(infinitySwag.stopPrediction).toHaveBeenCalledTimes(1);
-            expect(infinitySwag.stopPrediction).toHaveBeenCalledWith(2);
+            expect(predictLooper.stopPrediction).toHaveBeenCalledTimes(1);
+            expect(predictLooper.stopPrediction).toHaveBeenCalledWith(2);
             expect(predict).toEqual({
                 resetButtonsState: PredictCtrl.prototype.resetButtonsState,
             });
@@ -255,8 +255,8 @@ describe('Testing method', () => {
                 });
                 expect(mockTTM).toHaveBeenCalledTimes(1);
                 expect(mockTTM).toHaveBeenCalledWith(0);
-                expect(infinitySwag.startPrediction).toHaveBeenCalledTimes(1);
-                expect(infinitySwag.startPrediction).toHaveBeenCalledWith(0, 1);
+                expect(predictLooper.startPrediction).toHaveBeenCalledTimes(1);
+                expect(predictLooper.startPrediction).toHaveBeenCalledWith(0, 1);
                 expect(predict).toEqual({
                     getPanelsState: PredictCtrl.prototype.getPanelsState,
                     timeToMilliseconds: mockTTM,
@@ -278,8 +278,8 @@ describe('Testing method', () => {
                 });
                 expect(mockTTM).toHaveBeenCalledTimes(1);
                 expect(mockTTM).toHaveBeenCalledWith(0);
-                expect(infinitySwag.startPrediction).toHaveBeenCalledTimes(1);
-                expect(infinitySwag.startPrediction).toHaveBeenCalledWith(0, 1);
+                expect(predictLooper.startPrediction).toHaveBeenCalledTimes(1);
+                expect(predictLooper.startPrediction).toHaveBeenCalledWith(0, 1);
                 expect(predict).toEqual({
                     getPanelsState: PredictCtrl.prototype.getPanelsState,
                     timeToMilliseconds: mockTTM,
@@ -431,8 +431,8 @@ describe('Testing method', () => {
             expect({ ...localStorage }).toEqual({ btn0: '1s'});
             expect(emitMock).toHaveBeenCalledTimes(1);
             expect(emitMock).toHaveBeenCalledWith('alert-success', ['Predizione avviata', '']);
-            expect(infinitySwag.startPrediction).toHaveBeenCalledTimes(1);
-            expect(infinitySwag.startPrediction).toHaveBeenCalledWith(0, 1);
+            expect(predictLooper.startPrediction).toHaveBeenCalledTimes(1);
+            expect(predictLooper.startPrediction).toHaveBeenCalledWith(0, 1);
             expect(predict).toEqual({
                 startPrediction: PredictCtrl.prototype.startPrediction,
                 timeToMilliseconds: mockTTM,
@@ -456,8 +456,8 @@ describe('Testing method', () => {
         });
         expect(emitMock).toHaveBeenCalledTimes(1);
         expect(emitMock).toHaveBeenCalledWith('alert-success', ['Predizione terminata', '']);
-        expect(infinitySwag.stopPrediction).toHaveBeenCalledTimes(1);
-        expect(infinitySwag.stopPrediction).toHaveBeenCalledWith(parIndex);
+        expect(predictLooper.stopPrediction).toHaveBeenCalledTimes(1);
+        expect(predictLooper.stopPrediction).toHaveBeenCalledWith(parIndex);
         expect(predict).toEqual({
             stopPrediction: PredictCtrl.prototype.stopPrediction,
             started: [false],

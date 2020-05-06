@@ -10,7 +10,7 @@
  */
 
 /* eslint-disable import/named */
-import InfinitySwag from '../../../src/utils/infinitySwag';
+import predictLooper from '../../../src/utils/predictLooper';
 import BackendSrvMock from '../../../__mocks__/backendSrvMock';
 import ScopeMock, { evalAsyncMock } from '../../../__mocks__/scopeMock';
 import Influx, { getLastValueMock } from '../../../src/utils/influx';
@@ -29,7 +29,7 @@ jest.mock('../../../src/utils/models/RL_Adapter');
 jest.mock('../../../src/utils/dashboard');
 
 it('Testing exported object', () => {
-    expect(InfinitySwag).toEqual({
+    expect(predictLooper).toEqual({
         $scope: null,
         backendSrv: null,
         db: [],
@@ -38,11 +38,11 @@ it('Testing exported object', () => {
 });
 
 describe('Testing method', () => {
-    const infinitySwagProto = Object.getPrototypeOf(InfinitySwag);
-    let infinitySwag = null;
+    const predictLooperProto = Object.getPrototypeOf(predictLooper);
+    let predictLooper = null;
     let dash = null;
     beforeEach(() => {
-        infinitySwag = new (function Object() { })();
+        predictLooper = new (function Object() { })();
         dash = {
             dashboard: {
                 templating: {
@@ -81,24 +81,24 @@ describe('Testing method', () => {
     });
 
     afterEach(() => {
-        infinitySwag = null;
+        predictLooper = null;
         jest.clearAllMocks();
     });
 
     it('setBackendSrv', () => {
-        infinitySwag.setBackendSrv = infinitySwagProto.setBackendSrv;
-        infinitySwag.setConfig = jest.fn();
+        predictLooper.setBackendSrv = predictLooperProto.setBackendSrv;
+        predictLooper.setConfig = jest.fn();
 
         const parScope = new ScopeMock();
         const parBackendSrv = new BackendSrvMock();
-        infinitySwag.setBackendSrv(parScope, parBackendSrv);
+        predictLooper.setBackendSrv(parScope, parBackendSrv);
 
-        expect(infinitySwag.setConfig).toHaveBeenCalledTimes(1);
-        expect(infinitySwag).toEqual({
+        expect(predictLooper.setConfig).toHaveBeenCalledTimes(1);
+        expect(predictLooper).toEqual({
             $scope: parScope,
             backendSrv: parBackendSrv,
-            setBackendSrv: infinitySwagProto.setBackendSrv,
-            setConfig: infinitySwag.setConfig,
+            setBackendSrv: predictLooperProto.setBackendSrv,
+            setConfig: predictLooper.setConfig,
         });
     });
 
@@ -139,14 +139,14 @@ describe('Testing method', () => {
             },
         };
         beforeEach(() => {
-            infinitySwag.setConfig = infinitySwagProto.setConfig;
-            infinitySwag.backendSrv = new BackendSrvMock();
-            infinitySwag.$scope = new ScopeMock();
+            predictLooper.setConfig = predictLooperProto.setConfig;
+            predictLooper.backendSrv = new BackendSrvMock();
+            predictLooper.$scope = new ScopeMock();
         });
 
         it('when dashboard.updateSettings() return true', () => {
             const fSetInflux = jest.fn();
-            infinitySwag.setInflux = fSetInflux;
+            predictLooper.setInflux = fSetInflux;
             const getThenMock = jest.fn((fun) => {
                 fun(dash);
             });
@@ -171,7 +171,7 @@ describe('Testing method', () => {
                 },
             }));
 
-            infinitySwag.setConfig();
+            predictLooper.setConfig();
 
             expect(getDashboardMock).toHaveBeenCalledTimes(1);
             expect(getDashboardMock).toHaveBeenCalledWith('predire-in-grafana');
@@ -195,11 +195,11 @@ describe('Testing method', () => {
             expect(fSetInflux).toHaveBeenCalledWith();
             expect(evalAsyncMock).toHaveBeenCalledTimes(2);
             expect(evalAsyncMock).toHaveBeenCalledWith();
-            expect(infinitySwag).toEqual({
+            expect(predictLooper).toEqual({
                 $scope: new ScopeMock(),
                 backendSrv: new BackendSrvMock(),
                 grafana: new GrafanaApiQuery(),
-                setConfig: infinitySwagProto.setConfig,
+                setConfig: predictLooperProto.setConfig,
                 setInflux: fSetInflux,
                 variables: 'testVariable1',
             });
@@ -207,7 +207,7 @@ describe('Testing method', () => {
 
         it('when dashboard.updateSettings() return false', () => {
             const fSetInflux = jest.fn();
-            infinitySwag.setInflux = fSetInflux;
+            predictLooper.setInflux = fSetInflux;
             const getThenMock = jest.fn((fun) => {
                 fun(dash);
             });
@@ -221,7 +221,7 @@ describe('Testing method', () => {
                 },
             }));
 
-            infinitySwag.setConfig();
+            predictLooper.setConfig();
 
             expect(getDashboardMock).toHaveBeenCalledTimes(1);
             expect(getDashboardMock).toHaveBeenCalledWith('predire-in-grafana');
@@ -237,11 +237,11 @@ describe('Testing method', () => {
             expect(fSetInflux).toHaveBeenCalledWith();
             expect(evalAsyncMock).toHaveBeenCalledTimes(1);
             expect(evalAsyncMock).toHaveBeenCalledWith();
-            expect(infinitySwag).toEqual({
+            expect(predictLooper).toEqual({
                 $scope: new ScopeMock(),
                 backendSrv: new BackendSrvMock(),
                 grafana: new GrafanaApiQuery(),
-                setConfig: infinitySwagProto.setConfig,
+                setConfig: predictLooperProto.setConfig,
                 setInflux: fSetInflux,
                 variables: 'testVariable1',
             });
@@ -249,14 +249,14 @@ describe('Testing method', () => {
     });
 
     it('setInflux', () => {
-        infinitySwag.setInflux = infinitySwagProto.setInflux;
-        infinitySwag.variables = [...dash.dashboard.templating.list];
-        infinitySwag.db = [];
+        predictLooper.setInflux = predictLooperProto.setInflux;
+        predictLooper.variables = [...dash.dashboard.templating.list];
+        predictLooper.db = [];
 
-        infinitySwag.setInflux();
+        predictLooper.setInflux();
 
         const expDB = [];
-        infinitySwag.variables.forEach((variable) => {
+        predictLooper.variables.forEach((variable) => {
             expDB.push(
                 new Influx(
                     variable.query.host,
@@ -265,18 +265,18 @@ describe('Testing method', () => {
                 ),
             );
         });
-        expect(infinitySwag).toEqual({
+        expect(predictLooper).toEqual({
             db: expDB,
             variables: dash.dashboard.templating.list,
-            setInflux: infinitySwagProto.setInflux,
+            setInflux: predictLooperProto.setInflux,
         });
     });
 
     it('dbWrite', () => {
-        infinitySwag.dbWrite = infinitySwagProto.dbWrite;
-        infinitySwag.variables = [...dash.dashboard.templating.list];
+        predictLooper.dbWrite = predictLooperProto.dbWrite;
+        predictLooper.variables = [...dash.dashboard.templating.list];
         const expDB = [];
-        infinitySwag.variables.forEach((variable) => {
+        predictLooper.variables.forEach((variable) => {
             expDB.push(
                 new Influx(
                     variable.query.host,
@@ -285,62 +285,62 @@ describe('Testing method', () => {
                 ),
             );
         });
-        infinitySwag.db = expDB;
+        predictLooper.db = expDB;
 
         const parInfo = 'Info';
         const parIndex = 0;
-        infinitySwag.dbWrite(parInfo, parIndex);
+        predictLooper.dbWrite(parInfo, parIndex);
 
-        expect(infinitySwag.db[parIndex].storeValue).toHaveBeenCalledTimes(1);
-        expect(infinitySwag.db[parIndex].storeValue)
+        expect(predictLooper.db[parIndex].storeValue).toHaveBeenCalledTimes(1);
+        expect(predictLooper.db[parIndex].storeValue)
             .toHaveBeenCalledWith('predizione' + dash.dashboard.templating.list[parIndex].name,
                 parInfo);
-        expect(infinitySwag).toEqual({
+        expect(predictLooper).toEqual({
             db: expDB,
             variables: dash.dashboard.templating.list,
-            dbWrite: infinitySwagProto.dbWrite,
+            dbWrite: predictLooperProto.dbWrite,
         });
     });
 
     describe('startPrediction', () => {
         it('with predictions[index] defined', () => {
             jest.useFakeTimers();
-            infinitySwag.startPrediction = infinitySwagProto.startPrediction;
-            infinitySwag.predictions = [1];
+            predictLooper.startPrediction = predictLooperProto.startPrediction;
+            predictLooper.predictions = [1];
             const dbWriteMock = jest.fn();
-            infinitySwag.dbWrite = dbWriteMock;
+            predictLooper.dbWrite = dbWriteMock;
             const getPredictionMock = jest.fn(() => 1);
-            infinitySwag.getPrediction = getPredictionMock;
+            predictLooper.getPrediction = getPredictionMock;
 
             const parIndex = 0;
             const parRefreshTime = 1000;
-            infinitySwag.startPrediction(parIndex, parRefreshTime);
+            predictLooper.startPrediction(parIndex, parRefreshTime);
 
             expect(setInterval).not.toHaveBeenCalled();
             expect(dbWriteMock).not.toHaveBeenCalled();
             jest.advanceTimersByTime(parRefreshTime);
             expect(dbWriteMock).not.toHaveBeenCalled();
             expect(getPredictionMock).not.toHaveBeenCalled();
-            expect(infinitySwag).toEqual({
+            expect(predictLooper).toEqual({
                 predictions: [1],
                 dbWrite: dbWriteMock,
                 getPrediction: getPredictionMock,
-                startPrediction: infinitySwagProto.startPrediction,
+                startPrediction: predictLooperProto.startPrediction,
             });
         });
 
         it('with predictions[index] undefined', () => {
             jest.useFakeTimers();
-            infinitySwag.startPrediction = infinitySwagProto.startPrediction;
-            infinitySwag.predictions = [];
+            predictLooper.startPrediction = predictLooperProto.startPrediction;
+            predictLooper.predictions = [];
             const dbWriteMock = jest.fn();
-            infinitySwag.dbWrite = dbWriteMock;
+            predictLooper.dbWrite = dbWriteMock;
             const getPredictionMock = jest.fn(() => 1);
-            infinitySwag.getPrediction = getPredictionMock;
+            predictLooper.getPrediction = getPredictionMock;
 
             const parIndex = 0;
             const parRefreshTime = 1000;
-            infinitySwag.startPrediction(parIndex, parRefreshTime);
+            predictLooper.startPrediction(parIndex, parRefreshTime);
 
             expect(setInterval).toHaveBeenCalledTimes(1);
             expect(setInterval).toHaveBeenCalledWith(expect.any(Function), parRefreshTime);
@@ -350,39 +350,39 @@ describe('Testing method', () => {
             expect(dbWriteMock).toHaveBeenLastCalledWith(getPredictionMock(), parIndex);
             expect(getPredictionMock).toHaveBeenCalledTimes(2);
             expect(getPredictionMock).toHaveBeenCalledWith(parIndex);
-            expect(infinitySwag).toEqual({
+            expect(predictLooper).toEqual({
                 predictions: [1],
                 dbWrite: dbWriteMock,
                 getPrediction: getPredictionMock,
-                startPrediction: infinitySwagProto.startPrediction,
+                startPrediction: predictLooperProto.startPrediction,
             });
         });
     });
 
     it('stopPrediction', () => {
-        infinitySwag.stopPrediction = infinitySwagProto.stopPrediction;
+        predictLooper.stopPrediction = predictLooperProto.stopPrediction;
         const predictionMock = [1, 2];
-        infinitySwag.predictions = [...predictionMock];
+        predictLooper.predictions = [...predictionMock];
 
         const parIndex = 0;
-        infinitySwag.stopPrediction(parIndex);
+        predictLooper.stopPrediction(parIndex);
 
         expect(clearInterval).toHaveBeenCalledTimes(1);
         expect(clearInterval).toHaveBeenCalledWith(predictionMock[parIndex]);
-        expect(infinitySwag.predictions[parIndex]).toEqual(undefined);
-        expect(infinitySwag).toEqual({
+        expect(predictLooper.predictions[parIndex]).toEqual(undefined);
+        expect(predictLooper).toEqual({
             predictions: [
                 undefined,
                 2,
             ],
-            stopPrediction: infinitySwagProto.stopPrediction,
+            stopPrediction: predictLooperProto.stopPrediction,
         });
     });
 
     describe('getPrediction', () => {
         beforeEach(() => {
-            infinitySwag.getPrediction = infinitySwagProto.getPrediction;
-            infinitySwag.variables = [...dash.dashboard.templating.list];
+            predictLooper.getPrediction = predictLooperProto.getPrediction;
+            predictLooper.variables = [...dash.dashboard.templating.list];
         });
 
         afterEach(() => {
@@ -391,14 +391,14 @@ describe('Testing method', () => {
 
         it('with model SVM', () => {
             const oldDB = [new Influx()];
-            infinitySwag.db = [...oldDB];
+            predictLooper.db = [...oldDB];
             const predictSVMMock = jest.fn(() => 1);
-            infinitySwag.predictSVM = predictSVMMock;
+            predictLooper.predictSVM = predictSVMMock;
             getLastValueMock.mockImplementation(() => [0, 0]);
 
 
             const parIndex = 0;
-            const returnValue = infinitySwag.getPrediction(parIndex);
+            const returnValue = predictLooper.getPrediction(parIndex);
 
             expect(returnValue).toEqual(1);
             expect(getLastValueMock)
@@ -408,13 +408,13 @@ describe('Testing method', () => {
             for (let i = 0; i < dash.dashboard.templating.list[parIndex].query.predittore.D; i++) {
                 expPoint.push(oldDB[parIndex].getLastValue());
             }
-            expect(infinitySwag.predictSVM).toHaveBeenCalledTimes(1);
-            expect(infinitySwag.predictSVM)
+            expect(predictLooper.predictSVM).toHaveBeenCalledTimes(1);
+            expect(predictLooper.predictSVM)
                 .toHaveBeenCalledWith(dash.dashboard.templating.list[parIndex].query.predittore,
                     expPoint);
-            expect(infinitySwag).toEqual({
+            expect(predictLooper).toEqual({
                 variables: dash.dashboard.templating.list,
-                getPrediction: infinitySwagProto.getPrediction,
+                getPrediction: predictLooperProto.getPrediction,
                 db: oldDB,
                 predictSVM: predictSVMMock,
             });
@@ -422,12 +422,12 @@ describe('Testing method', () => {
 
         it('with model RL', () => {
             const oldDB = [undefined, new Influx()];
-            infinitySwag.db = [...oldDB];
+            predictLooper.db = [...oldDB];
             const predictRLMock = jest.fn(() => 1);
-            infinitySwag.predictRL = predictRLMock;
+            predictLooper.predictRL = predictRLMock;
 
             const parIndex = 1;
-            const returnValue = infinitySwag.getPrediction(parIndex);
+            const returnValue = predictLooper.getPrediction(parIndex);
 
             expect(returnValue).toEqual(1);
             expect(getLastValueMock)
@@ -437,13 +437,13 @@ describe('Testing method', () => {
             for (let i = 0; i < dash.dashboard.templating.list[parIndex].query.predittore.D; i++) {
                 expPoint.push(oldDB[parIndex].getLastValue());
             }
-            expect(infinitySwag.predictRL).toHaveBeenCalledTimes(1);
-            expect(infinitySwag.predictRL)
+            expect(predictLooper.predictRL).toHaveBeenCalledTimes(1);
+            expect(predictLooper.predictRL)
                 .toHaveBeenCalledWith(dash.dashboard.templating.list[parIndex].query.predittore,
                     expPoint);
-            expect(infinitySwag).toEqual({
+            expect(predictLooper).toEqual({
                 variables: dash.dashboard.templating.list,
-                getPrediction: infinitySwagProto.getPrediction,
+                getPrediction: predictLooperProto.getPrediction,
                 db: oldDB,
                 predictRL: predictRLMock,
             });
@@ -451,13 +451,13 @@ describe('Testing method', () => {
     });
 
     it('predictSVM', () => {
-        infinitySwag.predictSVM = infinitySwagProto.predictSVM;
+        predictLooper.predictSVM = predictLooperProto.predictSVM;
 
         const parPredictor = {
             D: 4,
         };
         const parPoint = [0, 0];
-        const returnValue = infinitySwag.predictSVM({ ...parPredictor }, [...parPoint]);
+        const returnValue = predictLooper.predictSVM({ ...parPredictor }, [...parPoint]);
 
         expect(returnValue).toEqual(1);
         expect(SVM).toHaveBeenCalledTimes(1);
@@ -465,19 +465,19 @@ describe('Testing method', () => {
         expect(fromJSONMockSVM).toHaveBeenCalledWith(parPredictor);
         expect(predictClassMockSVM).toHaveBeenCalledTimes(1);
         expect(predictClassMockSVM).toHaveBeenCalledWith(parPoint);
-        expect(infinitySwag).toEqual({
-            predictSVM: infinitySwagProto.predictSVM,
+        expect(predictLooper).toEqual({
+            predictSVM: predictLooperProto.predictSVM,
         });
     });
 
     it('predictRL', () => {
-        infinitySwag.predictRL = infinitySwagProto.predictRL;
+        predictLooper.predictRL = predictLooperProto.predictRL;
 
         const parPredictor = {
             D: 5,
         };
         const parPoint = [0, 0];
-        const returnValue = infinitySwag.predictRL({ ...parPredictor }, [...parPoint]);
+        const returnValue = predictLooper.predictRL({ ...parPredictor }, [...parPoint]);
 
         expect(returnValue).toEqual(1);
         expect(RL).toHaveBeenCalledTimes(1);
@@ -486,8 +486,8 @@ describe('Testing method', () => {
         expect(fromJSONMockRL).toHaveBeenCalledWith(parPredictor);
         expect(predictMockRL).toHaveBeenCalledTimes(1);
         expect(predictMockRL).toHaveBeenCalledWith(parPoint);
-        expect(infinitySwag).toEqual({
-            predictRL: infinitySwagProto.predictRL,
+        expect(predictLooper).toEqual({
+            predictRL: predictLooperProto.predictRL,
         });
     });
 });

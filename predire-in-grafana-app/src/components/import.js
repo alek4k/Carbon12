@@ -270,7 +270,7 @@ export default class importCtrl {
                 this.$location.url('plugins/predire-in-grafana-app/page/predizione');
                 this.$scope.$evalAsync();
                 // eseguo il refresh della pagina per aggiornare il backend di Grafana
-                window.location.href = 'plugins/predire-in-grafana-app/page/predizione';
+                window.location.assign('plugins/predire-in-grafana-app/page/predizione');
             });
     }
 }

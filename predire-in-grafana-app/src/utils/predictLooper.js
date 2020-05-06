@@ -1,5 +1,5 @@
 /**
- * File name: infinitySwag.js
+ * File name: predictLooper.js
  * Date: 2020-04-01
  *
  * @file Classe per la gestione della predizione
@@ -15,7 +15,7 @@ import RL from './models/RL_Adapter';
 import SVM from './models/SVM_Adapter';
 import Dashboard from './dashboard';
 
-class InfinitySwag {
+class predictLooper {
     /**
      * Costruisce l'oggetto che genera le predizioni
      */
@@ -155,4 +155,4 @@ class InfinitySwag {
     }
 }
 
-export default new InfinitySwag();
+export default new predictLooper();

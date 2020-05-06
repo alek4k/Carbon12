@@ -11,7 +11,7 @@
 
 // eslint-disable-next-line import/no-unresolved
 import { appEvents } from 'grafana/app/core/core';
-import InfinitySwag from '../utils/infinitySwag';
+import predictLooper from '../utils/predictLooper';
 import GrafanaApiQuery from '../utils/grafana_query';
 
 export default class predictCtrl {
@@ -54,7 +54,7 @@ export default class predictCtrl {
                             this.dashboardEmpty = !db.dashboard.panels.length;
                             if (!this.dashboardEmpty) {
                                 this.resetButtonsState('no');
-                                InfinitySwag.setBackendSrv(this.$scope, this.backendSrv);
+                                predictLooper.setBackendSrv(this.$scope, this.backendSrv);
                                 this.getPanelsState(db.dashboard.panels);
                             } else {
                                 this.resetButtonsState();
@@ -82,7 +82,7 @@ export default class predictCtrl {
                 case undefined:
                     if (localStorage.getItem(localItem) !== 'no') {
                         toRemove.push(localItem);
-                        InfinitySwag.stopPrediction(parseInt(localItem.substr(3), 10));
+                        predictLooper.stopPrediction(parseInt(localItem.substr(3), 10));
                     }
                     break;
                 default:
@@ -118,7 +118,7 @@ export default class predictCtrl {
                     const value = localStorage.getItem('btn' + i);
                     this.time[i] = value.substr(0, value.length - 1);
                     this.timeUnit[i] = value[value.length - 1] === 's' ? 'secondi' : 'minuti';
-                    InfinitySwag.startPrediction(i, this.timeToMilliseconds(i));
+                    predictLooper.startPrediction(i, this.timeToMilliseconds(i));
                 }
             }
             this.panelsList.push(panels[i].title);
@@ -157,7 +157,7 @@ export default class predictCtrl {
             this.started[index] = true;
             localStorage.setItem('btn' + index, this.time[index] + this.timeUnit[index][0]);
             appEvents.emit('alert-success', ['Predizione avviata', '']);
-            InfinitySwag.startPrediction(index, refreshTime);
+            predictLooper.startPrediction(index, refreshTime);
         }
     }
 
@@ -169,7 +169,7 @@ export default class predictCtrl {
         this.started[index] = false;
         localStorage.setItem('btn' + index, 'no');
         appEvents.emit('alert-success', ['Predizione terminata', '']);
-        InfinitySwag.stopPrediction(index);
+        predictLooper.stopPrediction(index);
     }
 
     /**

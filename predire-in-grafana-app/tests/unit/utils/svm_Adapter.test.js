@@ -1,6 +1,6 @@
 /**
  * File name: SVM_Adapter.test.js
- * Date: 2020-03-18
+ * Date: 2020-05-06
  *
  * @file Test metodi della classe SVM_Adapter
  * @author Carbon12 <carbon.dodici@gmail.com>
@@ -9,19 +9,19 @@
  * Changelog: modifiche effettuate
  */
 
-const SvmAdapter = require('../../models/SVM_Adapter').svmadapter;
-const Svm = require('../../models/svm/svm').svm;
-const fJMock = require('../../models/svm/svm').fromJSONMOCK;
-const tJMock = require('../../models/svm/svm').toJSONMOCK;
-const tMock = require('../../models/svm/svm').trainMOCK;
+import SvmAdapter from '../../../src/utils/models/SVM_Adapter';
+import SVM, {
+    fromJSONMOCK as fJMock, toJSONMOCK as tJMock, trainMOCK as tMock, predictClassMOCK as pMock,
+}
+    from '../../../src/utils/models/svm/svm';
 
-jest.mock('../../models/svm/svm.js');
+jest.mock('../../../src/utils/models/svm/svm.js');
 
 describe('Testing constructor', () => {
     test('Testing constructor', () => {
         const p = { numX: 1 };
         const svmAdapter = new SvmAdapter(p);
-        const k = new Svm();
+        const k = new SVM();
         expect(svmAdapter).toEqual({
             svm: k,
         });
@@ -33,7 +33,7 @@ describe('Testing method', () => {
 
     beforeEach(() => {
         svmAdapter = new (function costruttore() {})();
-        svmAdapter.svm = new Svm();
+        svmAdapter.svm = new SVM();
         fJMock.mockClear();
         tMock.mockClear();
     });
@@ -43,7 +43,7 @@ describe('Testing method', () => {
     });
 
 
-    test('It should return JSON file with RL configuration', () => {
+    test('It should return JSON file with JSON configuration', () => {
         svmAdapter.fromJSON = SvmAdapter.prototype.fromJSON;
         const j = {};
         j.N = 7;
@@ -60,6 +60,7 @@ describe('Testing method', () => {
                 fromJSON: fJMock,
                 toJSON: tJMock,
                 train: tMock,
+                predictClass: pMock,
             },
         });
     });
@@ -98,5 +99,11 @@ describe('Testing method', () => {
         expect(svmAdapter.train(data, labels)).toEqual(k);
 
         expect(tMock).toHaveBeenCalledTimes(1);
+    });
+
+    test('It should test SVM predict', () => {
+        svmAdapter.predictClass = SvmAdapter.prototype.predictClass;
+        svmAdapter.predictClass();
+        expect(pMock).toHaveBeenCalledTimes(1);
     });
 });

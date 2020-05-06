@@ -1,6 +1,6 @@
 /**
  * File name: module.js
- * Date: 2020-02-25
+ * Date: 2020-05-06
  *
  * @file Entry point del plug-in
  * @author Carbon12 <carbon.dodici@gmail.com>

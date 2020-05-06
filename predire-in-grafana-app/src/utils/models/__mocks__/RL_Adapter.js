@@ -1,10 +1,10 @@
 /**
  * File name: view.js
- * Date: 2020-04-26
+ * Date: 2020-05-06
  *
  * @file Classe che descrive la visualizzazione grafica del pannello
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
  * Changelog: Inizializzata la struttura della classe View
  */

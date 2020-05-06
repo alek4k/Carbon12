@@ -4,7 +4,7 @@
  *
  * @file Interfaccia per la gestione dei modelli
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
  * Changelog: creazione interfaccia
  */

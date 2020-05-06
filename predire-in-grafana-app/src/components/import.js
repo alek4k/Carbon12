@@ -1,6 +1,6 @@
 /**
  * File name: import.js
- * Date: 2020-02-25
+ * Date: 2020-05-06
  *
  * @file Classe che rappresenta la pagina principale di configurazione del plug-in
  * @author Carbon12 <carbon.dodici@gmail.com>

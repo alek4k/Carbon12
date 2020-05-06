@@ -4,7 +4,7 @@
  *
  * @file Test metodi della classe SVM_Adapter
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
  * Changelog: modifiche effettuate
  */

@@ -1,6 +1,6 @@
 /**
  * File name: model.js
- * Date: 2020-03-28
+ * Date: 2020-05-06
  *
  * @file Interfaccia per la gestione dei modelli
  * @author Carbon12 <carbon.dodici@gmail.com>
@@ -9,12 +9,13 @@
  * Changelog: creazione interfaccia
  */
 
-
-
-const fromJSONMOCK = jest.fn(() => {
+export const predictMOCK = jest.fn(() => {
 });
 
-const toJSONMOCK = jest.fn(() => {
+export const fromJSONMOCK = jest.fn(() => {
+});
+
+export const toJSONMOCK = jest.fn(() => {
     const ris = {
         _parametroN: 'numero di dati inseriti',
         N: 7,
@@ -30,7 +31,7 @@ const toJSONMOCK = jest.fn(() => {
     return ris;
 });
 
-const trainMOCK = jest.fn(() => {
+export const trainMOCK = jest.fn(() => {
     const k = {};
     k._parametroN = 'numero di dati inseriti';
     k.N = 7;
@@ -47,23 +48,12 @@ const trainMOCK = jest.fn(() => {
 
 // let rgMOCK = {};
 
-const regression = jest.fn().mockImplementation(() => ({
+const Regression = jest.fn().mockImplementation(() => ({
     // rg: rgMOCK,
     fromJSON: fromJSONMOCK,
     toJSON: toJSONMOCK,
     train: trainMOCK,
+    predict: predictMOCK,
 }));
 
-/* rgMOCK = regression.mockImplementation((options) => {
-    const rg = Object.create(regression.prototype);
-    rg.transposeOfXTimesX = {};
-    rg.transposeOfXTimesY = {};
-    rg.D = options;
-    rg.identity = 0;
-    console.log('Bababa');
-    return rg;
-}); */
-
-module.exports = {
-    regression, fromJSONMOCK, toJSONMOCK, trainMOCK,
-};
+export default Regression;

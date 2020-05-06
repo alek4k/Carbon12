@@ -4,7 +4,7 @@
  *
  * @file Classe Adapter per la libreria Regression
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
  * Changelog: creazione classe
  */

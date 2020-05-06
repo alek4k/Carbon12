@@ -4,7 +4,7 @@
  *
  * @file Classe che descrive la visualizzazione grafica del pannello
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
  * Changelog: Inizializzata la struttura della classe View
  */

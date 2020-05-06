@@ -1,6 +1,6 @@
 /**
  * File name: RL_Adapter.test.js
- * Date: 2020-03-18
+ * Date: 2020-05-06
  *
  * @file Test metodi della classe RL_Adapter
  * @author Carbon12 <carbon.dodici@gmail.com>
@@ -9,13 +9,13 @@
  * Changelog: modifiche effettuate
  */
 
-const RLAdapter = require('../../models/RL_Adapter').rladapter;
-const Regression = require('../../models/rl/regression').regression;
-const fJMock = require('../../models/rl/regression').fromJSONMOCK;
-const tJMock = require('../../models/rl/regression').toJSONMOCK;
-const tMock = require('../../models/rl/regression').trainMOCK;
+import RLAdapter from '../../../src/utils/models/RL_Adapter';
+import Regression, {
+    fromJSONMOCK as fJMock, toJSONMOCK as tJMock, trainMOCK as tMock, predictMOCK as pMock,
+}
+    from '../../../src/utils/models/rl/regression';
 
-jest.mock('../../models/rl/regression.js');
+jest.mock('../../../src/utils/models/rl/regression.js');
 
 describe('Testing constructor', () => {
     test('Testing constructor', () => {
@@ -62,6 +62,7 @@ describe('Testing method', () => {
                 fromJSON: fJMock,
                 toJSON: tJMock,
                 train: tMock,
+                predict: pMock,
             },
         });
     });
@@ -82,5 +83,11 @@ describe('Testing method', () => {
 
         expect(rlAdapter.train()).toEqual(k);
         expect(tMock).toHaveBeenCalledTimes(1);
+    });
+
+    test('It should test SVM predict', () => {
+        rlAdapter.predict = RLAdapter.prototype.predict;
+        rlAdapter.predict();
+        expect(pMock).toHaveBeenCalledTimes(1);
     });
 });

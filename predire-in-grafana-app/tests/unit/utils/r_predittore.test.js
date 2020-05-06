@@ -9,7 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-const RPredittore = require('../../fileManager/r_predittore').rpredittore;
+import RPredittore from '../../../src/utils/r_predittore';
 
 describe('Testing constructor', () => {
     test('Testing constructor with no data', () => {

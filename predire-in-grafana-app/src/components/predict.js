@@ -1,6 +1,6 @@
 /**
  * File name: predict.js
- * Date: 2020-04-01
+ * Date: 2020-05-06
  *
  * @file Classe per gestione della pagina di predizione
  * @author Carbon12 <carbon.dodici@gmail.com>

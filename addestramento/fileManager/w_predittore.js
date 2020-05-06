@@ -4,7 +4,7 @@
  *
  * @file classe per la lettura e scrittura del JSON con il predittore
  * @author Carbon12 <carbon.dodici@gmail.com>
- * @version X.Y.Z
+ * @version 1.4.0
  *
  * Changelog: modifiche effettuate
  */

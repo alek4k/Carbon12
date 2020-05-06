@@ -1,6 +1,6 @@
 /**
  * File name: RL_Adapter.test.js
- * Date: 2020-03-18
+ * Date: 2020-05-06
  *
  * @file Test metodi della classe RL_Adapter
  * @author Carbon12 <carbon.dodici@gmail.com>
@@ -9,7 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-const Model = require('../../models/model').model;
+import Model from '../../../src/utils/models/model';
 
 test('It should response a error message because fromJSON must be implemented', () => {
     Model.prototype.fromJSON = false;

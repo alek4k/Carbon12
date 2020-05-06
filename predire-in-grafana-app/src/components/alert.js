@@ -1,6 +1,6 @@
 /**
  * File name: alert.js
- * Date: 2020-04-23
+ * Date: 2020-05-06
  *
  * @file Classe per gestione della pagina degli alert
  * @author Carbon12 <carbon.dodici@gmail.com>

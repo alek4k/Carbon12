@@ -456,7 +456,7 @@ describe('Testing method', () => {
         test('Test for config loadCsv', async () => {
             server.startServer = Server.prototype.startServer;
             server.config = function testConfig() {};
-            const listenMock = jest.fn()
+            const listenMock = jest.fn();
             server.app = { listen: listenMock };
             server.startServer();
             expect(listenMock).toHaveBeenCalledTimes(1);

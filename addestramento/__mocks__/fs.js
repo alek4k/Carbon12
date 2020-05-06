@@ -13,12 +13,10 @@ const readFileSyncMOCK = jest.fn();
 const createReadStreamMOCK = jest.fn();
 
 
-const fs = jest.fn().mockImplementation(() => ({
+const fs = {
     writeFileSync: writeFileSyncMOCK,
     readFileSync: readFileSyncMOCK,
     createReadStream: createReadStreamMOCK,
-}));
-
-module.exports = {
-    fs, writeFileSyncMOCK, readFileSyncMOCK, createReadStreamMOCK,
 };
+
+module.exports = fs;

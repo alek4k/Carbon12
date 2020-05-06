@@ -9,31 +9,19 @@
  * Changelog: modifiche effettuate
  */
 
-const validityMOCK = jest
-    .fn()
-    .mockReturnValueOnce(false)
-    .mockReturnValueOnce(false)
+const validityMOCK = jest.fn()
     .mockReturnValue(true);
 
-const getFileVersionMOCK = jest
-    .fn()
-    .mockReturnValueOnce(0)
+const getFileVersionMOCK = jest.fn()
     .mockReturnValue(10);
 
-const checkVersionMOCK = jest
-    .fn()
-    .mockReturnValueOnce(false)
+const checkVersionMOCK = jest.fn()
     .mockReturnValue(true);
 
-const getDataEntryMOCK = jest
-    .fn()
-    .mockReturnValueOnce(['A'])
-    .mockReturnValueOnce(['C', 'D'])
+const getDataEntryMOCK = jest.fn()
     .mockReturnValue(['A', 'B']);
 
-const getModelMOCK = jest
-    .fn()
-    .mockReturnValueOnce('RL')
+const getModelMOCK = jest.fn()
     .mockReturnValue('SVM');
 
 const getConfigurationMOCK = jest.fn(() => {

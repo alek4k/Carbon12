@@ -8,7 +8,7 @@
  *
  * Changelog: modifiche effettuate
  */
-
+const autoGetColumnsMOCK = jest.fn(() => {});
 const setLabelsColumnMOCK = jest.fn(() => {});
 
 const autoGetDataMOCK = jest.fn(() => {
@@ -26,6 +26,7 @@ const getDataSourceMOCK = jest.fn(() => ['A', 'B']);
 const countSourceMOCK = jest.fn(() => 2);
 
 const csvreader = jest.fn().mockImplementation(() => ({
+    autoGetColumns: autoGetColumnsMOCK,
     setLabelsColumn: setLabelsColumnMOCK,
     autoGetData: autoGetDataMOCK,
     autoGetLabel: autoGetLabelMOCK,
@@ -35,6 +36,7 @@ const csvreader = jest.fn().mockImplementation(() => ({
 
 module.exports = {
     csvreader,
+    autoGetColumnsMOCK,
     setLabelsColumnMOCK,
     autoGetDataMOCK,
     autoGetLabelMOCK,

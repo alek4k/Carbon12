@@ -9,20 +9,24 @@
  * Changelog: modifiche effettuate
  */
 
-const formidable = jest.fn().mockImplementation(() => ({
-    IncomingForm: function form() {
-        this.parse = function parse() {
-            return {
-                on(str, f) {
-                    if (str === 'field') {
-                        f('par1', 'par2');
-                    } else if (str === '') {
-                        f();
-                    }
-                },
-            };
-        };
+const formidable = {
+
+    parseMOCK: jest.fn(),
+    onMOCK: jest.fn(),
+
+    IncomingForm: function fun() {
+        this.parse = formidable.parseMOCK;
+        this.on = formidable.onMOCK;
     },
-}));
+};
+
+/* const IncomingFormMOCK = jest.fn(() => {
+    this.multiples = false;
+    this.on = '';
+});
+
+const formidable = {
+    IncomingForm: IncomingFormMOCK,
+}; */
 
 module.exports = formidable;

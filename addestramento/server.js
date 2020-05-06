@@ -69,7 +69,6 @@ module.exports = class Server {
                 console.log('Error: wrong versions');
                 return 'Versione file di addestramento non compatibile';
             }
-            console.log(nconf.get);
             // controllare che le data entry coincidano con quelle nel csv
             const dataSourceJson = managePredittore.getDataEntry();
             if (dataSourceJson.length !== dataSourceCsv.length || dataSourceJson.every(
@@ -94,19 +93,13 @@ module.exports = class Server {
 
     train(data, labels, predittore) {
         let modelAdapter;
-        switch (this.model) {
-            case 'SVM': {
-                modelAdapter = new SvmAdapter();
-                break;
-            }
-            case 'RL': {
-                const n = data[0].length + 1;
-                const param = { numX: n, numY: 1 };
-                modelAdapter = new RlAdapter(param);
-                break;
-            }
-            default:
-                modelAdapter = null;
+        if (this.model === 'SVM') {
+            modelAdapter = new SvmAdapter();
+        }
+        if (this.model === 'RL') {
+            const n = data[0].length + 1;
+            const param = { numX: n, numY: 1 };
+            modelAdapter = new RlAdapter(param);
         }
         if (predittore) {
             modelAdapter.fromJSON(predittore);
@@ -114,8 +107,8 @@ module.exports = class Server {
         return modelAdapter.train(data, labels);
     }
 
+    // salvataggio predittore
     savePredittore(strPredittore, nome) {
-        // salvataggio predittore
         const managePredittore = new WPredittore();
         managePredittore.setHeader(nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'));
         managePredittore.setDataEntry(this.csvReader.getDataSource(), this.csvReader.countSource());

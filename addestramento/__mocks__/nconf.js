@@ -14,16 +14,14 @@ const fileMOCK = jest.fn();
 const defaultsMOCK = jest.fn({
     PORT: 8080, TRAIN_VERSION: '0.0.0', PLUGIN_VERSION: '0.0.0',
 });
-const getMOCK = jest.fn(() => { defaultsMOCK(); });
+const getMOCK = jest.fn();
 
-const nconf = jest.fn().mockImplementation(() => ({
+const nconf = {
     argv: argvMOCK,
     env: envMOCK,
     file: fileMOCK,
     defaults: defaultsMOCK,
     get: getMOCK,
-}));
-
-module.exports = {
-    nconf, argvMOCK, envMOCK, fileMOCK, defaultsMOCK, getMOCK,
 };
+
+module.exports = nconf;

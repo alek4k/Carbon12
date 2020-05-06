@@ -453,7 +453,7 @@ describe('Testing method', () => {
     });
 
     describe('Testing startServer method', () => {
-        test.only('Test for config loadCsv', async () => {
+        test('Test for config loadCsv', async () => {
             server.startServer = Server.prototype.startServer;
             server.config = function testConfig() {};
             const listenMock = jest.fn()

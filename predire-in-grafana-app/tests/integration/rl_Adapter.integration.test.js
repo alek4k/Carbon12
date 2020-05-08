@@ -13,7 +13,7 @@ import RLAdapter from '../../src/utils/models/RL_Adapter';
 
 const rlAdapter = new RLAdapter({ numX: 3, numY: 1 });
 
-test('It should return JSON file with RL configuration', () => {
+test('It should return JSON with RL configuration', () => {
     const j = {};
     j.N = 7;
     j.D = 3;
@@ -28,7 +28,7 @@ test('It should return JSON file with RL configuration', () => {
     ]);
 });
 
-test('It should return JSON file with RL configuration', () => {
+test('It should return JSON with RL configuration', () => {
     const data = [
         [9098, 5492],
         [9133, 5540],

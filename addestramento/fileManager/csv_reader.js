@@ -60,7 +60,6 @@ class CsvReader extends dataReader {
     }
 
     /**
-     *
      * @param {Array} columns Lista di colonne da ritornare.
      * @returns {Array} Ritorna la matrice contenente ogni riga di ogni colonna selezionata.
      */

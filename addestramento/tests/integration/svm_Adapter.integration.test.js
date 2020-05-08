@@ -13,7 +13,7 @@ const SvmAdapter = require('../../models/SVM_Adapter').svmadapter;
 
 const svmAdapter = new SvmAdapter();
 
-test('It should return JSON file with RL configuration', () => {
+test('It should return JSON with SVM configuration', () => {
     const j = {};
     j.N = 7;
     j.D = 3;
@@ -32,7 +32,7 @@ test('It should return JSON file with RL configuration', () => {
     ]);
 });
 
-test('It should return JSON file with SVM configuration', () => {
+test('It should return JSON with SVM configuration', () => {
     const data = [
         [1, 0],
         [2, 3],

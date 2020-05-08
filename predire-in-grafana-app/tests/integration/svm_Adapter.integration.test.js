@@ -13,7 +13,7 @@ import SvmAdapter from '../../src/utils/models/SVM_Adapter';
 
 const svmAdapter = new SvmAdapter();
 
-test('It should return JSON file with RL configuration', () => {
+test('It should return JSON with SVM configuration', () => {
     const j = {};
     j.N = 7;
     j.D = 3;
@@ -32,7 +32,7 @@ test('It should return JSON file with RL configuration', () => {
     ]);
 });
 
-test('It should return JSON file with SVM configuration', () => {
+test('It should return JSON with SVM configuration', () => {
     const data = [
         [1, 0],
         [2, 3],
@@ -69,7 +69,7 @@ test('It should return JSON file with SVM configuration', () => {
     expect(result).toEqual(k);
 });
 
-test('It should return prediction from RL', () => {
+test('It should return prediction from SVM', () => {
     const point = [14, 54];
     expect(svmAdapter.predictClass(point)).toEqual(1);
 });

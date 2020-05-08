@@ -114,8 +114,6 @@ describe('Testing method', () => {
 
     afterEach(() => {
         server = null;
-        aGLMock.mockClear();
-        // mock.restore();
     });
 
     describe('Testing ValidityCsv method', () => {
@@ -208,7 +206,7 @@ describe('Testing method', () => {
     });
 
     describe('Testing train method', () => {
-        test('test addestramento SVM senza predittore', () => {
+        test('It should test train predittore with SVM whitout predittore', () => {
             server.train = Server.prototype.train;
             server.model = 'SVM';
 
@@ -229,7 +227,7 @@ describe('Testing method', () => {
             expect(fJSvmAMock).toHaveBeenCalledTimes(0);
             expect(tSvmAMock).toHaveBeenCalledTimes(1);
         });
-        test('test addestramento SVM con predittore', () => {
+        test('It should test train predittore with SVM whit predittore', () => {
             server.train = Server.prototype.train;
             server.model = 'SVM';
 
@@ -272,7 +270,7 @@ describe('Testing method', () => {
             expect(fJSvmAMock).toHaveBeenCalledWith(pred);
             expect(tSvmAMock).toHaveBeenCalledTimes(1);
         });
-        test('test addestramento RL senza predittore', () => {
+        test('It should test train predittore with RL whitout predittore', () => {
             server.train = Server.prototype.train;
             server.model = 'RL';
 
@@ -303,7 +301,7 @@ describe('Testing method', () => {
             expect(fJRlAMock).toHaveBeenCalledTimes(0);
             expect(tRlAMock).toHaveBeenCalledTimes(1);
         });
-        test('test addestramento RL con predittore', () => {
+        test('It should test train predittore with RL whit predittore', () => {
             server.train = Server.prototype.train;
             server.model = 'RL';
 
@@ -347,7 +345,7 @@ describe('Testing method', () => {
     });
 
     describe('Testing savePredittore method', () => {
-        test('salvataggio json', async () => {
+        test('It should save json', async () => {
             server.savePredittore = Server.prototype.savePredittore;
             server.csvReader = new CsvReader();
             const nome = 'files/expense.csv';
@@ -424,7 +422,7 @@ describe('Testing method', () => {
     });
 
     describe('Testing config method', () => {
-        test('It should response the GET method', async () => {
+        test('It should test Server\'s configuration', async () => {
             server.config = Server.prototype.config;
             server.source = [];
             server.model = 'SVM';
@@ -436,7 +434,7 @@ describe('Testing method', () => {
             const getMock = jest.fn();
             const postMock = jest.fn();
             server.app = { use: useMock };
-            server.ruter = { get: getMock, post: postMock };
+            server.router = { get: getMock, post: postMock };
             const req = {};
             const renderMOCK = jest.fn();
             const res = {
@@ -449,11 +447,14 @@ describe('Testing method', () => {
                 fun(req, res);
             });
             expect(server.config()).toEqual();
+            expect(useMock).toHaveBeenCalledTimes(1);
+            expect(getMock).toHaveBeenCalledTimes(2);
+            expect(postMock).toHaveBeenCalledTimes(4);
         });
     });
 
     describe('Testing startServer method', () => {
-        test('Test for config loadCsv', async () => {
+        test('It should test the start', async () => {
             server.startServer = Server.prototype.startServer;
             server.config = function testConfig() {};
             const listenMock = jest.fn();

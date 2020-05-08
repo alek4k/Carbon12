@@ -43,7 +43,7 @@ describe('Testing method', () => {
     });
 
 
-    test('It should return JSON file with RL configuration', () => {
+    test('It should return JSON with SVM configuration', () => {
         svmAdapter.fromJSON = SvmAdapter.prototype.fromJSON;
         const j = {};
         j.N = 7;
@@ -65,7 +65,7 @@ describe('Testing method', () => {
     });
 
 
-    test('It should return JSON file with SVM configuration', () => {
+    test('It should return JSON with SVM configuration', () => {
         svmAdapter.train = SvmAdapter.prototype.train;
         const data = [
             [1, 0],

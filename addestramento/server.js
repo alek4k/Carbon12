@@ -46,6 +46,14 @@ module.exports = class Server {
         nconf.defaults({ PORT: 8080, TRAIN_VERSION: '0.0.0', PLUGIN_VERSION: '0.0.0' });
     }
 
+    /**
+     * validityCsv
+     * @param  {Array} csvReaderV
+     * array (N*D)+E con i dati di addestramento: N #tuple, D #sorgenti,
+     * E valori attesi o classificazione dei dati per l'addestramento
+     * @return {boolean}
+     * verifica la validità del file csv
+     */
     validityCsv(csvReaderV) {
         const labels = csvReaderV.autoGetLabel();
         if (labels.every((value) => value === 0)) {
@@ -56,6 +64,15 @@ module.exports = class Server {
         return '';
     }
 
+    /**
+     * validityJson
+     * @param  {Array} dataSourceCsv
+     * array con le sorgenti dell'addestramento: N #tuple, D #sorgenti
+     * @param  {JSON} managePredittore
+     * vecchio predittore allenato in precedenza
+     * @return {boolean}
+     * verifica la validità dell'ex-predittore
+     */
     validityJson(managePredittore, dataSourceCsv) {
         if (managePredittore.validity()) {
             if (managePredittore.getFileVersion() >= 0) {
@@ -91,6 +108,17 @@ module.exports = class Server {
         return '';
     }
 
+    /**
+     * train
+     * @param  {Array} data
+     *array N*D con i dati di addestramento: N #tuple, D #sorgenti
+     * @param  {Array} labels
+     * array[N] con i valori attesi o classificazione dei dati per l'addestramento
+     * @param  {Array} predittore
+     * vecchio predittore allenato in precedenza
+     * @return {JSON} config
+     * stringa JSON con la configurazione salvata del modello da usare per predire
+     */
     train(data, labels, predittore) {
         let modelAdapter;
         if (this.model === 'SVM') {
@@ -107,7 +135,15 @@ module.exports = class Server {
         return modelAdapter.train(data, labels);
     }
 
-    // salvataggio predittore
+    /**
+     * savePredittore
+     * @param  {JSON} strPredittore
+     * predittore generato dall'addestramento
+     * @param  {string} nome
+     * stringa che identifica il nome del file che si genera
+     * 
+     * salvataggio predittore
+     */
     savePredittore(strPredittore, nome) {
         const managePredittore = new WPredittore();
         managePredittore.setHeader(nconf.get('PLUGIN_VERSION'), nconf.get('TRAIN_VERSION'));
@@ -119,6 +155,10 @@ module.exports = class Server {
         fs.writeFileSync(nome, managePredittore.save());
     }
 
+    /**
+     * uploadForm
+     * racchiude le chiamate alle attività di verifica, di addestramento e salvataggio del predittore
+     */
     uploadForm(req, res) {
         const form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
@@ -178,6 +218,10 @@ module.exports = class Server {
         });
     }
 
+    /**
+     * downloadPredittore
+     * permette di scaricare il predittore
+     */
     downloadPredittore(req, res) {
         const file = path.join(__dirname, this.nomePredittore);
         const filename = path.basename(file);
@@ -190,6 +234,11 @@ module.exports = class Server {
         filestream.pipe(res);
     }
 
+    /**
+     * getChartData
+     * restituisce l'insieme di tutti i dati che servono per la costruzione del grafico
+     * suddivide il file (csv) in: dati effettivi, dati labels e intestazioni delle data source
+     */
     getChartData(request, response) {
         const form = new formidable.IncomingForm();
         let result = null;
@@ -208,6 +257,11 @@ module.exports = class Server {
         form.parse(request);
     }
 
+    /**
+     * getCSVColumns
+     * ritorna l'insieme delle intestazioni delle colonne del file contenente i dati (csv)
+     * permette di selezionare la sorgente che identificherà la colonna delle labels nella pagina di addestramento
+     */
     getCSVColumns(request, response) {
         const form = new formidable.IncomingForm();
         form.multiples = false;
@@ -225,11 +279,15 @@ module.exports = class Server {
         form.parse(request);
     }
 
+    /**
+     * config
+     * configurazione del server
+     */
     config() {
         this.app.use('/', this.router);
 
         this.router.get('/', (request, response) => {
-            let error2 = this.error; // TODO: dare un nome migliore alla variabile
+            let error2 = this.error;
             response.render('addestramento', { error2 });
             error2 = '';
         });
@@ -239,8 +297,8 @@ module.exports = class Server {
         });
 
         this.router.get('/downloadPredittore', (request, response) => {
-            const model2 = this.model; // TODO: dare un nome migliore alla variabile
-            const sources2 = this.sources; // TODO: dare un nome migliore alla variabile
+            const model2 = this.model;
+            const sources2 = this.sources;
             response.render('downloadPredittore', { model2, sources2 });
         });
 
@@ -257,6 +315,10 @@ module.exports = class Server {
         });
     }
 
+    /**
+     * startServer
+     * avvio del server
+     */
     startServer() {
         this.config();
         this.server = this.app.listen(nconf.get('PORT'), () => {

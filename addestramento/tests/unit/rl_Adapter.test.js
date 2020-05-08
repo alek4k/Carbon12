@@ -66,7 +66,7 @@ describe('Testing method', () => {
         });
     });
 
-    test('It should return JSON file with RL configuration', () => {
+    test('It should return JSON with RL configuration', () => {
         rlAdapter.train = RLAdapter.prototype.train;
         const k = {};
         k._parametroN = 'numero di dati inseriti';

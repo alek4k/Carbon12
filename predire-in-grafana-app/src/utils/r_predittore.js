@@ -53,6 +53,7 @@ export default class RPredittore {
      * @param strVersion stringa che rappresenta la versione
      * @return {int}
      */
+    // eslint-disable-next-line class-methods-use-this
     versionToInt(strVersion) {
         let res = strVersion.replace('.', '');
         res = strVersion.replace('.', '');

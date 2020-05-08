@@ -56,7 +56,6 @@ class WPredittore {
     }
 
     /**
-     *
      * @param model Modello utilizzato per l'addestramento
      */
     setModel(model) {
@@ -64,7 +63,6 @@ class WPredittore {
     }
 
     /**
-     *
      * @param version
      */
     setFileVersion(version) {
@@ -72,7 +70,6 @@ class WPredittore {
     }
 
     /**
-     *
      * @param notes
      */
     setNotes(notes) {
@@ -80,7 +77,6 @@ class WPredittore {
     }
 
     /**
-     *
      * @param config
      */
     setConfiguration(config) {
@@ -88,7 +84,6 @@ class WPredittore {
     }
 
     /**
-     *
      * @returns {string} JSON da inserire nel file del predittore
      */
     save() {

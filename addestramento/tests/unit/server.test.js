@@ -121,7 +121,7 @@ describe('Testing method', () => {
         beforeEach(() => {
             csvReader = new CsvReader();
         });
-        test('This test will not send a messagge because the structure of file.csv is not correct', () => {
+        test('This test will send a messagge because the structure of file.csv is not correct', () => {
             server.validityCsv = Server.prototype.validityCsv;
             expect(server.validityCsv(csvReader)).toEqual(
                 'Valori attesi nel file csv mancanti',

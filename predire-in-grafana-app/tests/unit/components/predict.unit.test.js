@@ -9,16 +9,20 @@
  * Changelog: modifiche effettuate
  */
 
+/* eslint-disable import/no-unresolved */
+/* eslint-disable import/named */
+import { emitMock } from 'grafana/app/core/core';
 import PredictCtrl from '../../../src/components/predict';
-import GrafanaApiQueryMock, { getDashboardMock, getFolderMock }
+import GrafanaApiQueryMock, { getDashboardMock, getFolderMock, postDashboardMock }
     from '../../../src/utils/grafana_query';
 import BackendSrvMock from '../../../__mocks__/backendSrvMock';
 import ScopeMock, { evalAsyncMock } from '../../../__mocks__/scopeMock';
 import predictLooper from '../../../src/utils/predictLooper';
-import { appEvents, emitMock } from 'grafana/app/core/core';
+import DashboardMock, { removePanelMock, getJSONMock, updateSettingsMock } from '../../../src/utils/dashboard';
 
 jest.mock('../../../src/utils/grafana_query');
 jest.mock('../../../src/utils/predictLooper');
+jest.mock('../../../src/utils/dashboard');
 jest.mock('grafana/app/core/core');
 
 afterEach(() => {
@@ -44,8 +48,7 @@ it('Testing constructor', () => {
         $scope: '',
         backendSrv: new BackendSrvMock(),
         grafana: new GrafanaApiQueryMock(),
-        dashboardExists: false,
-        dashboardEmpty: true,
+        toRemove: -1,
     });
 });
 
@@ -56,23 +59,38 @@ describe('Testing method', () => {
     });
 
     describe('verifyDashboard', () => {
+        beforeEach(() => {
+            predict.verifyDashboard = PredictCtrl.prototype.verifyDashboard;
+            predict.grafana = new GrafanaApiQueryMock();
+            predict.$scope = new ScopeMock();
+        });
+
         describe('when dashboardExists is true', () => {
-            it('when dashboardEmpty is true', () => {
-                predict.verifyDashboard = PredictCtrl.prototype.verifyDashboard;
-                predict.grafana = new GrafanaApiQueryMock();
+            beforeEach(() => {
                 getFolderMock.mockImplementationOnce(() => ({
                     then: (fun) => {
                         const dbList = [{ uid: 'carbon12' }, { uid: 'altro' }];
                         fun(dbList);
                     },
                 }));
+            });
+
+            it('when dashboardEmpty is true', () => {
+                getJSONMock.mockReturnValue({
+                    panels: [],
+                });
                 getDashboardMock.mockImplementationOnce(() => ({
                     then: (fun) => {
                         const db = { dashboard: { panels: [] } };
                         fun(db);
                     },
                 }));
-                predict.$scope = new ScopeMock();
+                predict.dashboard = new DashboardMock();
+                predict.getPanelsState = jest.fn();
+                updateSettingsMock.mockReturnValueOnce(true);
+                postDashboardMock.mockReturnValueOnce({
+                    then: (fun) => fun(),
+                });
 
                 predict.verifyDashboard();
 
@@ -80,7 +98,7 @@ describe('Testing method', () => {
                 expect(getFolderMock).toHaveBeenCalledWith('0');
                 expect(getDashboardMock).toHaveBeenCalledTimes(1);
                 expect(getDashboardMock).toHaveBeenCalledWith('predire-in-grafana');
-                expect(evalAsyncMock).toHaveBeenCalledTimes(2);
+                expect(evalAsyncMock).toHaveBeenCalledTimes(3);
                 expect(evalAsyncMock).toHaveBeenCalledWith();
                 expect(predict).toEqual({
                     verifyDashboard: PredictCtrl.prototype.verifyDashboard,
@@ -88,18 +106,15 @@ describe('Testing method', () => {
                     $scope: new ScopeMock(),
                     dashboardEmpty: true,
                     dashboardExists: true,
+                    dashboard: new DashboardMock(),
+                    getPanelsState: expect.any(Function),
                 });
             });
 
             it('when dashboardEmpty is false', () => {
-                predict.verifyDashboard = PredictCtrl.prototype.verifyDashboard;
-                predict.grafana = new GrafanaApiQueryMock();
-                getFolderMock.mockImplementationOnce(() => ({
-                    then: (fun) => {
-                        const dbList = [{ uid: 'carbon12' }, { uid: 'altro' }];
-                        fun(dbList);
-                    },
-                }));
+                getJSONMock.mockReturnValue({
+                    panels: [1],
+                });
                 getDashboardMock.mockImplementationOnce(() => ({
                     then: (fun) => {
                         const db = { dashboard: { panels: ['panel'] } };
@@ -108,7 +123,6 @@ describe('Testing method', () => {
                 }));
                 const mockGetPanelsState = jest.fn();
                 predict.getPanelsState = mockGetPanelsState;
-                predict.$scope = new ScopeMock();
                 predict.backendSrv = new BackendSrvMock();
 
                 predict.verifyDashboard();
@@ -130,20 +144,18 @@ describe('Testing method', () => {
                     backendSrv: new BackendSrvMock(),
                     dashboardEmpty: false,
                     dashboardExists: true,
+                    dashboard: new DashboardMock(),
                 });
             });
         });
 
         it('when dashboardExists is false', () => {
-            predict.verifyDashboard = PredictCtrl.prototype.verifyDashboard;
-            predict.grafana = new GrafanaApiQueryMock();
             getFolderMock.mockImplementationOnce(() => ({
                 then: (fun) => {
                     const dbList = [{ uid: 'altro1' }, { uid: 'altro2' }];
                     fun(dbList);
                 },
             }));
-            predict.$scope = new ScopeMock();
 
             predict.verifyDashboard();
 
@@ -163,43 +175,47 @@ describe('Testing method', () => {
     describe('getPanelsState', () => {
         beforeEach(() => {
             predict.getPanelsState = PredictCtrl.prototype.getPanelsState;
-            predict.started = [];
-            predict.panelsList = [];
+            predict.dashboard = new DashboardMock();
+            getJSONMock.mockReturnValue({
+                panels: [1],
+                templating: {
+                    list: [{
+                        query: {},
+                    }],
+                },
+            });
         });
 
-        it('when localStorage.getItem is equal to "no"', () => {
-            localStorage.setItem('btn0', 'no');
-
-            const parPanels = [{ title: 'testPanelTitle' }];
-            predict.getPanelsState(parPanels);
-
-            expect({ ...localStorage }).toEqual({
-                btn0: 'no',
+        it('when started is equal to "no"', () => {
+            JSON.parse = jest.fn().mockReturnValueOnce({
+                started: 'no',
             });
+
+            predict.getPanelsState();
+
             expect(predict).toEqual({
                 getPanelsState: PredictCtrl.prototype.getPanelsState,
                 time: ['1'],
                 timeUnit: ['secondi'],
                 started: [false],
-                panelsList: ['testPanelTitle'],
+                panelsList: [undefined],
+                dashboard: new DashboardMock(),
             });
         });
 
-        describe('when localStorage.getItem is not equal to "no"', () => {
+        describe('when started is not equal to "no"', () => {
             const mockTTM = jest.fn(() => 1);
             beforeEach(() => {
                 predict.timeToMilliseconds = mockTTM;
             });
 
-            it('when localStorage.getItem end with s', () => {
-                localStorage.setItem('btn0', '15s');
-
-                const parPanels = [{ title: 'testPanelTitle' }];
-                predict.getPanelsState(parPanels);
-
-                expect({ ...localStorage }).toEqual({
-                    btn0: '15s',
+            it('when state end in "s"', () => {
+                JSON.parse = jest.fn().mockReturnValue({
+                    started: '10s',
                 });
+
+                predict.getPanelsState();
+
                 expect(mockTTM).toHaveBeenCalledTimes(1);
                 expect(mockTTM).toHaveBeenCalledWith(0);
                 expect(predictLooper.startPrediction).toHaveBeenCalledTimes(1);
@@ -207,22 +223,21 @@ describe('Testing method', () => {
                 expect(predict).toEqual({
                     getPanelsState: PredictCtrl.prototype.getPanelsState,
                     timeToMilliseconds: mockTTM,
-                    time: ['15'],
+                    dashboard: new DashboardMock(),
+                    time: ['10'],
                     timeUnit: ['secondi'],
                     started: [true],
-                    panelsList: ['testPanelTitle'],
+                    panelsList: [undefined],
                 });
             });
 
-            it('when localStorage.getItem don\'t end with s', () => {
-                localStorage.setItem('btn0', '15m');
-
-                const parPanels = [{ title: 'testPanelTitle' }];
-                predict.getPanelsState(parPanels);
-
-                expect({ ...localStorage }).toEqual({
-                    btn0: '15m',
+            it('when state do not end in "s"', () => {
+                JSON.parse = jest.fn().mockReturnValue({
+                    started: '10m',
                 });
+
+                predict.getPanelsState();
+
                 expect(mockTTM).toHaveBeenCalledTimes(1);
                 expect(mockTTM).toHaveBeenCalledWith(0);
                 expect(predictLooper.startPrediction).toHaveBeenCalledTimes(1);
@@ -230,27 +245,12 @@ describe('Testing method', () => {
                 expect(predict).toEqual({
                     getPanelsState: PredictCtrl.prototype.getPanelsState,
                     timeToMilliseconds: mockTTM,
-                    time: ['15'],
+                    dashboard: new DashboardMock(),
+                    time: ['10'],
                     timeUnit: ['minuti'],
                     started: [true],
-                    panelsList: ['testPanelTitle'],
+                    panelsList: [undefined],
                 });
-            });
-        });
-
-        it('when localStorage.getItem is not defined', () => {
-            const parPanels = [{ title: 'testPanelTitle' }];
-            predict.getPanelsState(parPanels);
-
-            expect({ ...localStorage }).toEqual({
-                btn0: 'no',
-            });
-            expect(predict).toEqual({
-                getPanelsState: PredictCtrl.prototype.getPanelsState,
-                time: ['1'],
-                timeUnit: ['secondi'],
-                started: [false],
-                panelsList: ['testPanelTitle'],
             });
         });
     });
@@ -369,13 +369,18 @@ describe('Testing method', () => {
             predict.started = [];
             predict.time = ['1'];
             predict.timeUnit = ['secondi'];
+            predict.dashboard = new DashboardMock();
+            predict.grafana = new GrafanaApiQueryMock();
+            postDashboardMock.mockReturnValueOnce({
+                then: (fun) => fun(),
+            });
+            predict.$scope = new ScopeMock();
 
             const parIndex = 0;
             predict.startPrediction(parIndex);
 
             expect(mockTTM).toHaveBeenCalledTimes(1);
             expect(mockTTM).toHaveBeenCalledWith(parIndex);
-            expect({ ...localStorage }).toEqual({ btn0: '1s'});
             expect(emitMock).toHaveBeenCalledTimes(1);
             expect(emitMock).toHaveBeenCalledWith('alert-success', ['Predizione avviata', '']);
             expect(predictLooper.startPrediction).toHaveBeenCalledTimes(1);
@@ -387,6 +392,9 @@ describe('Testing method', () => {
                 started: [true],
                 time: ['1'],
                 timeUnit: ['secondi'],
+                $scope: new ScopeMock(),
+                dashboard: new DashboardMock(),
+                grafana: new GrafanaApiQueryMock(),
             });
         });
     });
@@ -394,13 +402,16 @@ describe('Testing method', () => {
     it('stopPrediction', () => {
         predict.stopPrediction = PredictCtrl.prototype.stopPrediction;
         predict.started = [true];
+        predict.dashboard = new DashboardMock();
+        predict.grafana = new GrafanaApiQueryMock();
+        postDashboardMock.mockReturnValueOnce({
+            then: (fun) => fun(),
+        });
+        predict.$scope = new ScopeMock();
 
         const parIndex = 0;
         predict.stopPrediction(parIndex);
 
-        expect({ ...localStorage }).toEqual({
-            btn0: 'no',
-        });
         expect(emitMock).toHaveBeenCalledTimes(1);
         expect(emitMock).toHaveBeenCalledWith('alert-success', ['Predizione terminata', '']);
         expect(predictLooper.stopPrediction).toHaveBeenCalledTimes(1);
@@ -408,11 +419,47 @@ describe('Testing method', () => {
         expect(predict).toEqual({
             stopPrediction: PredictCtrl.prototype.stopPrediction,
             started: [false],
+            $scope: new ScopeMock(),
+            dashboard: new DashboardMock(),
+            grafana: new GrafanaApiQueryMock(),
         });
     });
 
-    describe('removeanel', () => {
-        expect(true).toEqual(false);
+    it('removePanel', () => {
+        predict.removePanel = PredictCtrl.prototype.removePanel;
+        predict.started = [1];
+        predict.dashboard = new DashboardMock();
+        predict.grafana = new GrafanaApiQueryMock();
+        postDashboardMock.mockReturnValueOnce({
+            then: (fun) => fun(),
+        });
+        predict.verifyDashboard = jest.fn();
+        predict.$scope = new ScopeMock();
+        delete global.document;
+        global.document = {
+            getElementById: jest.fn().mockReturnValueOnce({
+                remove: jest.fn(),
+            }),
+        };
+
+        const parIndex = 0;
+        predict.removePanel(parIndex);
+
+        expect(removePanelMock).toHaveBeenCalledTimes(1);
+        expect(removePanelMock).toHaveBeenCalledWith(0);
+        expect(predictLooper.stopPrediction).toHaveBeenCalledTimes(1);
+        expect(predictLooper.stopPrediction).toHaveBeenCalledWith(0);
+        expect(postDashboardMock).toHaveBeenCalledTimes(1);
+        expect(predict.verifyDashboard).toHaveBeenCalledTimes(1);
+        expect(predict.verifyDashboard).toHaveBeenCalledWith();
+        expect(predict).toEqual({
+            removePanel: PredictCtrl.prototype.removePanel,
+            started: [1],
+            $scope: new ScopeMock(),
+            dashboard: new DashboardMock(),
+            grafana: new GrafanaApiQueryMock(),
+            verifyDashboard: predict.verifyDashboard,
+        });
     });
 
     describe('redirect', () => {

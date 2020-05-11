@@ -59,14 +59,13 @@ export default class predictCtrl {
                                         this.$scope.$evalAsync();
                                     });
                             }
-                            this.dashboardEmpty = ! this.dashboard.getJSON().panels.length;
+                            this.dashboardEmpty = !this.dashboard.getJSON().panels.length;
                             if (!this.dashboardEmpty) {
                                 predictLooper.setBackendSrv(this.$scope, this.backendSrv);
                                 this.getPanelsState();
                             }
                             this.$scope.$evalAsync();
                         });
-                } else {
                 }
                 this.$scope.$evalAsync();
             });

@@ -32,7 +32,6 @@ it('Testing exported object', () => {
     expect(PredictLooper).toEqual({
         $scope: null,
         backendSrv: null,
-        db: [],
         predictions: [],
     });
 });

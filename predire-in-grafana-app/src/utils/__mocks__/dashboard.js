@@ -11,10 +11,14 @@
 
 export const getJSONMock = jest.fn();
 export const updateSettingsMock = jest.fn();
+export const removePanelMock = jest.fn();
+export const setPredictionStartedMock = jest.fn();
 
 const Dashboard = jest.fn().mockImplementation(() => ({
     getJSON: getJSONMock,
     updateSettings: updateSettingsMock,
+    removePanel: removePanelMock,
+    setPredictionStarted: setPredictionStartedMock,
 }));
 
 export default Dashboard;

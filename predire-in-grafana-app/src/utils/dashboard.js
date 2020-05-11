@@ -142,7 +142,7 @@ export default class Dashboard {
      */
     updateSettings() {
         const panels = this.dashboardSettings.panels;
-        let variables = this.dashboardSettings.templating.list;
+        const variables = this.dashboardSettings.templating.list;
         const newVariables = [];
         let isBeenUpdated = false;
         // panels.length <= variables.length

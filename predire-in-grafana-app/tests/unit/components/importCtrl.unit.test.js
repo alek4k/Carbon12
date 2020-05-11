@@ -8,10 +8,12 @@
  *
  * Changelog: modifiche effettuate
  */
+/* eslint-disable import/no-unresolved */
 
-import { appEvents, emitMock } from 'grafana/app/core/core'; 
+import { appEvents, emitMock } from 'grafana/app/core/core';
 import ImportCtrl from '../../../src/components/import';
-import GrafanaAPI, { getDataSourcesMock, postDashboardMock } from '../../../src/utils/grafana_query';
+import GrafanaAPI, { getDataSourcesMock, postDashboardMock }
+    from '../../../src/utils/grafana_query';
 import BackendSrvMock, { getMock, postMock } from '../../../__mocks__/backendSrvMock';
 import ScopeMock, {evalAsyncMock} from '../../../__mocks__/scopeMock';
 import RPredittore, {

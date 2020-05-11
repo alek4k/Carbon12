@@ -335,7 +335,17 @@ describe('Testing method', () => {
     });
 
     it('removePanel', () => {
-        expect(true).toEqual(false);
+        dashboard.removePanel = Dashboard.prototype.removePanel;
+        dashboard.updateSettings = jest.fn();
+
+        const parIndex = 0;
+        dashboard.removePanel(parIndex);
+
+        expect(dashboard).toEqual({
+            removePanel: Dashboard.prototype.removePanel,
+            dashboardSettings: expDashboardSettings,
+            updateSettings: expect.any(Function),
+        });
     });
 
 
@@ -414,7 +424,24 @@ describe('Testing method', () => {
     });
 
     it('setPredictionStarted', () => {
-        expect(true).toEqual(false);
+        dashboard.setPredictionStarted = Dashboard.prototype.setPredictionStarted;
+        dashboard.dashboardSettings.templating.list.push({
+            query: '{}',
+        });
+        JSON.parse = jest.fn().mockReturnValueOnce({});
+
+        const parIndex = 0;
+        const parState = 'testState';
+        dashboard.setPredictionStarted(parIndex, parState);
+
+        JSON.stringify = jest.fn().mockReturnValueOnce({});
+        expDashboardSettings.templating.list.push({
+            query: '{"started":"testState"}',
+        });
+        expect(dashboard).toEqual({
+            setPredictionStarted: Dashboard.prototype.setPredictionStarted,
+            dashboardSettings: expDashboardSettings,
+        });
     });
 
     it('getJSON', () => {

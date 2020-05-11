@@ -58,7 +58,7 @@ describe('Testing method', () => {
                             predittore: {
                                 D: 1,
                             },
-                        },),
+                        }),
                     }, {
                         query: JSON.stringify({
                             name: 'TestQueryName2',
@@ -72,7 +72,7 @@ describe('Testing method', () => {
                             predittore: {
                                 D: 1,
                             },
-                        },),
+                        }),
                     }],
                 },
             },
@@ -118,7 +118,7 @@ describe('Testing method', () => {
                             predittore: {
                                 D: 1,
                             },
-                        },),
+                        }),
                     }, {
                         query: JSON.stringify({
                             name: 'TestQueryName2',
@@ -132,7 +132,7 @@ describe('Testing method', () => {
                             predittore: {
                                 D: 1,
                             },
-                        },),
+                        }),
                     }],
                 },
             },

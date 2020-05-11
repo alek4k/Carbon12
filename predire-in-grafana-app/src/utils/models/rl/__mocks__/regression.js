@@ -9,13 +9,13 @@
  * Changelog: creazione interfaccia
  */
 
-export const predictMOCK = jest.fn(() => {
+export const predictMock = jest.fn(() => {
 });
 
-export const fromJSONMOCK = jest.fn(() => {
+export const fromJSONMock = jest.fn(() => {
 });
 
-export const toJSONMOCK = jest.fn(() => {
+export const toJSONMock = jest.fn(() => {
     const ris = {
         _parametroN: 'numero di dati inseriti',
         N: 7,
@@ -31,7 +31,7 @@ export const toJSONMOCK = jest.fn(() => {
     return ris;
 });
 
-export const trainMOCK = jest.fn(() => {
+export const trainMock = jest.fn(() => {
     const k = {};
     k._parametroN = 'numero di dati inseriti';
     k.N = 7;
@@ -46,14 +46,14 @@ export const trainMOCK = jest.fn(() => {
     return k;
 });
 
-// let rgMOCK = {};
+// let rgMock = {};
 
 const Regression = jest.fn().mockImplementation(() => ({
-    // rg: rgMOCK,
-    fromJSON: fromJSONMOCK,
-    toJSON: toJSONMOCK,
-    train: trainMOCK,
-    predict: predictMOCK,
+    // rg: rgMock,
+    fromJSON: fromJSONMock,
+    toJSON: toJSONMock,
+    train: trainMock,
+    predict: predictMock,
 }));
 
 export default Regression;

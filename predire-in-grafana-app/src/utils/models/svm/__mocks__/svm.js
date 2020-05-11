@@ -9,10 +9,10 @@
  * Changelog: creazione interfaccia
  */
 
-export const fromJSONMOCK = jest.fn(() => {
+export const fromJSONMock = jest.fn(() => {
 });
 
-export const toJSONMOCK = jest.fn(() => {
+export const toJSONMock = jest.fn(() => {
     const ris = {
         _parametroN: 'numero di dati inseriti',
         N: 7,
@@ -30,7 +30,7 @@ export const toJSONMOCK = jest.fn(() => {
     return ris;
 });
 
-export const trainMOCK = jest.fn(() => {
+export const trainMock = jest.fn(() => {
     const k = {};
     k.parametroN = 'numero di dati inseriti';
     k.N = 7;
@@ -47,14 +47,13 @@ export const trainMOCK = jest.fn(() => {
     return k;
 });
 
-export const predictClassMOCK = jest.fn(() => {
-});
+export const predictClassMock = jest.fn();
 
 const SVM = jest.fn().mockImplementation(() => ({
-    fromJSON: fromJSONMOCK,
-    toJSON: toJSONMOCK,
-    train: trainMOCK,
-    predictClass: predictClassMOCK,
+    fromJSON: fromJSONMock,
+    toJSON: toJSONMock,
+    train: trainMock,
+    predictClass: predictClassMock,
 }));
 
 export default SVM;

@@ -69,7 +69,7 @@ class predictLooper {
             this.db[index] = new Influx(
                 JSON.parse(variable.query).host,
                 parseInt(JSON.parse(variable.query).port, 10),
-                JSON.parse(variable.query).database
+                JSON.parse(variable.query).database,
             );
         });
     }

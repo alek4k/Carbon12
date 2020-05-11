@@ -18,7 +18,8 @@ import GrafanaApiQueryMock, { getDashboardMock, getFolderMock, postDashboardMock
 import BackendSrvMock from '../../../__mocks__/backendSrvMock';
 import ScopeMock, { evalAsyncMock } from '../../../__mocks__/scopeMock';
 import predictLooper from '../../../src/utils/predictLooper';
-import DashboardMock, { removePanelMock, getJSONMock, updateSettingsMock } from '../../../src/utils/dashboard';
+import DashboardMock, { removePanelMock, getJSONMock, updateSettingsMock }
+    from '../../../src/utils/dashboard';
 
 jest.mock('../../../src/utils/grafana_query');
 jest.mock('../../../src/utils/predictLooper');

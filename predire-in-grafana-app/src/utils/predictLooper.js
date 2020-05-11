@@ -22,7 +22,6 @@ class predictLooper {
     constructor() {
         this.$scope = null;
         this.backendSrv = null;
-        this.db = [];
         this.predictions = [];
     }
 
@@ -42,33 +41,35 @@ class predictLooper {
      */
     setConfig() {
         this.grafana = new GrafanaApiQuery(this.backendSrv);
-        this.grafana.getDashboard('predire-in-grafana').then((dash) => {
-            const dashboard = new Dashboard(dash.dashboard);
-            if (dashboard.updateSettings()) {
-                this.variables = dashboard.getJSON().templating.list;
-                this.grafana.postDashboard(dashboard.getJSON()).then(() => {
-                    this.setInflux();
-                    this.$scope.$evalAsync();
-                });
-            } else {
-                this.variables = dashboard.getJSON().templating.list;
+        this.grafana
+            .getDashboard('predire-in-grafana')
+            .then((dash) => {
+                const dashboard = new Dashboard(dash.dashboard);
+                if (dashboard.updateSettings()) {
+                    this.variables = dashboard.getJSON().templating.list;
+                    this.grafana
+                        .postDashboard(dashboard.getJSON())
+                        .then(() => {
+                            this.$scope.$evalAsync();
+                        });
+                } else {
+                    this.variables = dashboard.getJSON().templating.list;
+                }
                 this.setInflux();
-            }
-            this.$scope.$evalAsync();
-        });
+                this.$scope.$evalAsync();
+            });
     }
 
     /**
      *  Crea un'istanza del database per ogni pannello
      */
     setInflux() {
-        this.variables.forEach((variable) => {
-            this.db.push(
-                new Influx(
-                    variable.query.host,
-                    parseInt(variable.query.port, 10),
-                    variable.query.database,
-                ),
+        this.db = [];
+        this.variables.forEach((variable, index) => {
+            this.db[index] = new Influx(
+                JSON.parse(variable.query).host,
+                parseInt(JSON.parse(variable.query).port, 10),
+                JSON.parse(variable.query).database
             );
         });
     }
@@ -112,18 +113,18 @@ class predictLooper {
      * @returns {Number} rappresenta la predizione relativa al pannello richiesto
      */
     getPrediction(index) {
-        const predictor = this.variables[index].query.predittore;
+        const predictor = JSON.parse(this.variables[index].query).predittore;
         const point = [];
         for (let i = 0; i < predictor.D; ++i) {
             point.push(
                 this.db[index].getLastValue(
-                    this.variables[index].query.sources[i],
-                    this.variables[index].query.instances[i],
-                    this.variables[index].query.params[i],
+                    JSON.parse(this.variables[index].query).sources[i],
+                    JSON.parse(this.variables[index].query).instances[i],
+                    JSON.parse(this.variables[index].query).params[i],
                 ),
             );
         }
-        return this.variables[index].query.model === 'SVM'
+        return JSON.parse(this.variables[index].query).model === 'SVM'
             ? this.predictSVM(predictor, point) : this.predictRL(predictor, point);
     }
 

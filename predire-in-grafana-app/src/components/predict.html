@@ -10,14 +10,14 @@
     </div>
   </div>
 
-  <div ng-if="ctrl.panelsList" class="gf-form-group">
-    <div ng-repeat="panel in ctrl.panelsList" class="gf-form-inline dashlist-section">
+  <div ng-if="ctrl.panelsList && ctrl.dashboardExists && !ctrl.dashboardEmpty" class="gf-form-group">
+    <div ng-repeat="panel in ctrl.panelsList" id="row{{$index}}" class="gf-form-inline dashlist-section">
       <div class="gf-form">
         <input type="text" class="gf-form-input width-14" readonly value="{{panel}}"/>
       </div>
       <div class="gf-form">
         <label class="gf-form-label width-7">Predici ogni:</label>
-        <input type="text" class="gf-form-input width-6" pattern="^(([0-9]+)?([0.9]+.[0-9]+)?)$"
+        <input type="text" class="gf-form-input width-5" pattern="^(([0-9]+)?([0.9]+.[0-9]+)?)$"
           ng-model="ctrl.time[$index]"/>
       </div>
       <div class="gf-form-select-wrapper">
@@ -32,13 +32,43 @@
         <button class="btn btn-danger"
           ng-click="ctrl.stopPrediction($index)">Stop</button>
       </div>
+      <div class="gf-form explore-input--ml">
+        <button class="btn btn-danger"
+          ng-click="ctrl.toRemove = $index">Rimuovi</button>
+      </div>
     </div>
   </div>
 
-  <div ng-if="ctrl.dashboardExists && ctrl.dashboardEmpty" class="gf-form-group">
+  <div ng-if="ctrl.toRemove !== -1" class="modal-backdrop in"></div>
+  <div ng-if="ctrl.toRemove !== -1" class="modal hide modal--narrow confirm-modal in show">
+    <div class="modal-body">
+      <div class="modal-header">
+        <h2 class="modal-header-title">
+          <i class="fa fa-trash"></i>
+          <span class="p-l-1">Conferma di rimozione</span>
+        </h2>
+        <a class="modal-header-close" ng-click="ctrl.toRemove = -1">
+          <i class="fa fa-remove"></i>
+        </a>
+      </div>
+      <div class="modal-content text-center">
+        <div class="confirm-modal-text">
+          Sei sicuro di voler rimuovere il pannello "{{ctrl.panelsList[ctrl.toRemove]}}"?
+        </div>
+        <div class="confirm-modal-buttons">
+          <button type="button" class="btn btn-primary"
+            ng-click="ctrl.removePanel(ctrl.toRemove); ctrl.toRemove = -1">Si</button>
+          <button type="button" class="btn btn-danger"
+            ng-click="ctrl.toRemove = -1">Annulla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-if="ctrl.dashboardExists && ctrl.dashboardEmpty">
     <div class="row">
       <div class="col-md-10">
-        <p>La dashboard è vuota</p>    
+        <p>La dashboard è vuota</p>
       </div>
     </div>
   </div>

@@ -47,7 +47,7 @@ describe('Testing method', () => {
             dashboard: {
                 templating: {
                     list: [{
-                        query: {
+                        query: JSON.stringify({
                             name: 'TestQueryName1',
                             host: 'TestQueryHost1',
                             port: '1000',
@@ -59,9 +59,9 @@ describe('Testing method', () => {
                             predittore: {
                                 D: 1,
                             },
-                        },
+                        },),
                     }, {
-                        query: {
+                        query: JSON.stringify({
                             name: 'TestQueryName2',
                             host: 'TestQueryHost2',
                             port: '1000',
@@ -73,7 +73,7 @@ describe('Testing method', () => {
                             predittore: {
                                 D: 1,
                             },
-                        },
+                        },),
                     }],
                 },
             },
@@ -107,7 +107,7 @@ describe('Testing method', () => {
             dashboard: {
                 templating: {
                     list: [{
-                        query: {
+                        query: JSON.stringify({
                             name: 'TestQueryName1',
                             host: 'TestQueryHost1',
                             port: '1000',
@@ -119,9 +119,9 @@ describe('Testing method', () => {
                             predittore: {
                                 D: 1,
                             },
-                        },
+                        },),
                     }, {
-                        query: {
+                        query: JSON.stringify({
                             name: 'TestQueryName2',
                             host: 'TestQueryHost2',
                             port: '1000',
@@ -133,7 +133,7 @@ describe('Testing method', () => {
                             predittore: {
                                 D: 1,
                             },
-                        },
+                        },),
                     }],
                 },
             },
@@ -259,9 +259,9 @@ describe('Testing method', () => {
         predictLooper.variables.forEach((variable) => {
             expDB.push(
                 new Influx(
-                    variable.query.host,
-                    parseInt(variable.query.port, 10),
-                    variable.query.database,
+                    JSON.parse(variable.query).host,
+                    parseInt(JSON.parse(variable.query).port, 10),
+                    JSON.parse(variable.query).database,
                 ),
             );
         });
@@ -279,9 +279,9 @@ describe('Testing method', () => {
         predictLooper.variables.forEach((variable) => {
             expDB.push(
                 new Influx(
-                    variable.query.host,
-                    parseInt(variable.query.port, 10),
-                    variable.query.database,
+                    JSON.parse(variable.query).host,
+                    parseInt(JSON.parse(variable.query).port, 10),
+                    JSON.parse(variable.query).database,
                 ),
             );
         });
@@ -398,20 +398,19 @@ describe('Testing method', () => {
 
 
             const parIndex = 0;
+            const parsedQuery = JSON.parse(dash.dashboard.templating.list[parIndex].query);
             const returnValue = predictLooper.getPrediction(parIndex);
 
             expect(returnValue).toEqual(1);
-            expect(getLastValueMock)
-                .toHaveBeenCalledTimes(dash.dashboard.templating.list[parIndex].query.predittore.D);
+            expect(getLastValueMock).toHaveBeenCalledTimes(parsedQuery.predittore.D);
             getLastValueMock.mockClear();
             const expPoint = [];
-            for (let i = 0; i < dash.dashboard.templating.list[parIndex].query.predittore.D; i++) {
+            for (let i = 0; i < parsedQuery.predittore.D; i++) {
                 expPoint.push(oldDB[parIndex].getLastValue());
             }
             expect(predictLooper.predictSVM).toHaveBeenCalledTimes(1);
             expect(predictLooper.predictSVM)
-                .toHaveBeenCalledWith(dash.dashboard.templating.list[parIndex].query.predittore,
-                    expPoint);
+                .toHaveBeenCalledWith(parsedQuery.predittore, expPoint);
             expect(predictLooper).toEqual({
                 variables: dash.dashboard.templating.list,
                 getPrediction: predictLooperProto.getPrediction,
@@ -427,20 +426,20 @@ describe('Testing method', () => {
             predictLooper.predictRL = predictRLMock;
 
             const parIndex = 1;
+            const parsedQuery = JSON.parse(dash.dashboard.templating.list[parIndex].query);
             const returnValue = predictLooper.getPrediction(parIndex);
 
             expect(returnValue).toEqual(1);
             expect(getLastValueMock)
-                .toHaveBeenCalledTimes(dash.dashboard.templating.list[parIndex].query.predittore.D);
+                .toHaveBeenCalledTimes(parsedQuery.predittore.D);
             getLastValueMock.mockClear();
             const expPoint = [];
-            for (let i = 0; i < dash.dashboard.templating.list[parIndex].query.predittore.D; i++) {
+            for (let i = 0; i < parsedQuery.predittore.D; i++) {
                 expPoint.push(oldDB[parIndex].getLastValue());
             }
             expect(predictLooper.predictRL).toHaveBeenCalledTimes(1);
             expect(predictLooper.predictRL)
-                .toHaveBeenCalledWith(dash.dashboard.templating.list[parIndex].query.predittore,
-                    expPoint);
+                .toHaveBeenCalledWith(parsedQuery.predittore, expPoint);
             expect(predictLooper).toEqual({
                 variables: dash.dashboard.templating.list,
                 getPrediction: predictLooperProto.getPrediction,

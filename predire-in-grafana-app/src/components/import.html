@@ -44,20 +44,20 @@
     <p>O configurane una</p>
     <div class="gf-form">
       <label class="gf-form-label width-6">Nome:</label>
-      <input type="text" class="gf-form-input width-12" ng-model="ctrl.newDataSource">
+      <input type="text" class="gf-form-input width-12" ng-model="ctrl.newDataSource"/>
     </div>
     <div class="gf-form">
       <span class="gf-form-label width-6">Database:</span>
-      <input type="text" class="gf-form-input width-12" ng-model="ctrl.database">
+      <input type="text" class="gf-form-input width-12" ng-model="ctrl.database"/>
     </div>
     <div class="gf-form-inline">
       <div class="gf-form">
         <span class="gf-form-label width-6">Host:</span>
-        <input type="text" class="gf-form-input width-12" ng-model="ctrl.host">
+        <input type="text" class="gf-form-input width-12" ng-model="ctrl.host"/>
       </div>
       <div class="gf-form">
         <span class="gf-form-label width-6">Port:</span>
-        <input type="text" class="gf-form-input width-6" ng-model="ctrl.port">
+        <input type="text" class="gf-form-input width-6" ng-model="ctrl.port"/>
       </div>
     </div>
     <div class="gf-form-button-row">
@@ -98,7 +98,7 @@
       <button ng-if="ctrl.step === 4" type="button" class="btn btn-secondary"
         ng-click="ctrl.step = (ctrl.step === 3) ?  4 : 3">Chiudi note JSON</button>
       <div ng-if="ctrl.step === 4">
-        <textarea class="gf-form-input h6 width-30" readonly ng-model="ctrl.notes"></textarea>
+        <textarea class="gf-form-input width-25" readonly ng-model="ctrl.notes"/>
       </div>
     </div>
 
@@ -112,14 +112,14 @@
     <section class="card-list-layout-grid card-list-layout-grid--max-2-col">
       <ol class="card-list">
         <li ng-repeat="dataEntry in ctrl.availableDataEntry" class="card-item-wrapper">
-          <div class="card-item preloader">
+          <div class="card-item preloader" style="background: #2f2f32;" onMouseOver="this.style.background='#2f2f32'">
             <p class="card-item-header h6 text-center">{{dataEntry}}</p>
             <div class="card-item-body">
               <div class="card-item-details">
                 <div class="gf-form">
                   <label class="gf-form-label width-6">Sorgente:</label>
                   <div class="gf-form-select-wrapper grafana-options-table">
-                    <select class="gf-form-input" ng-model="ctrl.sources[$index]"
+                    <select class="gf-form-input ReactTable" ng-model="ctrl.sources[$index]"
                       ng-options="s for s in ctrl.availableSources"
                       ng-change="ctrl.instances[$index] = ctrl.availableInstances[
                             ctrl.availableSources.indexOf(ctrl.sources[$index])
@@ -132,7 +132,7 @@
                 <div ng-if="!ctrl.sources[$index] || ctrl.instances[$index]" class="gf-form">
                   <label class="gf-form-label width-6">Istanza:</label>
                   <div class="gf-form-select-wrapper grafana-options-table">
-                    <select class="gf-form-input" ng-model="ctrl.instances[$index]"
+                    <select class="gf-form-input ReactTable" ng-model="ctrl.instances[$index]"
                     ng-options="i for i in ctrl.availableInstances[
                           ctrl.availableSources.indexOf(ctrl.sources[$index])
                         ]"/>
@@ -141,7 +141,7 @@
                 <div class="gf-form">
                   <label class="gf-form-label width-6">Parametro:</label>
                   <div class="gf-form-select-wrapper grafana-options-table">
-                    <select class="gf-form-input" ng-model="ctrl.params[$index]"
+                    <select class="gf-form-input ReactTable" ng-model="ctrl.params[$index]"
                       ng-options="p for p in ctrl.availableParams[
                           ctrl.availableSources.indexOf(ctrl.sources[$index])
                         ]"/>
@@ -169,9 +169,9 @@
       <div class="gf-form">
         <label class="gf-form-label width-8">Nome pannello:</label>
         <input ng-if="ctrl.view === 'Grafico'" type="text" class="gf-form-input width-14"
-          placeholder="Grafico di Predizione" ng-model="ctrl.panelName">
+          placeholder="Grafico di Predizione" ng-model="ctrl.panelName"/>
         <input ng-if="ctrl.view === 'Indicatore'" type="text" class="gf-form-input width-14"
-          placeholder="Indicatore di Predizione" ng-model="ctrl.panelName">
+          placeholder="Indicatore di Predizione" ng-model="ctrl.panelName"/>
       </div>
       <div class="gf-form">
         <button class="btn btn-primary" ng-click="ctrl.createPanel()">Crea Pannello</button>

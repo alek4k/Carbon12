@@ -6,7 +6,7 @@
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version 1.4.0
  *
- * Changelog: modificato metodo buildView(Object)
+ * Changelog: modifiche effettuate
  */
 
 /* eslint-disable import/named */

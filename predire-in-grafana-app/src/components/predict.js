@@ -13,6 +13,7 @@
 import { appEvents } from 'grafana/app/core/core';
 import predictLooper from '../utils/predictLooper';
 import GrafanaApiQuery from '../utils/grafana_query';
+import Dashboard from '../utils/dashboard';
 
 export default class predictCtrl {
     /** @ngInject */
@@ -28,8 +29,7 @@ export default class predictCtrl {
         this.$scope = $scope;
         this.backendSrv = backendSrv;
         this.grafana = new GrafanaApiQuery(backendSrv);
-        this.dashboardExists = false;
-        this.dashboardEmpty = true;
+        this.toRemove = -1;
         this.verifyDashboard();
     }
 
@@ -51,77 +51,49 @@ export default class predictCtrl {
                     this.grafana
                         .getDashboard('predire-in-grafana')
                         .then((db) => {
-                            this.dashboardEmpty = !db.dashboard.panels.length;
+                            this.dashboard = new Dashboard(db.dashboard);
+                            if (this.dashboard.updateSettings()) {
+                                this.grafana
+                                    .postDashboard(this.dashboard.getJSON())
+                                    .then(() => {
+                                        this.$scope.$evalAsync();
+                                    });
+                            }
+                            this.dashboardEmpty = ! this.dashboard.getJSON().panels.length;
                             if (!this.dashboardEmpty) {
-                                this.resetButtonsState('no');
                                 predictLooper.setBackendSrv(this.$scope, this.backendSrv);
-                                this.getPanelsState(db.dashboard.panels);
-                            } else {
-                                this.resetButtonsState();
+                                this.getPanelsState();
                             }
                             this.$scope.$evalAsync();
                         });
                 } else {
-                    this.resetButtonsState();
                 }
                 this.$scope.$evalAsync();
             });
     }
 
     /**
-     * Ripristina lo stato dei pulsanti che gestiscono la previsione secondo la proprietà passata
-     * @param {onStatus} String rappresenta lo stato dei pulsanti che verranno coinvolti nel ripristino
-     */
-    // eslint-disable-next-line class-methods-use-this
-    resetButtonsState(onStatus) {
-        const toRemove = [];
-        for (let i = 0; i < localStorage.length; ++i) {
-            const localItem = localStorage.key(i);
-            if (localItem.startsWith('btn')) {
-                switch (onStatus) {
-                case undefined:
-                    if (localStorage.getItem(localItem) !== 'no') {
-                        toRemove.push(localItem);
-                        predictLooper.stopPrediction(parseInt(localItem.substr(3), 10));
-                    }
-                    break;
-                default:
-                    if (localStorage.getItem(localItem) === 'no') {
-                        toRemove.push(localItem);
-                    }
-                }
-            }
-        }
-        toRemove.forEach((localItem) => {
-            localStorage.removeItem(localItem);
-        });
-    }
-
-    /**
      * Acquisisce lo stato della previsione dei pannelli presenti nella dashboard
-     * @param {panels} Object rappresenta i pannelli presenti nella dashboard
      */
-    getPanelsState(panels) {
+    getPanelsState() {
         this.started = [];
         this.time = [];
         this.timeUnit = [];
         this.panelsList = [];
-        for (let i = 0; i < panels.length; ++i) {
+        for (let i = 0; i < this.dashboard.getJSON().panels.length; ++i) {
             this.time.push('1');
             this.timeUnit.push('secondi');
-            if (localStorage.getItem('btn' + i) === null) {
-                this.started[i] = false;
-                localStorage.setItem('btn' + i, 'no');
+            if (JSON.parse(this.dashboard.getJSON().templating.list[i].query).started !== 'no') {
+                this.started[i] = true;
+                const state = JSON.parse(this.dashboard.getJSON().templating.list[i].query).started;
+                this.time[i] = state.substr(0, state.length - 1);
+                this.timeUnit[i] = state[state.length - 1] === 's' ? 'secondi' : 'minuti';
+                predictLooper.startPrediction(i, this.timeToMilliseconds(i));
             } else {
-                this.started[i] = localStorage.getItem('btn' + i) !== 'no';
-                if (this.started[i]) {
-                    const value = localStorage.getItem('btn' + i);
-                    this.time[i] = value.substr(0, value.length - 1);
-                    this.timeUnit[i] = value[value.length - 1] === 's' ? 'secondi' : 'minuti';
-                    predictLooper.startPrediction(i, this.timeToMilliseconds(i));
-                }
+                this.started[i] = false;
+                predictLooper.stopPrediction(i);
             }
-            this.panelsList.push(panels[i].title);
+            this.panelsList.push(this.dashboard.getJSON().panels[i].title);
         }
     }
 
@@ -155,9 +127,14 @@ export default class predictCtrl {
             appEvents.emit('alert-error', ['Frequenza di predizione non supportata', '']);
         } else {
             this.started[index] = true;
-            localStorage.setItem('btn' + index, this.time[index] + this.timeUnit[index][0]);
-            appEvents.emit('alert-success', ['Predizione avviata', '']);
-            predictLooper.startPrediction(index, refreshTime);
+            this.dashboard.setPredictionStarted(index, this.time[index] + this.timeUnit[index][0]);
+            this.grafana
+                .postDashboard(this.dashboard.getJSON())
+                .then(() => {
+                    appEvents.emit('alert-success', ['Predizione avviata', '']);
+                    predictLooper.startPrediction(index, refreshTime);
+                    this.$scope.$evalAsync();
+                });
         }
     }
 
@@ -167,9 +144,32 @@ export default class predictCtrl {
      */
     stopPrediction(index) {
         this.started[index] = false;
-        localStorage.setItem('btn' + index, 'no');
-        appEvents.emit('alert-success', ['Predizione terminata', '']);
-        predictLooper.stopPrediction(index);
+        this.dashboard.setPredictionStarted(index, 'no');
+        this.grafana
+            .postDashboard(this.dashboard.getJSON())
+            .then(() => {
+                appEvents.emit('alert-success', ['Predizione terminata', '']);
+                predictLooper.stopPrediction(index);
+                this.$scope.$evalAsync();
+            });
+    }
+
+    /**
+     * Rimuove il pannello della dashboard relativo all'indice passato
+     * @param {index} Number rappresenta l'indice del pannello della dashboard da rimuovere
+     */
+    removePanel(index) {
+        this.started.forEach((state, i) => {
+            predictLooper.stopPrediction(i);
+        });
+        this.dashboard.removePanel(index);
+        this.grafana
+            .postDashboard(this.dashboard.getJSON())
+            .then(() => {
+                document.getElementById('row' + index).remove();
+                this.verifyDashboard();
+                this.$scope.$evalAsync();
+            });
     }
 
     /**

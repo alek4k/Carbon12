@@ -6,7 +6,7 @@
  * @author Carbon12 <carbon.dodici@gmail.com>
  * @version 1.4.0
  *
- * Changelog: modificato metodo resetButtonsState(String)
+ * Changelog: modifiche effettuate
  */
 
 import PredictCtrl from '../../../src/components/predict';
@@ -72,8 +72,6 @@ describe('Testing method', () => {
                         fun(db);
                     },
                 }));
-                const mockResetButtonState = jest.fn();
-                predict.resetButtonsState = mockResetButtonState;
                 predict.$scope = new ScopeMock();
 
                 predict.verifyDashboard();
@@ -82,13 +80,10 @@ describe('Testing method', () => {
                 expect(getFolderMock).toHaveBeenCalledWith('0');
                 expect(getDashboardMock).toHaveBeenCalledTimes(1);
                 expect(getDashboardMock).toHaveBeenCalledWith('predire-in-grafana');
-                expect(mockResetButtonState).toHaveBeenCalledTimes(1);
-                expect(mockResetButtonState).toHaveBeenCalledWith();
                 expect(evalAsyncMock).toHaveBeenCalledTimes(2);
                 expect(evalAsyncMock).toHaveBeenCalledWith();
                 expect(predict).toEqual({
                     verifyDashboard: PredictCtrl.prototype.verifyDashboard,
-                    resetButtonsState: mockResetButtonState,
                     grafana: new GrafanaApiQueryMock(),
                     $scope: new ScopeMock(),
                     dashboardEmpty: true,
@@ -111,8 +106,6 @@ describe('Testing method', () => {
                         fun(db);
                     },
                 }));
-                const mockResetButtonState = jest.fn();
-                predict.resetButtonsState = mockResetButtonState;
                 const mockGetPanelsState = jest.fn();
                 predict.getPanelsState = mockGetPanelsState;
                 predict.$scope = new ScopeMock();
@@ -124,8 +117,6 @@ describe('Testing method', () => {
                 expect(getFolderMock).toHaveBeenCalledWith('0');
                 expect(getDashboardMock).toHaveBeenCalledTimes(1);
                 expect(getDashboardMock).toHaveBeenCalledWith('predire-in-grafana');
-                expect(mockResetButtonState).toHaveBeenCalledTimes(1);
-                expect(mockResetButtonState).toHaveBeenCalledWith('no');
                 expect(predictLooper.setBackendSrv).toHaveBeenCalledTimes(1);
                 expect(predictLooper.setBackendSrv)
                     .toHaveBeenCalledWith(new ScopeMock(), new BackendSrvMock());
@@ -133,7 +124,6 @@ describe('Testing method', () => {
                 expect(evalAsyncMock).toHaveBeenCalledWith();
                 expect(predict).toEqual({
                     verifyDashboard: PredictCtrl.prototype.verifyDashboard,
-                    resetButtonsState: mockResetButtonState,
                     getPanelsState: mockGetPanelsState,
                     grafana: new GrafanaApiQueryMock(),
                     $scope: new ScopeMock(),
@@ -153,62 +143,19 @@ describe('Testing method', () => {
                     fun(dbList);
                 },
             }));
-            const mockResetButtonState = jest.fn();
-            predict.resetButtonsState = mockResetButtonState;
             predict.$scope = new ScopeMock();
 
             predict.verifyDashboard();
 
             expect(getFolderMock).toHaveBeenCalledTimes(1);
             expect(getFolderMock).toHaveBeenCalledWith('0');
-            expect(mockResetButtonState).toHaveBeenCalledTimes(1);
-            expect(mockResetButtonState).toHaveBeenCalledWith();
             expect(evalAsyncMock).toHaveBeenCalledTimes(1);
             expect(evalAsyncMock).toHaveBeenCalledWith();
             expect(predict).toEqual({
                 verifyDashboard: PredictCtrl.prototype.verifyDashboard,
-                resetButtonsState: mockResetButtonState,
                 grafana: new GrafanaApiQueryMock(),
                 $scope: new ScopeMock(),
                 dashboardExists: false,
-            });
-        });
-    });
-
-    describe('resetButtonsState', () => {
-        beforeEach(() => {
-            localStorage.setItem('btn1', 'no');
-            localStorage.setItem('btn2', 'altro');
-            localStorage.setItem('key3', 'altro');
-            predict.resetButtonsState = PredictCtrl.prototype.resetButtonsState;
-        });
-
-        it('with onStatus defined', () => {
-            const parOnStatus = 'status';
-            predict.resetButtonsState(parOnStatus);
-
-            expect({ ...localStorage }).toEqual({
-                btn2: 'altro',
-                key3: 'altro',
-            });
-            expect(predictLooper.stopPrediction).toHaveBeenCalledTimes(0);
-            expect(predict).toEqual({
-                resetButtonsState: PredictCtrl.prototype.resetButtonsState,
-            });
-        });
-
-        it('with onStatus undefined', () => {
-            const parOnStatus = undefined;
-            predict.resetButtonsState(parOnStatus);
-
-            expect({ ...localStorage }).toEqual({
-                btn1: 'no',
-                key3: 'altro',
-            });
-            expect(predictLooper.stopPrediction).toHaveBeenCalledTimes(1);
-            expect(predictLooper.stopPrediction).toHaveBeenCalledWith(2);
-            expect(predict).toEqual({
-                resetButtonsState: PredictCtrl.prototype.resetButtonsState,
             });
         });
     });
@@ -462,6 +409,10 @@ describe('Testing method', () => {
             stopPrediction: PredictCtrl.prototype.stopPrediction,
             started: [false],
         });
+    });
+
+    describe('removeanel', () => {
+        expect(true).toEqual(false);
     });
 
     describe('redirect', () => {

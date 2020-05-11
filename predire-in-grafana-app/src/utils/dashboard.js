@@ -106,10 +106,19 @@ export default class Dashboard {
 
     /**
      * Aggiunge il pannello passato alla dashboard corrente
-     * @param {index} Number rappresenta l'indice del pannello della dashboard al quale verrà rimosso l'alert
+     * @param {panel} Panel rappresenta il pannello che dovrà essere aggiunto alla dashboard
      */
     addPanel(panel) {
         this.dashboardSettings.panels.push(panel.getJSON());
+    }
+
+    /**
+     * Rimuove il pannello della dashboard relativo all'indice passato
+     * @param {index} Number rappresenta l'indice del pannello della dashboard da rimuovere
+     */
+    removePanel(index) {
+        this.dashboardSettings.panels.splice(index, 1);
+        this.updateSettings();
     }
 
     /**
@@ -122,7 +131,7 @@ export default class Dashboard {
         this.dashboardSettings.templating.list.push({
             hide: 2, // nascosto
             name: panelID.toString(),
-            query: settings,
+            query: JSON.stringify(settings),
             type: 'textbox',
         });
     }
@@ -133,21 +142,35 @@ export default class Dashboard {
      */
     updateSettings() {
         const panels = this.dashboardSettings.panels;
-        const variables = this.dashboardSettings.templating.list;
+        let variables = this.dashboardSettings.templating.list;
+        const newVariables = [];
+        let isBeenUpdated = false;
         // panels.length <= variables.length
-        if (panels.length !== variables.length) {
-            // le variabili globali della dashboard non sono aggiornate
-            const newVariables = [];
-            for (let i = 0, j = 0; panels[j] !== undefined && i < variables.length; ++i) {
-                if (panels[j].id === variables[i].id) {
+        panels.forEach((panel) => {
+            let found = false;
+            for (let i = 0; !found && i < variables.length; ++i) {
+                if (panel.id === parseInt(variables[i].name, 10)) {
+                    found = true;
                     newVariables.push(variables[i]);
-                    ++j;
+                    variables.splice(i, 1);
+                } else {
+                    isBeenUpdated = true;
                 }
             }
-            this.dashboardSettings.templating.list = newVariables;
-            return true;
-        }
-        return false;
+        });
+        this.dashboardSettings.templating.list = newVariables;
+        return isBeenUpdated || variables.length > 1;
+    }
+
+    /**
+     * Imposta lo stato della predizione del pannello relativo all'indice passato
+     * @param {index} Number rappresenta l'indice del pannello della dashboard al quale impostare lo stato
+     * @param {state} Number rappresenta lo stato da impostare al pannello
+     */
+    setPredictionStarted(index, state) {
+        const settings = JSON.parse(this.dashboardSettings.templating.list[index].query);
+        settings.started = state;
+        this.dashboardSettings.templating.list[index].query = JSON.stringify(settings);
     }
 
     /**

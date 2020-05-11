@@ -67,13 +67,21 @@ export default class alertCtrl {
                     this.grafana
                         .getDashboard('predire-in-grafana')
                         .then((db) => {
-                            this.dashboardEmpty = !db.dashboard.panels.length;
+                            this.dashboard = new Dashboard(db.dashboard);
+                            if (this.dashboard.updateSettings()) {
+                                this.grafana
+                                    .postDashboard(this.dashboard.getJSON())
+                                    .then(() => {
+                                        this.$scope.$evalAsync();
+                                    });
+                            }
+                            this.dashboardEmpty = !this.dashboard.getJSON().panels.length;
                             if (!this.dashboardEmpty) {
                                 this.isRL = [];
-                                db.dashboard.templating.list.forEach((variable) => {
-                                    this.isRL.push(variable.query.model === 'RL');
+                                this.dashboard.getJSON().templating.list.forEach((variable) => {
+                                    this.isRL.push(JSON.parse(variable.query).model === 'RL');
                                 });
-                                this.getAlertsState(db.dashboard.panels);
+                                this.getAlertsState(this.dashboard.getJSON().panels);
                             }
                             this.$scope.$evalAsync();
                         });
@@ -102,7 +110,7 @@ export default class alertCtrl {
                 this.when.push(panel.alert.conditions[0].evaluator.type === 'gt'
                     ? 'superiore' : 'inferiore');
                 this.message.push(panel.alert.message);
-            } else if (panel.type === 'singlestat' && panel.thresholds !== undefined) {
+            } else if (panel.type === 'singlestat' && panel.thresholds !== undefined && panel.thresholds ) {
                 this.value.push(panel.thresholds.substr(0, panel.thresholds.indexOf(',')));
                 this.when.push(panel.colors[0] === '#299c46' ? 'superiore' : 'inferiore');
                 this.message.push('');
@@ -166,74 +174,68 @@ export default class alertCtrl {
      * @param {alertName} String rappresenta il nome dell'alert
      */
     saveAlertsState(alertName) {
-        this.grafana
-            .getDashboard('predire-in-grafana')
-            .then((db) => {
-                const dashboard = new Dashboard(db.dashboard);
-                let error = false;
-                for (let i = 0; i < this.panelsList.length && !error; ++i) {
-                    try {
-                        parseFloat(this.value[i]);
-                    } catch (err) {
-                        this.value[i] = '';
-                    }
-                    if ((!this.value[i] && this.when[i]) || (this.value[i] && !this.when[i])) {
-                        error = true;
-                        appEvents.emit('alert-error', ['L\'alert di "'
-                            + this.panelsList[i] + '" è incompleto', '']);
-                    } else if (this.value[i] && this.when[i]) {
-                        dashboard.setThresholds([{
-                            colorMode: 'critical',
-                            fill: true,
-                            line: true,
-                            op: (this.when[i] === 'superiore') ? 'gt' : 'lt',
-                            value: parseFloat(this.value[i]),
-                        }], i);
-                        dashboard.setAlert({
-                            conditions: [{
-                                evaluator: {
-                                    params: [
-                                        parseFloat(this.value[i]),
-                                    ],
-                                    type: (this.when[i] === 'superiore') ? 'gt' : 'lt',
-                                },
-                                query: {
-                                    params: [
-                                        dashboard.getJSON().panels[i].targets[0].refId,
-                                        '1s',
-                                        'now',
-                                    ],
-                                },
-                                reducer: {
-                                    params: [],
-                                    type: 'last',
-                                },
-                                type: 'query',
-                            }],
-                            executionErrorState: 'keep_state',
-                            frequency: '1s',
-                            message: this.message[i],
-                            name: this.panelsList[i] + ' alert',
-                            noDataState: 'keep_state',
-                            notifications: [{
-                                uid: alertName,
-                            }],
-                        }, i);
-                    } else {
-                        dashboard.removeThresholds(i);
-                        dashboard.removeAlert(i);
-                    }
-                }
-                if (!error) {
-                    this.grafana
-                        .postDashboard(dashboard.getJSON())
-                        .then(() => {
-                            appEvents.emit('alert-success', ['Salvataggio completato', '']);
-                            this.$scope.$evalAsync();
-                        });
-                }
-                this.$scope.$evalAsync();
-            });
+        let error = false;
+        for (let i = 0; i < this.panelsList.length && !error; ++i) {
+            try {
+                parseFloat(this.value[i]);
+            } catch (err) {
+                this.value[i] = '';
+            }
+            if ((!this.value[i] && this.when[i]) || (this.value[i] && !this.when[i])) {
+                error = true;
+                appEvents.emit('alert-error', ['L\'alert di "'
+                    + this.panelsList[i] + '" è incompleto', '']);
+            } else if (this.value[i] && this.when[i]) {
+                this.dashboard.setThresholds([{
+                    colorMode: 'critical',
+                    fill: true,
+                    line: true,
+                    op: (this.when[i] === 'superiore') ? 'gt' : 'lt',
+                    value: parseFloat(this.value[i]),
+                }], i);
+                this.dashboard.setAlert({
+                    conditions: [{
+                        evaluator: {
+                            params: [
+                                parseFloat(this.value[i]),
+                            ],
+                            type: (this.when[i] === 'superiore') ? 'gt' : 'lt',
+                        },
+                        query: {
+                            params: [
+                                this.dashboard.getJSON().panels[i].targets[0].refId,
+                                '1s',
+                                'now',
+                            ],
+                        },
+                        reducer: {
+                            params: [],
+                            type: 'last',
+                        },
+                        type: 'query',
+                    }],
+                    executionErrorState: 'keep_state',
+                    frequency: '1s',
+                    message: this.message[i],
+                    name: this.panelsList[i] + ' alert',
+                    noDataState: 'keep_state',
+                    notifications: [{
+                        uid: alertName,
+                    }],
+                }, i);
+            } else {
+                this.dashboard.removeThresholds(i);
+                this.dashboard.removeAlert(i);
+            }
+        }
+        if (!error) {
+            this.grafana
+                .postDashboard(this.dashboard.getJSON())
+                .then(() => {
+                    appEvents.emit('alert-success', ['Salvataggio completato', '']);
+                    this.$scope.$evalAsync();
+                });
+        }
     }
 
     /**

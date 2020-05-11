@@ -334,6 +334,11 @@ describe('Testing method', () => {
         });
     });
 
+    it('removePanel', () => {
+        expect(true).toEqual(false);
+    });
+
+
     it('storeSettings', () => {
         dashboard.storeSettings = Dashboard.prototype.storeSettings;
         const updateSettingsMock = jest.fn();
@@ -348,7 +353,7 @@ describe('Testing method', () => {
         expDashboardSettings.templating.list = [{
             hide: 2, // nascosto
             name: parPanelID.toString(),
-            query: parSettings,
+            query: JSON.stringify(parSettings),
             type: 'textbox',
         }];
         expect(dashboard).toEqual({
@@ -378,29 +383,38 @@ describe('Testing method', () => {
             expect(dashboard.dashboardSettings.panels).toEqual([]);
             expect(dashboard.dashboardSettings.templating.list).toEqual([]);
             dashboard.dashboardSettings.panels.push({ id: 1 });
-            dashboard.dashboardSettings.panels.push({ id: 2 });
+            dashboard.dashboardSettings.panels.push({ id: 5 });
             dashboard.dashboardSettings.panels.push({ id: 3 });
-            dashboard.dashboardSettings.panels.push({ id: 4 });
-            dashboard.dashboardSettings.templating.list.push({ id: 1 });
-            dashboard.dashboardSettings.templating.list.push({ id: 3 });
-            dashboard.dashboardSettings.templating.list.push({ id: 4 });
-            dashboard.dashboardSettings.templating.list.push({ id: 2 });
-            dashboard.dashboardSettings.templating.list.push({ id: 5 });
+            dashboard.dashboardSettings.panels.push({ id: 6 });
+            dashboard.dashboardSettings.templating.list.push({ name: '1' });
+            dashboard.dashboardSettings.templating.list.push({ name: '6' });
+            dashboard.dashboardSettings.templating.list.push({ name: '3' });
+            dashboard.dashboardSettings.templating.list.push({ name: '5' });
+            dashboard.dashboardSettings.templating.list.push({ name: '4' });
+            dashboard.dashboardSettings.templating.list.push({ name: '7' });
 
             const returnValue = dashboard.updateSettings();
 
+            expect(expDashboardSettings.panels).toEqual([]);
+            expect(expDashboardSettings.templating.list).toEqual([]);
             expDashboardSettings.panels.push({ id: 1 });
-            expDashboardSettings.panels.push({ id: 2 });
+            expDashboardSettings.panels.push({ id: 5 });
             expDashboardSettings.panels.push({ id: 3 });
-            expDashboardSettings.panels.push({ id: 4 });
-            expDashboardSettings.templating.list.push({ id: 1 });
-            expDashboardSettings.templating.list.push({ id: 2 });
+            expDashboardSettings.panels.push({ id: 6 });
+            expDashboardSettings.templating.list.push({ name: '1' });
+            expDashboardSettings.templating.list.push({ name: '5' });
+            expDashboardSettings.templating.list.push({ name: '3' });
+            expDashboardSettings.templating.list.push({ name: '6' });
             expect(returnValue).toEqual(true);
             expect(dashboard).toEqual({
                 updateSettings: Dashboard.prototype.updateSettings,
                 dashboardSettings: expDashboardSettings,
             });
         });
+    });
+
+    it('setPredictionStarted', () => {
+        expect(true).toEqual(false);
     });
 
     it('getJSON', () => {

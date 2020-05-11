@@ -136,7 +136,6 @@ export default class importCtrl {
         this.influx = new Influx(this.host, parseInt(this.port, 10), this.database);
 
         const sources = this.influx.getSources();
-
         this.availableSources = [];
         this.sources = [];
         this.availableParams = [];
@@ -185,6 +184,7 @@ export default class importCtrl {
             sources: this.sources,
             instances: this.instances,
             params: this.params,
+            started: 'no',
         };
         this.dashboard.storeSettings(panelID, settings);
     }
@@ -215,12 +215,11 @@ export default class importCtrl {
      * Gestisce la creazione del nuovo pannello
      */
     createPanel() {
+        this.error = '';
         for (let i = 0; i < this.availableDataEntry.length && !this.error; ++i) {
             if (this.sources[i] === undefined) {
                 this.error = 'La sorgente di '
                     + this.availableDataEntry[i] + ' non è stata selezionata';
-            } else {
-                this.error = '';
             }
         }
         if (!this.error) {

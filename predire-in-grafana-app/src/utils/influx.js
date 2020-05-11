@@ -176,7 +176,7 @@ export default class Influx extends DBConnection {
      * Elimina dal database tutte le predizioni
      */
     deleteAllPredictions() {
-        const oldPred = this.predictions;
+        const oldPred = [...this.predictions];
         for (let i = 0; i < oldPred.length; i++) {
             this.deletePrediction(oldPred[i]);
         }

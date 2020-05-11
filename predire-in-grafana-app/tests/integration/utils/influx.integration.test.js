@@ -12,7 +12,6 @@
 import { ajaxMock } from 'jquery';
 
 import Influx from '../../../src/utils/influx';
-import DBConnection from '../../../src/utils/db_connection';
 
 it('Testing constructor', () => {
     const parHost = 'localhost';

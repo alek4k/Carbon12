@@ -11,7 +11,7 @@
 
 import RLAdapter from '../../../src/utils/models/RL_Adapter';
 import Regression, {
-    fromJSONMOCK as fJMock, toJSONMOCK as tJMock, trainMOCK as tMock, predictMOCK as pMock,
+    fromJSONMock as fJMock, toJSONMock as tJMock, trainMock as tMock, predictMock as pMock,
 }
     from '../../../src/utils/models/rl/regression';
 

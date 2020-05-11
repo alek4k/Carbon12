@@ -11,7 +11,7 @@
 
 import SvmAdapter from '../../../src/utils/models/SVM_Adapter';
 import SVM, {
-    fromJSONMOCK as fJMock, toJSONMOCK as tJMock, trainMOCK as tMock, predictClassMOCK as pMock,
+    fromJSONMock as fJMock, toJSONMock as tJMock, trainMock as tMock, predictClassMock as pMock,
 }
     from '../../../src/utils/models/svm/svm';
 

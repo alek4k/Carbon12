@@ -65,7 +65,7 @@ describe('Testing method', () => {
         });
     });
 
-    it('with model equal SVM', () => {
+    it('with model equal RL', () => {
         builder.config.model = 'RL';
 
         const returnValue = builder.buildView();

@@ -62,7 +62,7 @@ In figura viene presentato un esempio del file di addestramento.
 ```
 	node app.js
 ```
-3. Utilizzando il browser accere all'indirizzo *http://localhost:8080/*;
+3. Utilizzando il browser accedere all'indirizzo *http://localhost:8080/*;
 4. Inserire il file `.csv` con i dati di addestramento;
 5. Se si desidera riaddestrare, inserire il vecchio `predittore.json`;
 6. Attivare il pulsante *Avvio Addestramento*;

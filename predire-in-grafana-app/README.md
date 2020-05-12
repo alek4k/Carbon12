@@ -23,7 +23,7 @@ Per garantire un corretto funzionamento del plug-in è necessario:
 ***Build***  
 Per l'installazione del plug-in è necessario spostare la cartella `predire-in-grafana-app` all'interno della cartella di Grafana dedicata ai plug-ins, `grafana/data/plugins`.
 
-Successivamete è necessario scaricare le dipendeze e creare la build, tramite i comandi:
+Successivamente è necessario scaricare le dipendenze e creare la build, tramite i comandi:
 ```
 npm install
 npm build

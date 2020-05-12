@@ -9,7 +9,7 @@
  * Changelog: modifiche effettuate
  */
 
-import SvmAdapter from '../../src/utils/models/SVM_Adapter';
+import SvmAdapter from '../../../src/utils/models/SVM_Adapter';
 
 const svmAdapter = new SvmAdapter();
 

@@ -10,7 +10,7 @@
  */
 
 import fs from 'fs';
-import RPredittore from '../../src/utils/r_predittore';
+import RPredittore from '../../../src/utils/r_predittore';
 
 const managePredittore = new RPredittore(JSON.parse(
     fs.readFileSync('./tests/files/predittore_test.json').toString(),

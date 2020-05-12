@@ -9,7 +9,8 @@
  * Changelog: modifiche effettuate
  */
 
-import RLAdapter from '../../src/utils/models/RL_Adapter';
+/* eslint-disable no-underscore-dangle */
+import RLAdapter from '../../../src/utils/models/RL_Adapter';
 
 const rlAdapter = new RLAdapter({ numX: 3, numY: 1 });
 

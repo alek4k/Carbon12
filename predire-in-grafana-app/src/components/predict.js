@@ -59,6 +59,7 @@ export default class predictCtrl {
                                         this.$scope.$evalAsync();
                                     });
                             }
+                            console.log(this.dashboard.getJSON().panels);
                             this.dashboardEmpty = !this.dashboard.getJSON().panels.length;
                             if (!this.dashboardEmpty) {
                                 predictLooper.setBackendSrv(this.$scope, this.backendSrv);
@@ -82,6 +83,7 @@ export default class predictCtrl {
         for (let i = 0; i < this.dashboard.getJSON().panels.length; ++i) {
             this.time.push('1');
             this.timeUnit.push('secondi');
+
             if (JSON.parse(this.dashboard.getJSON().templating.list[i].query).started !== 'no') {
                 this.started[i] = true;
                 const state = JSON.parse(this.dashboard.getJSON().templating.list[i].query).started;

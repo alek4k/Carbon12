@@ -261,7 +261,7 @@ test('Testing savePredittore', () => {
 
     server.savePredittore(strPredittore, nome);
 
-    const stats = fs.statSync('./greg.json');
+    const stats = fs.statSync('./test.json');
 
     expect(stats).toBeTruthy();
 });

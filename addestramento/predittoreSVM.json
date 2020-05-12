@@ -5,12 +5,12 @@
         "train_version": "1.4.0"
     },
     "data_entry": {
-        "source0": "win_mem.mean",
-        "source1": "win_cpu.mean"
+        "source0": "win_mem(GB)",
+        "source1": "win_cpu(%)"
     },
     "model": "SVM",
     "file_version": 0,
-    "notes": "Allenamento SVM: correlazione CPU RAM",
+    "notes": "Allenamento SVM: correlazione RAM disponibile - CPU usata",
     "configuration": {
         "_parametroN": "numero di dati inseriti",
         "N": 89,

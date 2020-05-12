@@ -5,12 +5,12 @@
         "train_version": "1.4.0"
     },
     "data_entry": {
-        "source0": "win_cpu.mean",
-        "source1": "win_mem.mean"
+        "source0": "win_disk(N)",
+        "source1": "win_cpu(%)"
     },
     "model": "RL",
     "file_version": 0,
-    "notes": "Allenamento RL: correlazione CPU RAM",
+    "notes": "Allenamento RL: correlazione I/O disco - % CPU usata",
     "configuration": {
         "_parametroN": "numero di dati inseriti",
         "N": 174,

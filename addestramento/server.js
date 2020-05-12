@@ -165,12 +165,13 @@ module.exports = class Server {
             this.model = fields.modello;
             this.notes = fields.note;
             this.nomePredittore = fields.nomeFile;
-
+            /*
             let configPresence = false;
             if (files.configFile.name && files.configFile.name !== '') {
                 console.log(files.configFile.name + ' loaded');
                 configPresence = true;
             }
+            */
             if (this.nomePredittore === '') {
                 this.nomePredittore = 'predittore';
             }
@@ -195,7 +196,8 @@ module.exports = class Server {
             this.sources = this.csvReader.getDataSource();
 
             let config = '';
-            if (configPresence) {
+            if (files.configFile.name && files.configFile.name !== '') {
+                console.log(files.configFile.name + ' loaded');
                 const managePredittore = new RPredittore(JSON.parse(
                     fs.readFileSync(pathConfigFile).toString(),
                 ));

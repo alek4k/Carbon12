@@ -81,9 +81,11 @@ describe('Testing constructor', () => {
         const serv = new Server();
         expect(mockExit).toHaveBeenCalledTimes(1);
     });
+
     test('Testing constructor', () => {
         nconf.argv.mockReturnThis();
         nconf.env.mockReturnThis();
+        nconf.file.mockImplementation(() => {});
         const ser = new Server();
         const k = {
             csvReader: null,
@@ -96,9 +98,11 @@ describe('Testing constructor', () => {
             app: {
                 set: expect.any(Function),
                 use: expect.any(Function),
+                listen: expect.any(Function),
             },
             router: undefined,
         };
+        expect(nconf.defaults).toHaveBeenCalledTimes(1);
         expect(ser).toEqual(k);
     });
 });
@@ -363,7 +367,609 @@ describe('Testing method', () => {
     });
 
     describe('Testing uploadForm method', () => {
+        test('when validityCsv return error and the name is define and don\'t end with .json', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('errorCsv');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
 
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: 'testName',
+                };
+                const files = {
+                    configFile: {
+                        name: '',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: 'errorCsv',
+                model: '',
+                nomePredittore: 'testName.json',
+                notes: '',
+            });
+        });
+
+        test('when validityCsv return error and the name is define and end with .json', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('errorCsv');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: 'testName.json',
+                };
+                const files = {
+                    configFile: {
+                        name: '',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: 'errorCsv',
+                model: '',
+                nomePredittore: 'testName.json',
+                notes: '',
+            });
+        });
+
+        test('when validityCsv return error and the name is not defined', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('errorCsv');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: '',
+                };
+                const files = {
+                    configFile: {
+                        name: '',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: 'errorCsv',
+                model: '',
+                nomePredittore: 'predittore.json',
+                notes: '',
+            });
+        });
+
+        test('when validityCsv don\'t return error and the name is define and don\'t end with .json and files.name is not define', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: 'testName',
+                };
+                const files = {
+                    configFile: {
+                        name: '',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: '',
+                model: '',
+                nomePredittore: 'testName.json',
+                notes: '',
+                sources: ['A', 'B'],
+            });
+        });
+
+        test('when validityCsv don\'t return error and the name is define and end with .json and files.name is not define', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: 'testName.json',
+                };
+                const files = {
+                    configFile: {
+                        name: '',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: '',
+                model: '',
+                nomePredittore: 'testName.json',
+                notes: '',
+                sources: ['A', 'B'],
+            });
+        });
+
+        test('when validityCsv don\'t return error and the name is not defined and files.name is not define', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: 'testName.json',
+                };
+                const files = {
+                    configFile: {
+                        name: '',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: '',
+                model: '',
+                nomePredittore: 'testName.json',
+                notes: '',
+                sources: ['A', 'B'],
+            });
+        });
+
+        test('when validityCsv don\'t return error and the name is define and don\'t end with .json and files.name is define and validityJson don\'t return error', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: 'testName',
+                };
+                const files = {
+                    configFile: {
+                        name: 'testNomeFile',
+                        path: 'testPath',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            fs.readFileSync.mockReturnValueOnce(1);
+            const mockValidityJson = jest.fn().mockReturnValueOnce('');
+            server.validityJson = mockValidityJson;
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityJson: mockValidityJson,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: '',
+                model: '',
+                nomePredittore: 'testName.json',
+                notes: '',
+                sources: ['A', 'B'],
+            });
+        });
+
+        //qua
+        test('when validityCsv don\'t return error and the name is define and end with .json and files.name is define and validityJson don\'t return error', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: 'testName.json',
+                };
+                const files = {
+                    configFile: {
+                        name: 'testNomeFile',
+                        path: 'testPath',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            fs.readFileSync.mockReturnValueOnce(1);
+            const mockValidityJson = jest.fn().mockReturnValueOnce('');
+            server.validityJson = mockValidityJson;
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityJson: mockValidityJson,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: '',
+                model: '',
+                nomePredittore: 'testName.json',
+                notes: '',
+                sources: ['A', 'B'],
+            });
+        });
+
+        test('when validityCsv don\'t return error and the name is not defined and files.name is define and validityJson don\'t return error', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: '',
+                };
+                const files = {
+                    configFile: {
+                        name: 'testNomeFile',
+                        path: 'testPath',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            fs.readFileSync.mockReturnValueOnce(1);
+            const mockValidityJson = jest.fn().mockReturnValueOnce('');
+            server.validityJson = mockValidityJson;
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityJson: mockValidityJson,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: '',
+                model: '',
+                nomePredittore: 'predittore.json',
+                notes: '',
+                sources: ['A', 'B'],
+            });
+        });
+
+        test('when validityCsv don\'t return error and the name is define and don\'t end with .json and files.name is define and validityJson return error', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: 'testName',
+                };
+                const files = {
+                    configFile: {
+                        name: 'testNomeFile',
+                        path: 'testPath',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            fs.readFileSync.mockReturnValueOnce(1);
+            const mockValidityJson = jest.fn().mockReturnValueOnce('errorJ');
+            server.validityJson = mockValidityJson;
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityJson: mockValidityJson,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: 'errorJ',
+                model: '',
+                nomePredittore: 'testName.json',
+                notes: '',
+                sources: ['A', 'B'],
+            });
+        });
+
+        test('when validityCsv don\'t return error and the name is define and end with .json and files.name is define and validityJson return error', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: 'testName.json',
+                };
+                const files = {
+                    configFile: {
+                        name: 'testNomeFile',
+                        path: 'testPath',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            fs.readFileSync.mockReturnValueOnce(1);
+            const mockValidityJson = jest.fn().mockReturnValueOnce('errorJ');
+            server.validityJson = mockValidityJson;
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityJson: mockValidityJson,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: 'errorJ',
+                model: '',
+                nomePredittore: 'testName.json',
+                notes: '',
+                sources: ['A', 'B'],
+            });
+        });
+
+        test('when validityCsv don\'t return error and the name is not defined and files.name is define and validityJson return error', () => {
+            server.uploadForm = Server.prototype.uploadForm;
+            const mockValidityCsv = jest.fn();
+            server.validityCsv = mockValidityCsv;
+            mockValidityCsv.mockReturnValueOnce('');
+            server.csvReader = new CsvReader();
+            const mockTrain = jest.fn();
+            server.train = mockTrain;
+            const mockSavePredittore = jest.fn();
+            server.savePredittore = mockSavePredittore;
+
+            formidable.parseMOCK.mockImplementationOnce((req, fun) => {
+                const err = '';
+                const fields = {
+                    modello: '',
+                    note: '',
+                    nomeFile: '',
+                };
+                const files = {
+                    configFile: {
+                        name: 'testNomeFile',
+                        path: 'testPath',
+                    },
+                };
+                fun(err, fields, files);
+            });
+            fs.readFileSync.mockReturnValueOnce(1);
+            const mockValidityJson = jest.fn().mockReturnValueOnce('errorJ');
+            server.validityJson = mockValidityJson;
+            const req = {};
+            const writeHeadMock = jest.fn();
+            const endMock = jest.fn();
+            const res = {
+                writeHead: writeHeadMock,
+                end: endMock,
+            };
+            server.uploadForm(req, res);
+
+            expect(server).toEqual({
+                uploadForm: Server.prototype.uploadForm,
+                validityJson: mockValidityJson,
+                validityCsv: mockValidityCsv,
+                csvReader: new CsvReader(),
+                train: mockTrain,
+                savePredittore: mockSavePredittore,
+                error: 'errorJ',
+                model: '',
+                nomePredittore: 'predittore.json',
+                notes: '',
+                sources: ['A', 'B'],
+            });
+        });
     });
 
     describe('Testing downloadPredittore method', () => {
@@ -457,7 +1063,7 @@ describe('Testing method', () => {
         test('It should test the start', async () => {
             server.startServer = Server.prototype.startServer;
             server.config = function testConfig() {};
-            const listenMock = jest.fn();
+            const listenMock = jest.fn().mockImplementation((nport, fun) => fun());
             server.app = { listen: listenMock };
             server.startServer();
             expect(listenMock).toHaveBeenCalledTimes(1);

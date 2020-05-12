@@ -1,0 +1,14 @@
+{
+    "header": {
+        "title": "Carbon12 Predire in Grafana"
+    },
+    "data_entry": {
+        "source0": "A",
+        "source1": "B",
+        "source2": "Labels"
+    },
+    "model": "SVM",
+    "file_version": 0,
+    "notes": null,
+    "configuration": ""
+}

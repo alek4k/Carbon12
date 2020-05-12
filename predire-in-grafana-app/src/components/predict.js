@@ -59,7 +59,6 @@ export default class predictCtrl {
                                         this.$scope.$evalAsync();
                                     });
                             }
-                            console.log(this.dashboard.getJSON().panels);
                             this.dashboardEmpty = !this.dashboard.getJSON().panels.length;
                             if (!this.dashboardEmpty) {
                                 predictLooper.setBackendSrv(this.$scope, this.backendSrv);

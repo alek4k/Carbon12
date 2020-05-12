@@ -49,7 +49,7 @@ describe('Testing method', () => {
         predict = new PredictCtrl(parLocation, parScope, parBackendSrv);
     });
 
-    describe.only('verifyDashboard', () => {
+    describe('verifyDashboard', () => {
         describe('when dashboardExists is true', () => {
             beforeEach(() => {
                 getMock.mockImplementationOnce(() => ({

@@ -14,6 +14,7 @@ const createReadStreamMOCK = jest.fn(); */
 const express = jest.fn(() => ({
     set: jest.fn(),
     use: jest.fn(),
+    listen: jest.fn().mockImplementation((nport, fun) => fun()),
 }));
 express.Router = jest.fn();
 express.static = jest.fn();

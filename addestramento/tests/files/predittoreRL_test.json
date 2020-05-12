@@ -1,0 +1,32 @@
+{
+    "header": {
+        "title": "Carbon12 Predire in Grafana",
+        "plugin_version": "1.4.0",
+        "train_version": "1.4.0"
+    },
+    "data_entry": {
+        "source0": "win_cpu.mean",
+        "source1": "win_mem.mean"
+    },
+    "model": "RL",
+    "file_version": 0,
+    "notes": "Allenamento RL: correlazione CPU RAM",
+    "configuration": {
+        "_parametroN": "numero di dati inseriti",
+        "N": 174,
+        "_parametroD": "numero di sorgenti analizzate",
+        "D": 3,
+        "_parametroAlpha": "coefficienti della retta risultante",
+        "alpha": [
+            [
+                1.9805284560870717
+            ],
+            [
+                -0.019614749086800637
+            ],
+            [
+                0.008094522020144324
+            ]
+        ]
+    }
+}

@@ -11,9 +11,7 @@
 const argvMOCK = jest.fn();
 const envMOCK = jest.fn();
 const fileMOCK = jest.fn();
-const defaultsMOCK = jest.fn({
-    PORT: 8080, TRAIN_VERSION: '0.0.0', PLUGIN_VERSION: '0.0.0',
-});
+const defaultsMOCK = jest.fn();
 const getMOCK = jest.fn();
 
 const nconf = {

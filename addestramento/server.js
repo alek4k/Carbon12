@@ -141,7 +141,7 @@ module.exports = class Server {
      * predittore generato dall'addestramento
      * @param  {string} nome
      * stringa che identifica il nome del file che si genera
-     * 
+     *
      * salvataggio predittore
      */
     savePredittore(strPredittore, nome) {
